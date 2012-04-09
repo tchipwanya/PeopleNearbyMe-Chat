@@ -1,4 +1,7 @@
-Demo for node.js http://tinyclouds.org/node
+#PeopleNearby
+##Chat Server
 
-to run
-$ /usr/local/bin/node server.js
+Requires Node.js to be installed.
+
+To run
+	node server.js
