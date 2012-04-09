@@ -224,12 +224,12 @@ function addMessage (from, text, time, _class) {
   // replace URLs with links
   text = text.replace(util.urlRE, '<a target="_blank" href="$&">$&</a>');
 
-  var content = '<tr>'
-              + '  <td class="date">' + util.timeString(time) + '</td>'
-              + '  <td class="nick">' + util.toStaticHTML(from) + '</td>'
-              + '  <td class="msg-text">' + text  + '</td>'
-              + '</tr>'
-              ;
+  var content = '<tr>';
+  content+= '  <td class="date">' + util.timeString(time) + '</td>';
+  content+= '  <td class="nick">' + util.toStaticHTML(from) + '</td>';
+  content+= '  <td class="msg-text">' + text  + '</td>';
+  content+= '</tr>';
+              
   messageElement.html(content);
 
   //the log is the stream that we view
@@ -312,18 +312,18 @@ function longPoll (data) {
   }
 
   //make another request
-  $.ajax({ cache: false
-         , type: "GET"
-         , url: "/recv"
-         , dataType: "json"
-         , data: { since: CONFIG.last_message_time, id: CONFIG.id }
-         , error: function () {
+  $.ajax({ cache: false,
+           type: "GET",
+           url: "/recv",
+           dataType: "json",
+           data: { since: CONFIG.last_message_time, id: CONFIG.id },
+           error: function () {
              addMessage("", "long poll error. trying again...", new Date(), "error");
              transmission_errors += 1;
              //don't flood the servers on error, wait 10 seconds before retrying
              setTimeout(longPoll, 10*1000);
-           }
-         , success: function (data) {
+           },
+          success: function (data) {
              transmission_errors = 0;
              //if everything went well, begin another request immediately
              //the server will take a long time to respond
@@ -331,6 +331,7 @@ function longPoll (data) {
              //and then it will return it to us and close the connection.
              //since the connection is closed when we get data, we longPoll again
              longPoll(data);
+             console.log(data);
            }
          });
 }
@@ -464,16 +465,16 @@ $(document).ready(function() {
     }
 
     //make the actual join request to the server
-    $.ajax({ cache: false
-           , type: "GET" // XXX should be POST
-           , dataType: "json"
-           , url: "/join"
-           , data: { nick: nick }
-           , error: function () {
+    $.ajax({ cache: false,
+             type: "GET", // XXX should be POST
+             dataType: "json",
+             url: "/join",
+             data: { nick: nick },
+             error: function () {
                alert("error connecting to server");
                showConnect();
-             }
-           , success: onConnect
+             },
+             success: onConnect
            });
     return false;
   });

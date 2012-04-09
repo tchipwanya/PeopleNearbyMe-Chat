@@ -3,11 +3,11 @@ body {
   margin: 0;
 }
 body, #entry {
-  background: #22252a;
-  color: #eee;
+  background: #FFF;
+  color: #000;
 }
 body, table {
-  font-family: DejaVu Sans Mono, fixed; 
+  font-family: "Helvetica Neue", sans-serif; 
   font-size: 14pt;
   line-height: 150%;
 }
@@ -27,7 +27,7 @@ a { text-decoration: none; color: #888; }
 a:hover { text-decoration: underline; color: #aaa; }
 
 #loading, #connect {
-  background: #22252a;
+  background: #fff;
   position: fixed;
   top: 0;
   left: 0;
@@ -40,7 +40,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 #connect { z-index: 10000001; }
 
 #loading p, #connect fieldset  {
-  font-family: DejaVu Sans Mono, fixed; 
+  font-family: "Helvetica Neue", sans-serif; 
   width: 30em;
   border: 0;
 }
