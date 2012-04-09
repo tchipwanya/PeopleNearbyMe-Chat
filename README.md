@@ -3,5 +3,6 @@
 
 Requires Node.js to be installed.
 
-To run
+To run:
+	
 	node server.js
