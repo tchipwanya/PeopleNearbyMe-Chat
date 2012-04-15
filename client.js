@@ -472,8 +472,8 @@ $(document).ready(function() {
              dataType: "json",
              url: "/join",
              data: { nick: nick },
-             error: function () {
-               alert("error connecting to server");
+             error: function (xhr, ajaxOptions, thrownError) {
+               alert("Error connecting to server."+thrownError);
                showConnect();
              },
              success: onConnect
