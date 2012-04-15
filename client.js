@@ -463,7 +463,7 @@ $(document).ready(function() {
       showConnect();
       return false;
     }
-
+    
     //make the actual join request to the server
     $.ajax({ cache: false,
              type: "GET", // XXX should be POST
