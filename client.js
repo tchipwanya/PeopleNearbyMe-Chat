@@ -473,7 +473,7 @@ $(document).ready(function() {
              url: "/join",
              data: { nick: nick },
              error: function (xhr, ajaxOptions, thrownError) {
-               alert("Error connecting to server."+thrownError);
+               alert("Error connecting to server. "+thrownError);
                showConnect();
              },
              success: onConnect
