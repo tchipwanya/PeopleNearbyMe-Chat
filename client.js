@@ -1,9 +1,9 @@
-var CONFIG = { debug: false
-             , nick: "#"   // set in onConnect
-             , id: null    // set in onConnect
-             , last_message_time: 1
-             , focus: true //event listeners bound in onConnect
-             , unread: 0 //updated in the message-processing loop
+var CONFIG = { debug: false,
+              nick: "#",   // set in onConnect,
+              id: null,    // set in onConnect,
+              last_message_time: 1,
+              focus: true, //event listeners bound in onConnect,
+              unread: 0 //updated in the message-processing loop
              };
 
 var nicks = [];
@@ -134,7 +134,7 @@ function userPart(nick, timestamp) {
   //remove the user from the list
   for (var i = 0; i < nicks.length; i++) {
     if (nicks[i] == nick) {
-      nicks.splice(i,1)
+      nicks.splice(i,1);
       break;
     }
   }
@@ -145,15 +145,15 @@ function userPart(nick, timestamp) {
 // utility functions
 
 util = {
-  urlRE: /https?:\/\/([-\w\.]+)+(:\d+)?(\/([^\s]*(\?\S+)?)?)?/g, 
+  urlRE: /https?:\/\/([-\w\.]+)+(:\d+)?(\/([^\s]*(\?\S+)?)?)?/g,
 
-  //  html sanitizer 
+  //html sanitizer
   toStaticHTML: function(inputHtml) {
     inputHtml = inputHtml.toString();
     return inputHtml.replace(/&/g, "&amp;")
                     .replace(/</g, "&lt;")
                     .replace(/>/g, "&gt;");
-  }, 
+  },
 
   //pads n with zeros on the left,
   //digits is minimum length of output
@@ -161,7 +161,7 @@ util = {
   //zeroPad(2, 500); returns "500"
   zeroPad: function (digits, n) {
     n = n.toString();
-    while (n.length < digits) 
+    while (n.length < digits)
       n = '0' + n;
     return n;
   },
@@ -195,7 +195,7 @@ function addMessage (from, text, time, _class) {
   if (text === null)
     return;
 
-  if (time == null) {
+  if (time === null) {
     // if the time is null or undefined, use the current time.
     time = new Date();
   } else if ((time instanceof Date) === false) {
@@ -207,7 +207,7 @@ function addMessage (from, text, time, _class) {
   //  the time,
   //  the person who caused the event,
   //  and the content
-  var messageElement = $(document.createElement("table"));
+  var messageElement = $(document.createElement("div"));
 
   messageElement.addClass("message");
   if (_class)
@@ -224,11 +224,11 @@ function addMessage (from, text, time, _class) {
   // replace URLs with links
   text = text.replace(util.urlRE, '<a target="_blank" href="$&">$&</a>');
 
-  var content = '<tr>';
-  content+= '  <td class="date">' + util.timeString(time) + '</td>';
-  content+= '  <td class="nick">' + util.toStaticHTML(from) + '</td>';
-  content+= '  <td class="msg-text">' + text  + '</td>';
-  content+= '</tr>';
+  var content = '<div>';
+  content+= '  <span class="date">' + util.timeString(time) + '</span>';
+  content+= '  <span class="nick">' + util.toStaticHTML(from) + '</span>';
+  content+= '  <span class="msg-text">' + text  + '</td>';
+  content+= '</div>';
               
   messageElement.html(content);
 
@@ -240,17 +240,17 @@ function addMessage (from, text, time, _class) {
 }
 
 function updateRSS () {
-  var bytes = parseInt(rss);
+  var bytes = parseInt(rss,10);
   if (bytes) {
     var megabytes = bytes / (1024*1024);
     megabytes = Math.round(megabytes*10)/10;
-    $("#rss").text(megabytes.toString());
+    //$("#rss").text(megabytes.toString());
   }
 }
 
 function updateUptime () {
   if (starttime) {
-    $("#uptime").text(starttime.toRelativeTime());
+    //$("#uptime").text(starttime.toRelativeTime());
   }
 }
 
@@ -347,26 +347,28 @@ function send(msg) {
 
 //Transition the page to the state that prompts the user for a nickname
 function showConnect () {
-  $("#connect").show();
-  $("#loading").hide();
-  $("#toolbar").hide();
+  $("#connect").css('display','block');
+  $("#loading").css('display','none');
+  $("#toolbar").css('display','none');
+  $("#log").css('display','none');
   $("#nickInput").focus();
 }
 
 //transition the page to the loading screen
 function showLoad () {
-  $("#connect").hide();
-  $("#loading").show();
-  $("#toolbar").hide();
+  $("#connect").css('display','none');
+  $("#loading").css('display','block');
+  $("#toolbar").css('display','none');
 }
 
 //transition the page to the main chat view, putting the cursor in the textfield
 function showChat (nick) {
-  $("#toolbar").show();
+  $("#toolbar").css('display','block');
+  $("#log").css('display','block');
   $("#entry").focus();
 
-  $("#connect").hide();
-  $("#loading").hide();
+  $("#connect").css('display','none');
+  $("#loading").css('display','none');
 
   scrollDown();
 }
@@ -470,8 +472,8 @@ $(document).ready(function() {
              dataType: "json",
              url: "/join",
              data: { nick: nick },
-             error: function () {
-               alert("error connecting to server");
+             error: function (xhr, ajaxOptions, thrownError) {
+               alert("Error connecting to server. "+thrownError);
                showConnect();
              },
              success: onConnect
@@ -492,7 +494,7 @@ $(document).ready(function() {
   }
 
   // remove fixtures
-  $("#log table").remove();
+  $("#log div").remove();
 
   //begin listening for updates right away
   //interestingly, we don't need to join a room to get its updates

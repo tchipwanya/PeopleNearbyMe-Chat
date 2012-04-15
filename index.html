@@ -3,33 +3,32 @@
 		<link rel="stylesheet" href="style.css" type="text/css"/>
 		<script src="jquery-1.2.6.min.js" type="text/javascript"></script>
 		<script src="client.js" type="text/javascript"></script>
-		<title>node chat</title>
+		<title>peoplenearby.me</title>
 	</head>
 	<body>
 		<div id="app">
+			<div id="links">
+				<a href="">About</a>
+				<a href="">How it Works</a>
+			</div>
+			<div id="header">peoplenearby.me</div>
 			<div id="connect">
 				<form action="#">
 					<fieldset> 
-						<!-- <p>
-							<a href="http://github.com/PeopleNearby/PeopleNearby-ChatServer" target="_blank">here</a>.
-						</p> -->
-						<h1 id="site-name" class="header center">PeopleNearby.me</h1>
 						<input id="nickInput" class="text"type="text" name="nick" value="" placeholder="Type your name here"/>
 						<input id="connectButton" class="button" type="submit" name="" value="Join"/>
-
 					</fieldset>
 				</form>
 			</div><!-- #connect -->
 			<div id="loading"><p>loading</p></div><!-- #loading -->
-			<div id="log">
+			<div id="log"></div><!-- #log -->
 
-			</div><!-- #log -->
 			<div id="toolbar">
-				<ul id="status">
+				<!--<ul id="status">
 					<li><a id="usersLink" href="#">5 users</a></li>
 					<li>uptime: <span id="uptime">?</span></li>
 					<li>memory: <span id="rss">?</span>mb RSS</li>
-				</ul>
+				</ul>-->
 				<input tabindex="1" type="text" id="entry"/>
 			</div><!-- #toolbar -->
 		</div><!-- #app -->
