@@ -3,13 +3,12 @@ body {
   margin: 0;
 }
 body, #entry {
-  background: #FFF;
+  background: url('blue.jpg') #FFF;
   color: #000;
 }
 body, table {
   font-family: "Helvetica Neue", sans-serif; 
   font-size: 14pt;
-  line-height: 150%;
 }
 tr,td,table {
   padding: 0;
@@ -18,6 +17,11 @@ tr,td,table {
   border-width: 0;
 }
 table {
+  line-height: 150%;
+  padding:5px;
+  border-radius: 5px;
+  width:inherit;
+  background:rgba(255,255,255,0.7);
   border-collapse: collapse;
   border-spacing: 0
 }
@@ -25,14 +29,29 @@ table {
 
 a { text-decoration: none; color: #888; }
 a:hover { text-decoration: underline; color: #aaa; }
-
+::-moz-selection,
+::selection {
+  color: inherit;
+  background: hsl(324, 96%, 50%)#ffffff;
+}
+.header {
+  font-weight:100;
+  font-family: sans-serif;
+  font-size:100px;
+  text-shadow:1px 1px 2px #fff;
+}
+.center {
+  text-align: center;
+}
+#app {
+  width:900px;
+  margin: 0 auto;
+}
 #loading, #connect {
-  background: #fff;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+  background: url('blue.jpg') #FFF;
   height: 100%;
+  width: inherit;
+  position: fixed;
   padding: 1em;
 }
 
@@ -41,16 +60,15 @@ a:hover { text-decoration: underline; color: #aaa; }
 
 #loading p, #connect fieldset  {
   font-family: "Helvetica Neue", sans-serif; 
-  width: 30em;
   border: 0;
+  text-align:center;
 }
 
 #toolbar {
   position: fixed;
   color: #fff;
-  width: 100%; 
+  width: inherit; 
   bottom: 0;
-  background: #733;
 }
 
 #entry {
@@ -61,6 +79,7 @@ a:hover { text-decoration: underline; color: #aaa; }
   border-width: 0;
   outline-width: 0;
   clear: both;
+  background:rgba(255,255,255,0.7);
 }
 
 #log {
@@ -72,6 +91,11 @@ a:hover { text-decoration: underline; color: #aaa; }
 }
 
 /* not very important info */
+#nickInput {
+  font-size: 30px;
+  padding:10px;
+  font-weight:lighter;
+}
 .notice td, .join td, .part td, .message .date { color: #555; }
 .error td { color: #933; }
 .personal .nick, .notice .nick { color: #cd5; }
@@ -92,7 +116,10 @@ a:hover { text-decoration: underline; color: #aaa; }
 .nick a {
   color: inherit;
 }
-
+#status {
+    background: #733;
+    clear:both;
+}
 #toolbar ul {
   margin: 0;
   padding: 0;
@@ -100,8 +127,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 }
 
 #toolbar li {
-  display: block; 
-  float: left;
+  display: inline-block; 
   margin: 0 2em 0 0;
 }
 
