@@ -3,7 +3,6 @@ body {
   margin: 0;
 }
 body, #entry {
-  background: url('blue.jpg') #FFF;
   color: #000;
 }
 body, table {
@@ -16,14 +15,18 @@ tr,td,table {
   outline-width: 0;
   border-width: 0;
 }
+tr,td {
+  width: auto;
+}
 table {
   line-height: 150%;
   padding:5px;
   border-radius: 5px;
-  width:inherit;
+  width:890px;
   background:rgba(255,255,255,0.7);
   border-collapse: collapse;
-  border-spacing: 0
+  border-spacing: 0;
+  margin: 10px 0;
 }
 
 
@@ -43,20 +46,28 @@ a:hover { text-decoration: underline; color: #aaa; }
 .center {
   text-align: center;
 }
+#links {
+  float: right;
+}
+#header {
+  border-bottom: 1pt solid black;
+  padding:0px 10px;
+  text-shadow:1px 1px 2px #fff;
+  font-weight:100;
+  font-size:70px;
+}
 #app {
   width:900px;
   margin: 0 auto;
 }
 #loading, #connect {
-  background: url('blue.jpg') #FFF;
+
   height: 100%;
   width: inherit;
   position: fixed;
   padding: 1em;
 }
 
-#loading { z-index: 10000000; }
-#connect { z-index: 10000001; }
 
 #loading p, #connect fieldset  {
   font-family: "Helvetica Neue", sans-serif; 
@@ -65,11 +76,11 @@ a:hover { text-decoration: underline; color: #aaa; }
 }
 
 #toolbar {
-  position: fixed;
+
   color: #fff;
   width: inherit; 
-  bottom: 0;
 }
+
 
 #entry {
   width: 100%;
@@ -79,7 +90,12 @@ a:hover { text-decoration: underline; color: #aaa; }
   border-width: 0;
   outline-width: 0;
   clear: both;
-  background:rgba(255,255,255,0.7);
+  background:rgba(0,0,0,0.2);
+  border-top:1pt solid black;
+}
+#entry:active,
+#entry:focus {
+  outline:none;
 }
 
 #log {
@@ -87,7 +103,10 @@ a:hover { text-decoration: underline; color: #aaa; }
   /* enough padding to clear the toolbar.. is there a better way to do this? */
   padding-bottom: 5.1em; 
   background: inherit;
-  overflow: hidden;
+  overflow-x: visible;
+  overflow-y: scroll;
+  height:400px;
+  background:rgba(255,255,255,0.7);
 }
 
 /* not very important info */
@@ -101,7 +120,8 @@ a:hover { text-decoration: underline; color: #aaa; }
 .personal .nick, .notice .nick { color: #cd5; }
 
 .message {
-  margin: 0.1em 0;
+  margin: 0;
+  padding: 5px;
 }
 
 .message td {
