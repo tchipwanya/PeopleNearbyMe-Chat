@@ -1,4 +1,4 @@
-HOST = chat.peoplenearby.me; // localhost
+HOST = "chat.peoplenearby.me"; // localhost
 PORT = 8001;
 
 // when the daemon started
