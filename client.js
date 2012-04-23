@@ -183,8 +183,8 @@ util = {
 
 //used to keep the most recent messages visible
 function scrollDown () {
-  window.scrollBy(0, 100000000000000000);
-  $("#entry").focus();
+  //window.scrollBy(0, 100000000000000000);
+  //$("#entry").focus();
 }
 
 //inserts an event into the stream for display
@@ -465,7 +465,7 @@ $(document).ready(function() {
       showConnect();
       return false;
     }
-
+    
     //make the actual join request to the server
     $.ajax({ cache: false,
              type: "GET", // XXX should be POST
