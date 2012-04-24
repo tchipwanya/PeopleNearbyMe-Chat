@@ -2,17 +2,17 @@
 
 var sessions = {};
 
-function createSession (nick) {
-	if (nick.length > 50) return null;
-	if (/[^\w_\-^!]/.exec(nick)) return null;
+function createSession (alias) {
+	if (alias.length > 50) return null;
+	if (/[^\w_\-^!]/.exec(alias)) return null;
 
 	for (var i in sessions) {
 		var session = sessions[i];
-		if (session && session.nick === nick) return null;
+		if (session && session.alias === alias) return null;
 	}
 
 	var session = {
-		nick: nick,
+		alias: alias,
 		id: Math.floor(Math.random()*99999999999).toString(),
 		timestamp: new Date(),
 
@@ -21,7 +21,7 @@ function createSession (nick) {
 		},
 
 		destroy: function () {
-			channel.appendMessage(session.nick, "part");
+			channel.appendMessage(session.alias, "part");
 			delete sessions[session.id];
 		}
 	};

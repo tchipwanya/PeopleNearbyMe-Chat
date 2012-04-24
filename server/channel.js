@@ -5,8 +5,8 @@ var channel = new function () {
 	var messages = [], 
 		callbacks = [];
 
-	this.appendMessage = function (nick, type, text) {
-		var m = { nick: nick,
+	this.appendMessage = function (alias, type, text) {
+		var m = { alias: alias,
 							type: type, // "msg", "join", "part",
 							text: text,
 							timestamp: (new Date()).getTime()
@@ -14,13 +14,13 @@ var channel = new function () {
 
 		switch (type) {
 			case "msg":
-				sys.puts("<" + nick + "> " + text);
+				sys.puts("<" + alias + "> " + text);
 				break;
 			case "join":
-				sys.puts(nick + " join");
+				sys.puts(alias + " join");
 				break;
 			case "part":
-				sys.puts(nick + " part");
+				sys.puts(alias + " part");
 				break;
 		}
 

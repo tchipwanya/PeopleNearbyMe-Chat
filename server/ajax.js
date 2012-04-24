@@ -1,34 +1,34 @@
 /* Subfile 4 */
 
 fu.get("/who", function (req, res) {
-	var nicks = [];
+	var aliass = [];
 	for (var id in sessions) {
 		if (!sessions.hasOwnProperty(id)) continue;
 		var session = sessions[id];
-		nicks.push(session.nick);
+		aliass.push(session.alias);
 	}
-	res.simpleJSON(200, { nicks: nicks,
+	res.simpleJSON(200, { aliass: aliass,
 							rss: mem.rss
 						});
 });
 
 fu.get("/join", function (req, res) {
-	var nick = qs.parse(url.parse(req.url).query).nick;
-	if (nick === null || nick.length === 0) {
-		res.simpleJSON(400, {error: "Bad nick."});
+	var alias = qs.parse(url.parse(req.url).query).alias;
+	if (alias === null || alias.length === 0) {
+		res.simpleJSON(400, {error: "Bad alias."});
 		return;
 	}
-	var session = createSession(nick);
+	var session = createSession(alias);
 	if (session === null) {
-		res.simpleJSON(400, {error: "Nick in use"});
+		res.simpleJSON(400, {error: "alias in use"});
 		return;
 	}
 
-	//sys.puts("connection: " + nick + "@" + res.connection.remoteAddress);
+	//sys.puts("connection: " + alias + "@" + res.connection.remoteAddress);
 
-	channel.appendMessage(session.nick, "join");
+	channel.appendMessage(session.alias, "join");
 	res.simpleJSON(200, { id: session.id,
-						nick: session.nick,
+						alias: session.alias,
 						rss: mem.rss,
 						starttime: starttime
 						});
@@ -76,6 +76,6 @@ fu.get("/send", function (req, res) {
 
 	session.poke();
 
-	channel.appendMessage(session.nick, "msg", text);
+	channel.appendMessage(session.alias, "msg", text);
 	res.simpleJSON(200, { rss: mem.rss });
 });

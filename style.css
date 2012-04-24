@@ -142,14 +142,14 @@ a:hover { text-decoration: underline; color: #aaa; }
 }
 
 /* not very important info */
-#nickInput {
+#aliasInput {
   font-size: 30px;
   padding:10px;
   font-weight:lighter;
 }
 .notice td, .join td, .part td, .message .date { color: #555; }
 .error td { color: #933; }
-.personal .nick, .notice .nick { color: #cd5; }
+.personal .alias, .notice .alias { color: #cd5; }
 
 .message {
   margin: 0;
@@ -160,12 +160,12 @@ a:hover { text-decoration: underline; color: #aaa; }
   vertical-align: top;
 }
 
-.nick { 
+.alias { 
   font-weight: bold;
   padding: 0 1em 0 0.5em;
 }
 
-.nick a {
+.alias a {
   color: inherit;
 }
 #status {
