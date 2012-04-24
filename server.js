@@ -17,10 +17,11 @@ var fu = require("./fu"),
 	qs = require("querystring");
 
 var MESSAGE_BACKLOG = 200,
-		SESSION_TIMEOUT = 60 * 1000;
+	SESSION_TIMEOUT = 60 * 1000;
 
 var channel = new function () {
-	var messages = [], callbacks = [];
+	var messages = [], 
+		callbacks = [];
 
 	this.appendMessage = function (nick, type, text) {
 		var m = { nick: nick,
