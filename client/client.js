@@ -1,18 +1,12 @@
-/* client.js subfile 1 */
-
 var CONFIG = { debug: false,
-              alias: "#",   // set in onConnect,
+              nick: "#",   // set in onConnect,
               id: null,    // set in onConnect,
               last_message_time: 1,
               focus: true, //event listeners bound in onConnect,
               unread: 0 //updated in the message-processing loop
              };
 
-var aliass = [];
-// daemon start time
-var starttime;
-// daemon memory usage
-var rss;
+var nicks = [];
 
 /* Returns a description of this past date in relative terms.
  * Takes an optional parameter (default: 0) setting the threshold in ms which
@@ -82,6 +76,43 @@ Date.fromString = function(str) {
   return new Date(Date.parse(str));
 };
 
+//updates the users link to reflect the number of active users
+function updateUsersLink ( ) {
+  var t = nicks.length.toString() + " user";
+  if (nicks.length != 1) t += "s";
+  $("#usersLink").text(t);
+}
+
+//handles another person joining chat
+function userJoin(nick, timestamp) {
+  //put it in the stream
+  addMessage(nick, "joined", timestamp, "join");
+  //if we already know about this user, ignore it
+  for (var i = 0; i < nicks.length; i++)
+    if (nicks[i] == nick) return;
+  //otherwise, add the user to the list
+  nicks.push(nick);
+  //update the UI
+  updateUsersLink();
+}
+
+//handles someone leaving
+function userPart(nick, timestamp) {
+  //put it in the stream
+  addMessage(nick, "left", timestamp, "part");
+  //remove the user from the list
+  for (var i = 0; i < nicks.length; i++) {
+    if (nicks[i] == nick) {
+      nicks.splice(i,1);
+      break;
+    }
+  }
+  //update the UI
+  updateUsersLink();
+}
+
+// utility functions
+
 util = {
   urlRE: /https?:\/\/([-\w\.]+)+(:\d+)?(\/([^\s]*(\?\S+)?)?)?/g,
 
@@ -121,17 +152,8 @@ util = {
 
 //used to keep the most recent messages visible
 function scrollDown () {
-	var doAutoscroll = (($("#log").scrollTop()+ $("#log").innerHeight() + 40)>=($("#log")[0].scrollHeight));
-//	addMessage2("sys", ($("#log").scrollTop() +  $("#log").innerHeight()).toString() + " " + ($("#log")[0].scrollHeight).toString() + " " + doAutoscroll );
-	if (doAutoscroll) $("#log").scrollTop($("#log")[0].scrollHeight);
-}
-/* client.js subfile 2 */
-
-//updates the users link to reflect the number of active users
-function updateUsersLink ( ) {
-  var t = aliass.length.toString() + " user";
-  if (aliass.length != 1) t += "s";
-  $("#usersLink").text(t);
+  //window.scrollBy(0, 100000000000000000);
+  //$("#entry").focus();
 }
 
 //inserts an event into the stream for display
@@ -164,8 +186,8 @@ function addMessage (from, text, time, _class) {
   text = util.toStaticHTML(text);
 
   // If the current user said this, add a special css class
-  var alias_re = new RegExp(CONFIG.alias);
-  if (alias_re.exec(text))
+  var nick_re = new RegExp(CONFIG.nick);
+  if (nick_re.exec(text))
     messageElement.addClass("personal");
 
   // replace URLs with links
@@ -173,7 +195,7 @@ function addMessage (from, text, time, _class) {
 
   var content = '<div>';
   content+= '  <span class="date">' + util.timeString(time) + '</span>';
-  content+= '  <span class="alias">' + util.toStaticHTML(from) + '</span>';
+  content+= '  <span class="nick">' + util.toStaticHTML(from) + '</span>';
   content+= '  <span class="msg-text">' + text  + '</td>';
   content+= '</div>';
               
@@ -185,7 +207,6 @@ function addMessage (from, text, time, _class) {
   //always view the most recent message when it is added
   scrollDown();
 }
-
 
 function updateRSS () {
   var bytes = parseInt(rss,10);
@@ -202,46 +223,9 @@ function updateUptime () {
   }
 }
 
-//we want to show a count of unread messages when the window does not have focus
-function updateTitle(){
-  if (CONFIG.unread) {
-    document.title = "(" + CONFIG.unread.toString() + ") node chat";
-  } else {
-    document.title = "node chat";
-  }
-}
-/* client.js subfile 3 */
-
-//handles another person joining chat
-function userJoin(alias, timestamp) {
-  //put it in the stream
-  addMessage(alias, "joined", timestamp, "join");
-  //if we already know about this user, ignore it
-  for (var i = 0; i < aliass.length; i++)
-    if (aliass[i] == alias) return;
-  //otherwise, add the user to the list
-  aliass.push(alias);
-  //update the UI
-  updateUsersLink();
-}
-
-//handles someone leaving
-function userPart(alias, timestamp) {
-  //put it in the stream
-  addMessage(alias, "left", timestamp, "part");
-  //remove the user from the list
-  for (var i = 0; i < aliass.length; i++) {
-    if (aliass[i] == alias) {
-      aliass.splice(i,1);
-      break;
-    }
-  }
-  //update the UI
-  updateUsersLink();
-}
-
 var transmission_errors = 0;
 var first_poll = true;
+
 
 //process updates if we have any, request updates from the server,
 // and call again with response. the last part is like recursion except the call
@@ -274,15 +258,15 @@ function longPoll (data) {
           if(!CONFIG.focus){
             CONFIG.unread++;
           }
-          addMessage(message.alias, message.text, message.timestamp);
+          addMessage(message.nick, message.text, message.timestamp);
           break;
 
         case "join":
-          userJoin(message.alias, message.timestamp);
+          userJoin(message.nick, message.timestamp);
           break;
 
         case "part":
-          userPart(message.alias, message.timestamp);
+          userPart(message.nick, message.timestamp);
           break;
       }
     }
@@ -330,13 +314,13 @@ function send(msg) {
   }
 }
 
-//Transition the page to the state that prompts the user for a aliasname
+//Transition the page to the state that prompts the user for a nickname
 function showConnect () {
   $("#connect").css('display','block');
   $("#loading").css('display','none');
   $("#toolbar").css('display','none');
   $("#log").css('display','none');
-  $("#aliasInput").focus();
+  $("#nickInput").focus();
 }
 
 //transition the page to the loading screen
@@ -347,7 +331,7 @@ function showLoad () {
 }
 
 //transition the page to the main chat view, putting the cursor in the textfield
-function showChat (alias) {
+function showChat (nick) {
   $("#toolbar").css('display','block');
   $("#log").css('display','block');
   $("#entry").focus();
@@ -358,7 +342,21 @@ function showChat (alias) {
   scrollDown();
 }
 
-//handle the server's response to our aliasname and join request
+//we want to show a count of unread messages when the window does not have focus
+function updateTitle(){
+  if (CONFIG.unread) {
+    document.title = "(" + CONFIG.unread.toString() + ") node chat";
+  } else {
+    document.title = "node chat";
+  }
+}
+
+// daemon start time
+var starttime;
+// daemon memory usage
+var rss;
+
+//handle the server's response to our nickname and join request
 function onConnect (session) {
   if (session.error) {
     alert("error connecting: " + session.error);
@@ -366,7 +364,7 @@ function onConnect (session) {
     return;
   }
 
-  CONFIG.alias = session.alias;
+  CONFIG.nick = session.nick;
   CONFIG.id   = session.id;
   starttime   = new Date(session.starttime);
   rss         = session.rss;
@@ -374,7 +372,7 @@ function onConnect (session) {
   updateUptime();
 
   //update the UI to show the chat
-  showChat(CONFIG.alias);
+  showChat(CONFIG.nick);
 
   //listen for browser events so we know to update the document title
   $(window).bind("blur", function() {
@@ -391,26 +389,21 @@ function onConnect (session) {
 
 //add a list of present chat members to the stream
 function outputUsers () {
-  var alias_string = aliass.length > 0 ? aliass.join(", ") : "(none)";
-  addMessage("users:", alias_string, new Date(), "notice");
+  var nick_string = nicks.length > 0 ? nicks.join(", ") : "(none)";
+  addMessage("users:", nick_string, new Date(), "notice");
   return false;
-} 
+}
 
 //get a list of the users presently in the room, and add it to the stream
 function who () {
   jQuery.get("/who", {}, function (data, status) {
     if (status != "success") return;
-    aliass = data.aliass;
+    nicks = data.nicks;
     outputUsers();
   }, "json");
 }
 
-
-/* client.js subfile 4 */
-
 $(document).ready(function() {
-
-  /* Event binding */
 
   //submit new messages when the user hits enter if the message isnt blank
   $("#entry").keypress(function (e) {
@@ -426,18 +419,18 @@ $(document).ready(function() {
   $("#connectButton").click(function () {
     //lock the UI while waiting for a response
     showLoad();
-    var alias = $("#aliasInput").attr("value");
+    var nick = $("#nickInput").attr("value");
 
     //dont bother the backend if we fail easy validations
-    if (alias.length > 50) {
-      alert("alias too long. 50 character max.");
+    if (nick.length > 50) {
+      alert("Nick too long. 50 character max.");
       showConnect();
       return false;
     }
 
     //more validations
-    if (/[^\w_\-^!]/.exec(alias)) {
-      alert("Bad character in alias. Can only have letters, numbers, and '_', '-', '^', '!'");
+    if (/[^\w_\-^!]/.exec(nick)) {
+      alert("Bad character in nick. Can only have letters, numbers, and '_', '-', '^', '!'");
       showConnect();
       return false;
     }
@@ -447,7 +440,7 @@ $(document).ready(function() {
              type: "GET", // XXX should be POST
              dataType: "json",
              url: "/join",
-             data: { alias: alias },
+             data: { nick: nick },
              error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr);
                 console.log(ajaxOptions);

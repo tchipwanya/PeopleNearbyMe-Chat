@@ -1,4 +1,4 @@
-
+/* have to use the 'exports' node design pattern here if we don't plan on combining this with the other files. */
 
 var mongodb = require('mongodb');
 var collection;
@@ -36,13 +36,13 @@ function User() {
 	this.updateUsername = function(name) {
 		//check to see if a username is already in use
 		var check = collection.find({name:{$exists : true}});
-		if(check !=true){
+		if(check !=null){
 			return false;	//need to tell the user the name is invalid	
 		};
 	};
 	this.updateEmail = function(email) {
 		var check = collection.find({email:{$exists : true}});
-		if(check != true){
+		if(check !=null){
 			return false;	//need to tell the user the name is invalid	
 		};
 	};

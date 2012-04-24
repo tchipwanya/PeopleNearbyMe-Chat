@@ -1,5 +1,3 @@
-/* Subfile 1 */
-
 HOST = null; // localhost
 PORT = 8001;
 
@@ -21,19 +19,7 @@ var fu = require("./fu"),
 var MESSAGE_BACKLOG = 200,
 	SESSION_TIMEOUT = 60 * 1000;
 
-//used to be below "interval to kill sessions"
-
-fu.listen(Number(process.env.PORT || PORT), HOST);
-
-
-fu.get("/", fu.staticHandler("index.html"));
-fu.get("/style.css", fu.staticHandler("style.css"));
-fu.get("/client.js", fu.staticHandler("client.js"));
-//fu.get("/blue.jpg", fu.staticHandler("blue.jpg"));
-fu.get("/jquery-1.2.6.min.js", fu.staticHandler("jquery-1.2.6.min.js"));/* Subfile 2 */
-
 var channel = new function () {
-	
 	var messages = [], 
 		callbacks = [];
 
@@ -90,7 +76,6 @@ var channel = new function () {
 		}
 	}, 3000);
 };
-/* Subfile 3 */
 
 var sessions = {};
 
@@ -134,7 +119,16 @@ setInterval(function () {
 		}
 	}
 }, 1000);
-/* Subfile 4 */
+
+fu.listen(Number(process.env.PORT || PORT), HOST);
+
+
+fu.get("/", fu.staticHandler("index.html"));
+fu.get("/style.css", fu.staticHandler("style.css"));
+fu.get("/client.js", fu.staticHandler("client.js"));
+//fu.get("/blue.jpg", fu.staticHandler("blue.jpg"));
+fu.get("/jquery-1.2.6.min.js", fu.staticHandler("jquery-1.2.6.min.js"));
+
 
 fu.get("/who", function (req, res) {
 	var aliass = [];

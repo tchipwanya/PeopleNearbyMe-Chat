@@ -1,5 +1,3 @@
-/* client.js subfile 1 */
-
 var CONFIG = { debug: false,
               alias: "#",   // set in onConnect,
               id: null,    // set in onConnect,
@@ -9,10 +7,6 @@ var CONFIG = { debug: false,
              };
 
 var aliass = [];
-// daemon start time
-var starttime;
-// daemon memory usage
-var rss;
 
 /* Returns a description of this past date in relative terms.
  * Takes an optional parameter (default: 0) setting the threshold in ms which
@@ -82,6 +76,43 @@ Date.fromString = function(str) {
   return new Date(Date.parse(str));
 };
 
+//updates the users link to reflect the number of active users
+function updateUsersLink ( ) {
+  var t = aliass.length.toString() + " user";
+  if (aliass.length != 1) t += "s";
+  $("#usersLink").text(t);
+}
+
+//handles another person joining chat
+function userJoin(alias, timestamp) {
+  //put it in the stream
+  addMessage(alias, "joined", timestamp, "join");
+  //if we already know about this user, ignore it
+  for (var i = 0; i < aliass.length; i++)
+    if (aliass[i] == alias) return;
+  //otherwise, add the user to the list
+  aliass.push(alias);
+  //update the UI
+  updateUsersLink();
+}
+
+//handles someone leaving
+function userPart(alias, timestamp) {
+  //put it in the stream
+  addMessage(alias, "left", timestamp, "part");
+  //remove the user from the list
+  for (var i = 0; i < aliass.length; i++) {
+    if (aliass[i] == alias) {
+      aliass.splice(i,1);
+      break;
+    }
+  }
+  //update the UI
+  updateUsersLink();
+}
+
+// utility functions
+
 util = {
   urlRE: /https?:\/\/([-\w\.]+)+(:\d+)?(\/([^\s]*(\?\S+)?)?)?/g,
 
@@ -121,17 +152,8 @@ util = {
 
 //used to keep the most recent messages visible
 function scrollDown () {
-	var doAutoscroll = (($("#log").scrollTop()+ $("#log").innerHeight() + 40)>=($("#log")[0].scrollHeight));
-//	addMessage2("sys", ($("#log").scrollTop() +  $("#log").innerHeight()).toString() + " " + ($("#log")[0].scrollHeight).toString() + " " + doAutoscroll );
-	if (doAutoscroll) $("#log").scrollTop($("#log")[0].scrollHeight);
-}
-/* client.js subfile 2 */
-
-//updates the users link to reflect the number of active users
-function updateUsersLink ( ) {
-  var t = aliass.length.toString() + " user";
-  if (aliass.length != 1) t += "s";
-  $("#usersLink").text(t);
+  //window.scrollBy(0, 100000000000000000);
+  //$("#entry").focus();
 }
 
 //inserts an event into the stream for display
@@ -186,7 +208,6 @@ function addMessage (from, text, time, _class) {
   scrollDown();
 }
 
-
 function updateRSS () {
   var bytes = parseInt(rss,10);
   if (bytes) {
@@ -202,46 +223,9 @@ function updateUptime () {
   }
 }
 
-//we want to show a count of unread messages when the window does not have focus
-function updateTitle(){
-  if (CONFIG.unread) {
-    document.title = "(" + CONFIG.unread.toString() + ") node chat";
-  } else {
-    document.title = "node chat";
-  }
-}
-/* client.js subfile 3 */
-
-//handles another person joining chat
-function userJoin(alias, timestamp) {
-  //put it in the stream
-  addMessage(alias, "joined", timestamp, "join");
-  //if we already know about this user, ignore it
-  for (var i = 0; i < aliass.length; i++)
-    if (aliass[i] == alias) return;
-  //otherwise, add the user to the list
-  aliass.push(alias);
-  //update the UI
-  updateUsersLink();
-}
-
-//handles someone leaving
-function userPart(alias, timestamp) {
-  //put it in the stream
-  addMessage(alias, "left", timestamp, "part");
-  //remove the user from the list
-  for (var i = 0; i < aliass.length; i++) {
-    if (aliass[i] == alias) {
-      aliass.splice(i,1);
-      break;
-    }
-  }
-  //update the UI
-  updateUsersLink();
-}
-
 var transmission_errors = 0;
 var first_poll = true;
+
 
 //process updates if we have any, request updates from the server,
 // and call again with response. the last part is like recursion except the call
@@ -358,6 +342,20 @@ function showChat (alias) {
   scrollDown();
 }
 
+//we want to show a count of unread messages when the window does not have focus
+function updateTitle(){
+  if (CONFIG.unread) {
+    document.title = "(" + CONFIG.unread.toString() + ") node chat";
+  } else {
+    document.title = "node chat";
+  }
+}
+
+// daemon start time
+var starttime;
+// daemon memory usage
+var rss;
+
 //handle the server's response to our aliasname and join request
 function onConnect (session) {
   if (session.error) {
@@ -394,7 +392,7 @@ function outputUsers () {
   var alias_string = aliass.length > 0 ? aliass.join(", ") : "(none)";
   addMessage("users:", alias_string, new Date(), "notice");
   return false;
-} 
+}
 
 //get a list of the users presently in the room, and add it to the stream
 function who () {
@@ -405,12 +403,7 @@ function who () {
   }, "json");
 }
 
-
-/* client.js subfile 4 */
-
 $(document).ready(function() {
-
-  /* Event binding */
 
   //submit new messages when the user hits enter if the message isnt blank
   $("#entry").keypress(function (e) {
