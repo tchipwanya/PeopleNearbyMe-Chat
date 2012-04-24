@@ -36,13 +36,13 @@ function User() {
 	this.updateUsername = function(name) {
 		//check to see if a username is already in use
 		var check = collection.find({name:{$exists : true}});
-		if(check !=null){
+		if(check !=true){
 			return false;	//need to tell the user the name is invalid	
 		};
 	};
 	this.updateEmail = function(email) {
 		var check = collection.find({email:{$exists : true}});
-		if(check !=null){
+		if(check != true){
 			return false;	//need to tell the user the name is invalid	
 		};
 	};
