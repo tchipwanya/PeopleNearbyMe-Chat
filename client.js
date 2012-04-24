@@ -183,8 +183,9 @@ util = {
 
 //used to keep the most recent messages visible
 function scrollDown () {
-  //window.scrollBy(0, 100000000000000000);
-  //$("#entry").focus();
+	var doAutoscroll = (($("#log").scrollTop()+ $("#log").innerHeight() + 40)>=($("#log")[0].scrollHeight));
+//	addMessage2("sys", ($("#log").scrollTop() +  $("#log").innerHeight()).toString() + " " + ($("#log")[0].scrollHeight).toString() + " " + doAutoscroll );
+	if (doAutoscroll) $("#log").scrollTop($("#log")[0].scrollHeight);
 }
 
 //inserts an event into the stream for display
@@ -238,6 +239,7 @@ function addMessage (from, text, time, _class) {
   //always view the most recent message when it is added
   scrollDown();
 }
+
 
 function updateRSS () {
   var bytes = parseInt(rss,10);
