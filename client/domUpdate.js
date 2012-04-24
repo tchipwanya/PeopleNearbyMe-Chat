@@ -2,8 +2,8 @@
 
 //updates the users link to reflect the number of active users
 function updateUsersLink ( ) {
-  var t = aliass.length.toString() + " user";
-  if (aliass.length != 1) t += "s";
+  var t = aliases.length.toString() + " user";
+  if (aliases.length != 1) t += "s";
   $("#usersLink").text(t);
 }
 
@@ -57,21 +57,6 @@ function addMessage (from, text, time, _class) {
 
   //always view the most recent message when it is added
   scrollDown();
-}
-
-function updateRSS () {
-  var bytes = parseInt(rss,10);
-  if (bytes) {
-    var megabytes = bytes / (1024*1024);
-    megabytes = Math.round(megabytes*10)/10;
-    //$("#rss").text(megabytes.toString());
-  }
-}
-
-function updateUptime () {
-  if (starttime) {
-    //$("#uptime").text(starttime.toRelativeTime());
-  }
 }
 
 //we want to show a count of unread messages when the window does not have focus

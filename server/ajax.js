@@ -1,15 +1,13 @@
-/* Subfile 4 */
+/* server.js subfile 4 */
 
 fu.get("/who", function (req, res) {
-	var aliass = [];
+	var aliases = [];
 	for (var id in sessions) {
 		if (!sessions.hasOwnProperty(id)) continue;
 		var session = sessions[id];
-		aliass.push(session.alias);
+		aliases.push(session.alias);
 	}
-	res.simpleJSON(200, { aliass: aliass,
-							rss: mem.rss
-						});
+	res.simpleJSON(200, { aliases: aliases});
 });
 
 fu.get("/join", function (req, res) {
@@ -28,9 +26,7 @@ fu.get("/join", function (req, res) {
 
 	channel.appendMessage(session.alias, "join");
 	res.simpleJSON(200, { id: session.id,
-						alias: session.alias,
-						rss: mem.rss,
-						starttime: starttime
+						alias: session.alias
 						});
 });
 
@@ -41,7 +37,6 @@ fu.get("/part", function (req, res) {
 		session = sessions[id];
 		session.destroy();
 	}
-	res.simpleJSON(200, { rss: mem.rss });
 });
 
 fu.get("/recv", function (req, res) {
@@ -60,7 +55,7 @@ fu.get("/recv", function (req, res) {
 
 	channel.query(since, function (messages) {
 		if (session) session.poke();
-		res.simpleJSON(200, { messages: messages, rss: mem.rss });
+		res.simpleJSON(200, { messages: messages});
 	});
 });
 
@@ -77,5 +72,4 @@ fu.get("/send", function (req, res) {
 	session.poke();
 
 	channel.appendMessage(session.alias, "msg", text);
-	res.simpleJSON(200, { rss: mem.rss });
 });

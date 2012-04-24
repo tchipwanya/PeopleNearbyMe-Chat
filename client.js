@@ -8,11 +8,7 @@ var CONFIG = { debug: false,
               unread: 0 //updated in the message-processing loop
              };
 
-var aliass = [];
-// daemon start time
-var starttime;
-// daemon memory usage
-var rss;
+var aliases = [];
 
 /* Returns a description of this past date in relative terms.
  * Takes an optional parameter (default: 0) setting the threshold in ms which
@@ -128,8 +124,8 @@ function scrollDown () {
 
 //updates the users link to reflect the number of active users
 function updateUsersLink ( ) {
-  var t = aliass.length.toString() + " user";
-  if (aliass.length != 1) t += "s";
+  var t = aliases.length.toString() + " user";
+  if (aliases.length != 1) t += "s";
   $("#usersLink").text(t);
 }
 
@@ -185,21 +181,6 @@ function addMessage (from, text, time, _class) {
   scrollDown();
 }
 
-function updateRSS () {
-  var bytes = parseInt(rss,10);
-  if (bytes) {
-    var megabytes = bytes / (1024*1024);
-    megabytes = Math.round(megabytes*10)/10;
-    //$("#rss").text(megabytes.toString());
-  }
-}
-
-function updateUptime () {
-  if (starttime) {
-    //$("#uptime").text(starttime.toRelativeTime());
-  }
-}
-
 //we want to show a count of unread messages when the window does not have focus
 function updateTitle(){
   if (CONFIG.unread) {
@@ -215,10 +196,10 @@ function userJoin(alias, timestamp) {
   //put it in the stream
   addMessage(alias, "joined", timestamp, "join");
   //if we already know about this user, ignore it
-  for (var i = 0; i < aliass.length; i++)
-    if (aliass[i] == alias) return;
+  for (var i = 0; i < aliases.length; i++)
+    if (aliases[i] == alias) return;
   //otherwise, add the user to the list
-  aliass.push(alias);
+  aliases.push(alias);
   //update the UI
   updateUsersLink();
 }
@@ -228,9 +209,9 @@ function userPart(alias, timestamp) {
   //put it in the stream
   addMessage(alias, "left", timestamp, "part");
   //remove the user from the list
-  for (var i = 0; i < aliass.length; i++) {
-    if (aliass[i] == alias) {
-      aliass.splice(i,1);
+  for (var i = 0; i < aliases.length; i++) {
+    if (aliases[i] == alias) {
+      aliases.splice(i,1);
       break;
     }
   }
@@ -249,11 +230,6 @@ function longPoll (data) {
   if (transmission_errors > 2) {
     showConnect();
     return;
-  }
-
-  if (data && data.rss) {
-    rss = data.rss;
-    updateRSS();
   }
 
   //process any updates we may have
@@ -322,13 +298,11 @@ function longPoll (data) {
 //submit a new message to the server
 function send(msg) {
   if (CONFIG.debug === false) {
-    // XXX should be POST
-    // XXX should add to messages immediately
     jQuery.get("/send", {id: CONFIG.id, text: msg}, function (data) { }, "json");
   }
 }
 
-//Transition the page to the state that prompts the user for a aliasname
+//Transition the page to the state that prompts the user for a alias
 function showConnect () {
   $("#connect").css('display','block');
   $("#loading").css('display','none');
@@ -356,7 +330,7 @@ function showChat (alias) {
   scrollDown();
 }
 
-//handle the server's response to our aliasname and join request
+//handle the server's response to our alias and join request
 function onConnect (session) {
   if (session.error) {
     alert("error connecting: " + session.error);
@@ -366,10 +340,6 @@ function onConnect (session) {
 
   CONFIG.alias = session.alias;
   CONFIG.id   = session.id;
-  starttime   = new Date(session.starttime);
-  rss         = session.rss;
-  updateRSS();
-  updateUptime();
 
   //update the UI to show the chat
   showChat(CONFIG.alias);
@@ -389,7 +359,7 @@ function onConnect (session) {
 
 //add a list of present chat members to the stream
 function outputUsers () {
-  var alias_string = aliass.length > 0 ? aliass.join(", ") : "(none)";
+  var alias_string = aliases.length > 0 ? aliases.join(", ") : "(none)";
   addMessage("users:", alias_string, new Date(), "notice");
   return false;
 } 
@@ -398,7 +368,7 @@ function outputUsers () {
 function who () {
   jQuery.get("/who", {}, function (data, status) {
     if (status != "success") return;
-    aliass = data.aliass;
+    aliases = data.aliases;
     outputUsers();
   }, "json");
 }
@@ -457,11 +427,6 @@ $(document).ready(function() {
            });
     return false;
   });
-
-  // update the daemon uptime every 10 seconds
-  setInterval(function () {
-    updateUptime();
-  }, 10*1000);
 
   if (CONFIG.debug) {
     $("#loading").hide();

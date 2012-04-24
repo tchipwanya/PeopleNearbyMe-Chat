@@ -1,4 +1,4 @@
-/* Subfile 2 */
+/* server.js subfile 2 */
 
 var channel = new function () {
 	

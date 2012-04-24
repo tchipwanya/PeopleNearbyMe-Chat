@@ -8,11 +8,7 @@ var CONFIG = { debug: false,
               unread: 0 //updated in the message-processing loop
              };
 
-var aliass = [];
-// daemon start time
-var starttime;
-// daemon memory usage
-var rss;
+var aliases = [];
 
 /* Returns a description of this past date in relative terms.
  * Takes an optional parameter (default: 0) setting the threshold in ms which

@@ -1,22 +1,72 @@
-/* Subfile 1 */
+/* server.js subfile 1 */
+/**
+ * Module dependencies.
+ */
+/*
+var express = require('express'),
+	io = require('socket.io');
+
+var app = module.exports = express.createServer(),
+	io = io.listen(app);
+
+// Configuration
+
+app.configure(function(){
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
+  app.use(express.bodyDecoder());
+  app.use(express.methodOverride());
+  app.use(app.router);
+  app.use(express.staticProvider(__dirname + '/public'));
+});
+
+app.configure('development', function(){
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+});
+
+app.configure('production', function(){
+  app.use(express.errorHandler()); 
+});
+
+// Routes
+
+app.get('/', function(req, res){
+  res.render('index', {
+    title: 'Express'
+  });
+});
+
+// Only listen on $ node app.js
+
+if (!module.parent) {
+  app.listen(8888);
+  console.log("Express server listening on port %d", app.address().port)
+}
+
+io.on('connection', function(client){
+  client.send("Server: You're connected!\n=> The first thing you type will be your screen name.");
+
+  var user;
+  client.on('message', function(data){
+    if (!user) {
+      user = data;
+      io.broadcast(user + ' has joined.');
+      return;
+    }
+
+    io.broadcast(user + ": " + data);
+  });
+});
+*/
 
 HOST = null; // localhost
 PORT = 8001;
 
-// when the daemon started
-var starttime = (new Date()).getTime();
-
-var mem = process.memoryUsage();
-// every 10 seconds poll for the memory.
-setInterval(function () {
-	mem = process.memoryUsage();
-}, 10*1000);
-
-
 var fu = require("./fu"),
 	sys = require("sys"),
 	url = require("url"),
-	qs = require("querystring");
+	qs = require("querystring"),
+	io = require('socket.io');
 
 var MESSAGE_BACKLOG = 200,
 	SESSION_TIMEOUT = 60 * 1000;
@@ -24,13 +74,12 @@ var MESSAGE_BACKLOG = 200,
 //used to be below "interval to kill sessions"
 
 fu.listen(Number(process.env.PORT || PORT), HOST);
-
+io.listen(80);
 
 fu.get("/", fu.staticHandler("index.html"));
 fu.get("/style.css", fu.staticHandler("style.css"));
 fu.get("/client.js", fu.staticHandler("client.js"));
-//fu.get("/blue.jpg", fu.staticHandler("blue.jpg"));
-fu.get("/jquery-1.2.6.min.js", fu.staticHandler("jquery-1.2.6.min.js"));/* Subfile 2 */
+fu.get("/jquery-1.2.6.min.js", fu.staticHandler("jquery-1.2.6.min.js"));/* server.js subfile 2 */
 
 var channel = new function () {
 	
@@ -90,7 +139,7 @@ var channel = new function () {
 		}
 	}, 3000);
 };
-/* Subfile 3 */
+/* server.js subfile 3 */
 
 var sessions = {};
 
@@ -134,18 +183,16 @@ setInterval(function () {
 		}
 	}
 }, 1000);
-/* Subfile 4 */
+/* server.js subfile 4 */
 
 fu.get("/who", function (req, res) {
-	var aliass = [];
+	var aliases = [];
 	for (var id in sessions) {
 		if (!sessions.hasOwnProperty(id)) continue;
 		var session = sessions[id];
-		aliass.push(session.alias);
+		aliases.push(session.alias);
 	}
-	res.simpleJSON(200, { aliass: aliass,
-							rss: mem.rss
-						});
+	res.simpleJSON(200, { aliases: aliases});
 });
 
 fu.get("/join", function (req, res) {
@@ -164,9 +211,7 @@ fu.get("/join", function (req, res) {
 
 	channel.appendMessage(session.alias, "join");
 	res.simpleJSON(200, { id: session.id,
-						alias: session.alias,
-						rss: mem.rss,
-						starttime: starttime
+						alias: session.alias
 						});
 });
 
@@ -177,7 +222,6 @@ fu.get("/part", function (req, res) {
 		session = sessions[id];
 		session.destroy();
 	}
-	res.simpleJSON(200, { rss: mem.rss });
 });
 
 fu.get("/recv", function (req, res) {
@@ -196,7 +240,7 @@ fu.get("/recv", function (req, res) {
 
 	channel.query(since, function (messages) {
 		if (session) session.poke();
-		res.simpleJSON(200, { messages: messages, rss: mem.rss });
+		res.simpleJSON(200, { messages: messages});
 	});
 });
 
@@ -213,5 +257,4 @@ fu.get("/send", function (req, res) {
 	session.poke();
 
 	channel.appendMessage(session.alias, "msg", text);
-	res.simpleJSON(200, { rss: mem.rss });
 });
