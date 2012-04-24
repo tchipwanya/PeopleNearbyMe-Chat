@@ -182,6 +182,25 @@ function addMessage (from, text, time, _class) {
   scrollDown();
 }
 
+<<<<<<< HEAD
+=======
+
+function updateRSS () {
+  var bytes = parseInt(rss,10);
+  if (bytes) {
+    var megabytes = bytes / (1024*1024);
+    megabytes = Math.round(megabytes*10)/10;
+    //$("#rss").text(megabytes.toString());
+  }
+}
+
+function updateUptime () {
+  if (starttime) {
+    //$("#uptime").text(starttime.toRelativeTime());
+  }
+}
+
+>>>>>>> 47aa73326618b421242ffccbd35bf05a539869ef
 //we want to show a count of unread messages when the window does not have focus
 function updateTitle(){
   if (CONFIG.unread) {
