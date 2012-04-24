@@ -33,11 +33,18 @@ function User() {
 	this.enterRoom = function(roomID) {
 		this.chatroomID=roomID;
 	};
-	this.updateUsername = function() {
-
+	this.updateUsername = function(name) {
+		//check to see if a username is already in use
+		var check = collection.find({name:{$exists : true}});
+		if(check !=null){
+			return false;	//need to tell the user the name is invalid	
+		};
 	};
 	this.updateEmail = function(email) {
-
+		var check = collection.find({email:{$exists : true}});
+		if(check !=null){
+			return false;	//need to tell the user the name is invalid	
+		};
 	};
 	this.setRoom = function(roomID) {
 		this.chatroomID=roomID;
@@ -53,4 +60,7 @@ function User() {
 
 var will = new User();
 will.create("william","william@wpotter.me","asdf");
+
+var trevor =new User();
+trevor.create("trevor","tharron@middlebury.edu","1234");
 
