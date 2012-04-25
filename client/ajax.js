@@ -1,6 +1,9 @@
 /* client.js subfile 3 */
 
+// some of these functions are not ajax. also.. some should not be anonymous.
+
 //handles another person joining chat
+
 function userJoin(alias, timestamp) {
   //put it in the stream
   addMessage(alias, "joined", timestamp, "join");
@@ -28,21 +31,21 @@ function userPart(alias, timestamp) {
   updateUsersLink();
 }
 
-var transmission_errors = 0;
+//var transmission_errors = 0;
 var first_poll = true;
 
 //process updates if we have any, request updates from the server,
 // and call again with response. the last part is like recursion except the call
 // is being made from the response handler, and not at some point during the
 // function's execution.
-function longPoll (data) {
+/*function longPoll (data) {
   if (transmission_errors > 2) {
     showConnect();
     return;
-  }
+  }*/
 
-  //process any updates we may have
-  //data will be null on the first call of longPoll
+socket.on("recv", onMessage);
+function onMessage(data) {
   if (data && data.messages) {
     for (var i = 0; i < data.messages.length; i++) {
       var message = data.messages[i];
@@ -51,10 +54,9 @@ function longPoll (data) {
       if (message.timestamp > CONFIG.last_message_time)
         CONFIG.last_message_time = message.timestamp;
 
-      //dispatch new messages to their appropriate handlers
-      switch (message.type) {
+      switch (message.type) { // later on we can break these up into different callbacks and message types.
         case "msg":
-          if(!CONFIG.focus){
+          if (!CONFIG.focus) {
             CONFIG.unread++;
           }
           addMessage(message.alias, message.text, message.timestamp);
@@ -80,11 +82,12 @@ function longPoll (data) {
   }
 
   //make another request
-  $.ajax({ cache: false,
+/*$.ajax({ cache: false,
            type: "GET",
            url: "/recv",
            dataType: "json",
-           data: { since: CONFIG.last_message_time, id: CONFIG.id },
+           data: { since: CONFIG.last_message_time, id: CONFIG.id },  // !!!!!! Having server maintain 
+                                                                               messages users have recieved
            error: function () {
              addMessage("", "long poll error. trying again...", new Date(), "error");
              transmission_errors += 1;
@@ -101,13 +104,13 @@ function longPoll (data) {
              longPoll(data);
              console.log(data);
            }
-         });
+         }); */
 }
 
 //submit a new message to the server
 function send(msg) {
   if (CONFIG.debug === false) {
-    jQuery.get("/send", {id: CONFIG.id, text: msg}, function (data) { }, "json");
+    socket.emit("send", {id: CONFIG.id, text: msg});
   }
 }
 
@@ -140,7 +143,8 @@ function showChat (alias) {
 }
 
 //handle the server's response to our alias and join request
-function onConnect (session) {
+socket.on("join", onJoin);
+function onJoin (session) {
   if (session.error) {
     alert("error connecting: " + session.error);
     showConnect();
@@ -164,7 +168,7 @@ function onConnect (session) {
     CONFIG.unread = 0;
     updateTitle();
   });
-}
+});
 
 //add a list of present chat members to the stream
 function outputUsers () {
@@ -175,11 +179,14 @@ function outputUsers () {
 
 //get a list of the users presently in the room, and add it to the stream
 function who () {
-  jQuery.get("/who", {}, function (data, status) {
-    if (status != "success") return;
+  socket.emit("who", {});
+}
+
+socket.on("who", whoCallback);
+function whoCallback (data) {
+    if (data.status != "success") return;
     aliases = data.aliases;
     outputUsers();
-  }, "json");
-}
+  });
 
 

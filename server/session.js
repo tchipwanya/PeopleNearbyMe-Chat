@@ -2,7 +2,7 @@
 
 var sessions = {};
 
-function createSession (alias) {
+function createSession (alias) { // probably more secure than we need at the moment.
 	if (alias.length > 50) return null;
 	if (/[^\w_\-^!]/.exec(alias)) return null;
 

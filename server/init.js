@@ -1,13 +1,15 @@
 /* server.js subfile 1 */
+
 /**
  * Module dependencies.
  */
-/*
-var express = require('express'),
-	io = require('socket.io');
+
+var express = require('express')
+  , routes = require('./routes')
+  , io = require('socket.io');
 
 var app = module.exports = express.createServer(),
-	io = io.listen(app);
+    io = io.listen(app);
 
 // Configuration
 
@@ -30,53 +32,17 @@ app.configure('production', function(){
 
 // Routes
 
-app.get('/', function(req, res){
-  res.render('index', {
-    title: 'Express'
-  });
-});
+app.get('/', routes.index);
 
 // Only listen on $ node app.js
 
-if (!module.parent) {
-  app.listen(8888);
-  console.log("Express server listening on port %d", app.address().port)
+if (!module.parent) { 
+  app.listen(80, function(){
+    console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+  });
 }
 
-io.on('connection', function(client){
-  client.send("Server: You're connected!\n=> The first thing you type will be your screen name.");
-
-  var user;
-  client.on('message', function(data){
-    if (!user) {
-      user = data;
-      io.broadcast(user + ' has joined.');
-      return;
-    }
-
-    io.broadcast(user + ": " + data);
-  });
-});
-*/
-
-HOST = null; // localhost
-PORT = 8001;
-
-var fu = require("./fu"),
-	sys = require("sys"),
-	url = require("url"),
-	qs = require("querystring"),
-	io = require('socket.io');
-
-var MESSAGE_BACKLOG = 200,
-	SESSION_TIMEOUT = 60 * 1000;
-
-//used to be below "interval to kill sessions"
-
-fu.listen(Number(process.env.PORT || PORT), HOST);
 io.listen(80);
 
-fu.get("/", fu.staticHandler("index.html"));
-fu.get("/style.css", fu.staticHandler("style.css"));
-fu.get("/client.js", fu.staticHandler("client.js"));
-fu.get("/jquery-1.2.6.min.js", fu.staticHandler("jquery-1.2.6.min.js"));
+var MESSAGE_BACKLOG = 200,
+    SESSION_TIMEOUT = 60 * 1000;

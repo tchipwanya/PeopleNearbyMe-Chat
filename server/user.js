@@ -1,4 +1,4 @@
-/* have to use the 'exports' node design pattern here if we don't plan on combining this with the other files. */
+
 
 var mongodb = require('mongodb');
 var collection;
@@ -24,8 +24,18 @@ o	Valid?
 */
 function User() {
 	var id,email,fbToken,chatroomID,username,valid;
+	
+	this.create = function(username,email,password) {
+		this.username=username;
+		this.email=email;
+		this.password=password;
+		var user = {username:username,email:email,password:password};
+		db.user.insert(user);
+	
+	};	
 	this.login = function(user,password) {
 		collection.find({username:username,password:password});
+	
 	};
 	this.logout = function() {
 		this.chatroomID=null;
@@ -33,33 +43,43 @@ function User() {
 	this.enterRoom = function(roomID) {
 		this.chatroomID=roomID;
 	};
+<<<<<<< HEAD
 	this.updateUsername = function(name) {
 		//check to see if a username is already in use
 		var check = collection.find({name:{$exists : true}});
-		if(check !=null){
+		if(check !=true){
 			return false;	//need to tell the user the name is invalid	
 		};
 	};
 	this.updateEmail = function(email) {
 		var check = collection.find({email:{$exists : true}});
-		if(check !=null){
+		if(check != true){
 			return false;	//need to tell the user the name is invalid	
 		};
+=======
+	this.updateUsername = function() {
+		write("You're current username is" + username);
+		var username = prompt("Username", "type username here");
+		write("You're new username is" + username);
 	};
-	this.setRoom = function(roomID) {
+	this.updateEmail = function() {
+		write("You're current email is" + email);
+		var email = prompt("Email", "type email here");
+		write("You're new email is" + email);
+>>>>>>> Updated User Model, just filled it out a bit
+	};
+	this.setRoom = function() {
+		write("You're current room is" + roomID);
+		var roomID = prompt("Room", "type room here");
 		this.chatroomID=roomID;
 	};
-	this.create = function(username,email,password) {
-		this.username=username;
-		this.email=email;
-		this.password=password;
-		var user = {username:username,email:email,password:password};
-		db.user.insert(user);
-	};
+
 }
 
 var will = new User();
 will.create("william","william@wpotter.me","asdf");
+will.updateUsername("Will");
+will.updateEmail("will@middlebury.edu);
 
 var trevor =new User();
 trevor.create("trevor","tharron@middlebury.edu","1234");

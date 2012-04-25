@@ -1,4 +1,5 @@
 /* client.js subfile 4 */
+var socket = io.connect(); // Should figure out url automatically... strong chance this won't work.
 
 $(document).ready(function() {
 
@@ -35,21 +36,8 @@ $(document).ready(function() {
     }
     
     //make the actual join request to the server
-    $.ajax({ cache: false,
-             type: "GET", // XXX should be POST
-             dataType: "json",
-             url: "/join",
-             data: { alias: alias },
-             error: function (xhr, ajaxOptions, thrownError) {
-                console.log(xhr);
-                console.log(ajaxOptions);
-                console.log(thrownError);
-                alert("Error connecting to server. "+thrownError);
-                showConnect();
-             },
-             success: onConnect
-           });
-    return false;
+    socket.emit("join", { alias: alias });
+    return true;
   });
 
   if (CONFIG.debug) {
@@ -65,12 +53,12 @@ $(document).ready(function() {
   //begin listening for updates right away
   //interestingly, we don't need to join a room to get its updates
   //we just don't show the chat stream to the user until we create a session
-  longPoll();
+  //longPoll(); // not necessary since socket is always long-polling.
 
-  showConnect();
+  showConnect(); // possibly move to socket join response callback.
 });
 
 //if we can, notify the server that we're going away.
 $(window).unload(function () {
-  jQuery.get("/part", {id: CONFIG.id}, function (data) { }, "json");
+  socket.emit("part", {id: CONFIG.id});
 });

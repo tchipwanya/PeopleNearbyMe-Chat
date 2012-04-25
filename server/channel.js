@@ -6,11 +6,11 @@ var channel = new function () {
 		callbacks = [];
 
 	this.appendMessage = function (alias, type, text) {
-		var m = { alias: alias,
-							type: type, // "msg", "join", "part",
-							text: text,
-							timestamp: (new Date()).getTime()
-						};
+		var m = { 	alias: alias,
+					type: type, // "msg", "join", "part",
+					text: text,
+					timestamp: (new Date()).getTime()
+				};
 
 		switch (type) {
 			case "msg":
