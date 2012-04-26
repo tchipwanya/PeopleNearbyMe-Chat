@@ -51,7 +51,8 @@ if (!module.parent) {
 //io.listen(80);
 
 //var MESSAGE_BACKLOG = 200,
-var SESSION_TIMEOUT = 60 * 1000;/* server.js subfile 2 */
+var SESSION_TIMEOUT = 60 * 10000000;
+/* server.js subfile 2 */
 /*
 var channel = new function () {
 	
@@ -204,26 +205,6 @@ io.sockets.on("connection", function (socket) {
 			session.destroy();
 		}
 	});
-
-/*	socket.on("recv", function (user) {
-		if (!user.since) {
-			socket.emit("error", { error: "Must supply since parameter" });
-			return;
-		}
-		var id = user.id;
-		var session;
-		if (id && sessions[id]) {
-			session = sessions[id];
-			session.poke();
-		}
-
-		var since = parseInt(user.since, 10);
-
-		channel.query(since, function (messages) {
-			if (session) session.poke();
-			socket.emit("recv", { messages: messages });
-		});
-	}); */
 
 	socket.on("send", function (user) {
 		var id = user.id;
