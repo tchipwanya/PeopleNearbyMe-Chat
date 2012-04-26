@@ -3,7 +3,6 @@
 // some of these functions are not ajax. also.. some should not be anonymous.
 
 //handles another person joining chat
-
 function userJoin(alias, timestamp) {
   //put it in the stream
   addMessage(alias, "joined", timestamp, "join");
@@ -31,19 +30,7 @@ function userPart(alias, timestamp) {
   updateUsersLink();
 }
 
-//var transmission_errors = 0;
 var first_poll = true;
-
-//process updates if we have any, request updates from the server,
-// and call again with response. the last part is like recursion except the call
-// is being made from the response handler, and not at some point during the
-// function's execution.
-/*function longPoll (data) {
-  if (transmission_errors > 2) {
-    showConnect();
-    return;
-  }*/
-
 
 function onMessage(data) {
   console.log(data);
@@ -71,48 +58,25 @@ function onMessage(data) {
           userPart(message.alias, message.timestamp);
           break;
       }
-//    }
     //update the document title to include unread message count if blurred
     updateTitle();
 
-    //only after the first request for messages do we want to show who is here
+    // should we include this data in chatroom join callback?
     if (first_poll) {
       first_poll = false;
       who();
     }
-//  }
+}
 
-  //make another request
-/*$.ajax({ cache: false,
-           type: "GET",
-           url: "/recv",
-           dataType: "json",
-           data: { since: CONFIG.last_message_time, id: CONFIG.id },  // !!!!!! Having server maintain 
-                                                                               messages users have recieved
-           error: function () {
-             addMessage("", "long poll error. trying again...", new Date(), "error");
-             transmission_errors += 1;
-             //don't flood the servers on error, wait 10 seconds before retrying
-             setTimeout(longPoll, 10*1000);
-           },
-          success: function (data) {
-             transmission_errors = 0;
-             //if everything went well, begin another request immediately
-             //the server will take a long time to respond
-             //how long? well, it will wait until there is another message
-             //and then it will return it to us and close the connection.
-             //since the connection is closed when we get data, we longPoll again
-             longPoll(data);
-             console.log(data);
-           }
-         }); */
+function onError(data) {
+  alert(data.error);
 }
 
 //submit a new message to the server
 function send(msg) {
   socket.emit("send", {id: CONFIG.id, text: msg});
   console.log("message: "+msg);
-}
+}`
 
 //Transition the page to the state that prompts the user for a alias
 function showConnect () {
@@ -143,7 +107,6 @@ function showChat (alias) {
 }
 
 //handle the server's response to our alias and join request
-
 function onJoin (session) {
   if (session.error) {
     alert("error connecting: " + session.error);

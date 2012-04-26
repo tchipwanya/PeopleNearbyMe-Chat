@@ -3,7 +3,7 @@ var socket = io.connect();
 socket.on("recv", onMessage);
 socket.on("join", onJoin);
 socket.on("who", whoCallback);
-
+socket.on("error" onError);
 $(document).ready(function() {
 
   /* Event binding */
@@ -43,21 +43,6 @@ $(document).ready(function() {
     socket.emit("join", { alias: alias });
     return true;
   });
-
-  /*if (CONFIG.debug) {
-    $("#loading").hide();
-    $("#connect").hide();
-    scrollDown();
-    return;
-  }*/
-
-  // remove fixtures
-  //$("#log div").remove();
-
-  //begin listening for updates right away
-  //interestingly, we don't need to join a room to get its updates
-  //we just don't show the chat stream to the user until we create a session
-  //longPoll(); // not necessary since socket is always long-polling.
 
   showConnect(); // possibly move to socket join response callback.
 });

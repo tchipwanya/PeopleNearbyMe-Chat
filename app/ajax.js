@@ -43,26 +43,6 @@ io.sockets.on("connection", function (socket) {
 		}
 	});
 
-/*	socket.on("recv", function (user) {
-		if (!user.since) {
-			socket.emit("error", { error: "Must supply since parameter" });
-			return;
-		}
-		var id = user.id;
-		var session;
-		if (id && sessions[id]) {
-			session = sessions[id];
-			session.poke();
-		}
-
-		var since = parseInt(user.since, 10);
-
-		channel.query(since, function (messages) {
-			if (session) session.poke();
-			socket.emit("recv", { messages: messages });
-		});
-	}); */
-
 	socket.on("send", function (user) {
 		var id = user.id;
 		var text = user.text;
