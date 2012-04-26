@@ -33,5 +33,75 @@
 				<input tabindex="1" type="text" id="entry"/>
 			</div><!-- #toolbar -->
 		</div><!-- #app -->
+                <script language="javascript" type="text/javascript">
+                
+                    var userFolder = ""; // Folder where userfile (e.g. PizzaMan127~Cheese.htm) is located (e.g "users/")
+                    var HTMLextention = ".html"; // Extension of the user-file (usually .htm or .html)
+                    var inProgressMSG = "Attempting login..."; // Message displayed during a login
+                    var userFailMSG = "Invalid username or password"; // Message displayed after failed attempt
+                
+                    // Do not edit
+                    function login(){
+                            var username= document.getElementById('username').value; // location of username
+                            var password= document.getElementById('password').value; // location of password
+                            var fullURL= "";
+                            fullURL= userFolder + username + "~" + password + HTMLextention; // compiled filename the loads user-file
+                            setTimeout("failEvents();", 5000); // after 15 seconds display error message
+                            document.getElementById('errorDisplay').value = inProgressMSG; // show in-progress message
+                            showMSG();
+                            setTimeout("showMSG();", 5000); // hide in-progress message after 5 seconds
+                            verifWin.document.open();
+                            verifWin.document.location.href = fullURL; // trys to find user-file
+                            verifWin.document.close();
+                                    }
+                                    function passEvents(data){ // Events that occur for valid login
+                                            var URL = data;
+                            location.href=URL;
+                    }
+                    function failEvents(){ // Events that occur for invalid login
+                            document.getElementById('errorDisplay').value = userFailMSG;
+                            showMSG();
+                    }
+                    function showMSG() { // Controls the opening/closing of messages
+                            if ((document.getElementById("isShown_errorConsole").value)=="N") {
+                            document.getElementById("errorConsole").style.display='';
+                            document.getElementById("isShown_errorConsole").value="Y";}
+                            else if ((document.getElementById("isShown_errorConsole").value)=="Y") {
+                            document.getElementById("errorConsole").style.display='none';
+                            document.getElementById("isShown_errorConsole").value="N";}
+                    }
+                </script>
+                <table width="auto" border="0" cellpadding="1" cellspacing="2">
+                  <tr>
+                    <td align="right"><b><font size="5" color="#0000A0">Username and Password</font></b></td>
+                  </tr>
+                  <tr> 
+                    <td><form action="javascript:login();" method="get" name="LoginScript" id="LoginScript">
+                        <table border="0" cellspacing="10" cellpadding="0" width="100%">
+                          <tr> 
+                            <td><b>Username:</b></td>
+                            <td align="right"> <input name="username" id="username" type="text" style="border:1px solid #828177; background-color: #FFF8C6" value="" /></td>
+                          </tr>
+                          <tr>
+                              <td><b>Password:</b></td>
+                            <td align="right"> <input name="password" id="password" type="password" style="border:1px solid #828177;background-color: #FFF8C6" value="" /></td>
+                          </tr>
+                          
+                          <tr>
+                            <td><iframe name="verifWin" src="" width="1" height="1" frameborder="0" border="0"></iframe></td>
+                            <td align="right"><input name="submit" type="submit" style="border:1px solid #808080;color:#FFFFFF;background-color:#0000FF;" value="Login" /></td>
+                          </tr>
+                        </table>
+                      </form></td>
+                  </tr>
+                  
+                    <tr>
+                    <td bgcolor="#FFFFFF"><input type="hidden" id="isShown_errorConsole" value="Y" />
+                        <span id="errorConsole" style="display:;">
+                	<input type="button" id="errorDisplay" style="width:100%;background-color:#FFFFFF;border:0px;" value="Error: Please enable Javascript" />
+                	</span><script language="javascript" type="text/javascript">showMSG();</script></td>
+                  </tr>
+                  
+                </table>
 	</body>
 </html>
