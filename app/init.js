@@ -51,4 +51,4 @@ if (!module.parent) {
 //io.listen(80);
 
 //var MESSAGE_BACKLOG = 200,
-var SESSION_TIMEOUT = 60 * 1000;
+var SESSION_TIMEOUT = 60 * 10000000;
