@@ -1,7 +1,6 @@
 /* client.js subfile 1 */
 
-var CONFIG = { debug: false,
-              alias: "#",   // set in onConnect,
+var CONFIG = {alias: "#",   // set in onConnect,
               id: null,    // set in onConnect,
               last_message_time: 1,
               focus: true, //event listeners bound in onConnect,
@@ -120,5 +119,4 @@ function scrollDown () {
   var doAutoscroll = (($("#log").scrollTop()+ $("#log").innerHeight() + 40)>=($("#log")[0].scrollHeight));
   //  addMessage2("sys", ($("#log").scrollTop() +  $("#log").innerHeight()).toString() + " " + ($("#log")[0].scrollHeight).toString() + " " + doAutoscroll );
   if (doAutoscroll) $("#log").scrollTop($("#log")[0].scrollHeight);
-}
 }

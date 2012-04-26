@@ -1,5 +1,8 @@
 /* client.js subfile 4 */
-var socket = io.connect(); // Should figure out url automatically... strong chance this won't work.
+var socket = io.connect();
+socket.on("recv", onMessage);
+socket.on("join", onJoin);
+socket.on("who", whoCallback);
 
 $(document).ready(function() {
 
@@ -13,10 +16,11 @@ $(document).ready(function() {
     $("#entry").attr("value", ""); // clear the entry field.
   });
 
-  $("#usersLink").click(outputUsers);
+  //$("#usersLink").click(outputUsers);
 
   //try joining the chat when the user clicks the connect button
-  $("#connectButton").click(function () {
+  $("#aliasForm").submit(function (i) {
+    i.preventDefault();
     //lock the UI while waiting for a response
     showLoad();
     var alias = $("#aliasInput").attr("value");
@@ -34,21 +38,21 @@ $(document).ready(function() {
       showConnect();
       return false;
     }
-    
+
     //make the actual join request to the server
     socket.emit("join", { alias: alias });
     return true;
   });
 
-  if (CONFIG.debug) {
+  /*if (CONFIG.debug) {
     $("#loading").hide();
     $("#connect").hide();
     scrollDown();
     return;
-  }
+  }*/
 
   // remove fixtures
-  $("#log div").remove();
+  //$("#log div").remove();
 
   //begin listening for updates right away
   //interestingly, we don't need to join a room to get its updates

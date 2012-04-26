@@ -68,6 +68,7 @@ a:hover { text-decoration: underline; color: #aaa; }
   padding: 1em;
 }
 
+#loading, #log, #toolbar{ display:none; }
 
 #connectButton {
   -moz-box-shadow:inset 0px 0px 0px -50px #bbdaf7;
@@ -131,7 +132,6 @@ a:hover { text-decoration: underline; color: #aaa; }
 }
 
 #log {
-  display: block;
   /* enough padding to clear the toolbar.. is there a better way to do this? */
   padding-bottom: 5.1em; 
   background: inherit;

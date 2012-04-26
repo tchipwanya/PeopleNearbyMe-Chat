@@ -44,11 +44,12 @@ var first_poll = true;
     return;
   }*/
 
-socket.on("recv", onMessage);
+
 function onMessage(data) {
-  if (data && data.messages) {
-    for (var i = 0; i < data.messages.length; i++) {
-      var message = data.messages[i];
+  console.log(data);
+//  if (data && data.messages) {
+//    for (var i = 0; i < data.messages.length; i++) {
+      var message = data//data.messages[i];
 
       //track oldest message so we only request newer messages from server
       if (message.timestamp > CONFIG.last_message_time)
@@ -70,7 +71,7 @@ function onMessage(data) {
           userPart(message.alias, message.timestamp);
           break;
       }
-    }
+//    }
     //update the document title to include unread message count if blurred
     updateTitle();
 
@@ -79,7 +80,7 @@ function onMessage(data) {
       first_poll = false;
       who();
     }
-  }
+//  }
 
   //make another request
 /*$.ajax({ cache: false,
@@ -109,9 +110,8 @@ function onMessage(data) {
 
 //submit a new message to the server
 function send(msg) {
-  if (CONFIG.debug === false) {
-    socket.emit("send", {id: CONFIG.id, text: msg});
-  }
+  socket.emit("send", {id: CONFIG.id, text: msg});
+  console.log("message: "+msg);
 }
 
 //Transition the page to the state that prompts the user for a alias
@@ -143,7 +143,7 @@ function showChat (alias) {
 }
 
 //handle the server's response to our alias and join request
-socket.on("join", onJoin);
+
 function onJoin (session) {
   if (session.error) {
     alert("error connecting: " + session.error);
@@ -168,7 +168,7 @@ function onJoin (session) {
     CONFIG.unread = 0;
     updateTitle();
   });
-});
+}
 
 //add a list of present chat members to the stream
 function outputUsers () {
@@ -182,11 +182,8 @@ function who () {
   socket.emit("who", {});
 }
 
-socket.on("who", whoCallback);
 function whoCallback (data) {
     if (data.status != "success") return;
     aliases = data.aliases;
     outputUsers();
-  });
-
-
+}

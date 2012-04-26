@@ -1,7 +1,6 @@
 /* client.js subfile 1 */
 
-var CONFIG = { debug: false,
-              alias: "#",   // set in onConnect,
+var CONFIG = {alias: "#",   // set in onConnect,
               id: null,    // set in onConnect,
               last_message_time: 1,
               focus: true, //event listeners bound in onConnect,
@@ -117,11 +116,10 @@ util = {
 
 //used to keep the most recent messages visible
 function scrollDown () {
-	var doAutoscroll = (($("#log").scrollTop()+ $("#log").innerHeight() + 40)>=($("#log")[0].scrollHeight));
-//	addMessage2("sys", ($("#log").scrollTop() +  $("#log").innerHeight()).toString() + " " + ($("#log")[0].scrollHeight).toString() + " " + doAutoscroll );
-	if (doAutoscroll) $("#log").scrollTop($("#log")[0].scrollHeight);
-}
-/* client.js subfile 2 */
+  var doAutoscroll = (($("#log").scrollTop()+ $("#log").innerHeight() + 40)>=($("#log")[0].scrollHeight));
+  //  addMessage2("sys", ($("#log").scrollTop() +  $("#log").innerHeight()).toString() + " " + ($("#log")[0].scrollHeight).toString() + " " + doAutoscroll );
+  if (doAutoscroll) $("#log").scrollTop($("#log")[0].scrollHeight);
+}/* client.js subfile 2 */
 
 //updates the users link to reflect the number of active users
 function updateUsersLink ( ) {
@@ -182,25 +180,6 @@ function addMessage (from, text, time, _class) {
   scrollDown();
 }
 
-<<<<<<< HEAD
-=======
-
-function updateRSS () {
-  var bytes = parseInt(rss,10);
-  if (bytes) {
-    var megabytes = bytes / (1024*1024);
-    megabytes = Math.round(megabytes*10)/10;
-    //$("#rss").text(megabytes.toString());
-  }
-}
-
-function updateUptime () {
-  if (starttime) {
-    //$("#uptime").text(starttime.toRelativeTime());
-  }
-}
-
->>>>>>> 47aa73326618b421242ffccbd35bf05a539869ef
 //we want to show a count of unread messages when the window does not have focus
 function updateTitle(){
   if (CONFIG.unread) {
@@ -208,10 +187,12 @@ function updateTitle(){
   } else {
     document.title = "node chat";
   }
-}
-/* client.js subfile 3 */
+}/* client.js subfile 3 */
+
+// some of these functions are not ajax. also.. some should not be anonymous.
 
 //handles another person joining chat
+
 function userJoin(alias, timestamp) {
   //put it in the stream
   addMessage(alias, "joined", timestamp, "join");
@@ -239,33 +220,33 @@ function userPart(alias, timestamp) {
   updateUsersLink();
 }
 
-var transmission_errors = 0;
+//var transmission_errors = 0;
 var first_poll = true;
 
 //process updates if we have any, request updates from the server,
 // and call again with response. the last part is like recursion except the call
 // is being made from the response handler, and not at some point during the
 // function's execution.
-function longPoll (data) {
+/*function longPoll (data) {
   if (transmission_errors > 2) {
     showConnect();
     return;
-  }
+  }*/
 
-  //process any updates we may have
-  //data will be null on the first call of longPoll
-  if (data && data.messages) {
-    for (var i = 0; i < data.messages.length; i++) {
-      var message = data.messages[i];
+
+function onMessage(data) {
+  console.log(data);
+//  if (data && data.messages) {
+//    for (var i = 0; i < data.messages.length; i++) {
+      var message = data//data.messages[i];
 
       //track oldest message so we only request newer messages from server
       if (message.timestamp > CONFIG.last_message_time)
         CONFIG.last_message_time = message.timestamp;
 
-      //dispatch new messages to their appropriate handlers
-      switch (message.type) {
+      switch (message.type) { // later on we can break these up into different callbacks and message types.
         case "msg":
-          if(!CONFIG.focus){
+          if (!CONFIG.focus) {
             CONFIG.unread++;
           }
           addMessage(message.alias, message.text, message.timestamp);
@@ -279,7 +260,7 @@ function longPoll (data) {
           userPart(message.alias, message.timestamp);
           break;
       }
-    }
+//    }
     //update the document title to include unread message count if blurred
     updateTitle();
 
@@ -288,14 +269,15 @@ function longPoll (data) {
       first_poll = false;
       who();
     }
-  }
+//  }
 
   //make another request
-  $.ajax({ cache: false,
+/*$.ajax({ cache: false,
            type: "GET",
            url: "/recv",
            dataType: "json",
-           data: { since: CONFIG.last_message_time, id: CONFIG.id },
+           data: { since: CONFIG.last_message_time, id: CONFIG.id },  // !!!!!! Having server maintain 
+                                                                               messages users have recieved
            error: function () {
              addMessage("", "long poll error. trying again...", new Date(), "error");
              transmission_errors += 1;
@@ -312,14 +294,13 @@ function longPoll (data) {
              longPoll(data);
              console.log(data);
            }
-         });
+         }); */
 }
 
 //submit a new message to the server
 function send(msg) {
-  if (CONFIG.debug === false) {
-    jQuery.get("/send", {id: CONFIG.id, text: msg}, function (data) { }, "json");
-  }
+  socket.emit("send", {id: CONFIG.id, text: msg});
+  console.log("message: "+msg);
 }
 
 //Transition the page to the state that prompts the user for a alias
@@ -351,7 +332,8 @@ function showChat (alias) {
 }
 
 //handle the server's response to our alias and join request
-function onConnect (session) {
+
+function onJoin (session) {
   if (session.error) {
     alert("error connecting: " + session.error);
     showConnect();
@@ -386,15 +368,18 @@ function outputUsers () {
 
 //get a list of the users presently in the room, and add it to the stream
 function who () {
-  jQuery.get("/who", {}, function (data, status) {
-    if (status != "success") return;
-    aliases = data.aliases;
-    outputUsers();
-  }, "json");
+  socket.emit("who", {});
 }
 
-
-/* client.js subfile 4 */
+function whoCallback (data) {
+    if (data.status != "success") return;
+    aliases = data.aliases;
+    outputUsers();
+}/* client.js subfile 4 */
+var socket = io.connect();
+socket.on("recv", onMessage);
+socket.on("join", onJoin);
+socket.on("who", whoCallback);
 
 $(document).ready(function() {
 
@@ -408,10 +393,11 @@ $(document).ready(function() {
     $("#entry").attr("value", ""); // clear the entry field.
   });
 
-  $("#usersLink").click(outputUsers);
+  //$("#usersLink").click(outputUsers);
 
   //try joining the chat when the user clicks the connect button
-  $("#connectButton").click(function () {
+  $("#aliasForm").submit(function (i) {
+    i.preventDefault();
     //lock the UI while waiting for a response
     showLoad();
     var alias = $("#aliasInput").attr("value");
@@ -429,44 +415,31 @@ $(document).ready(function() {
       showConnect();
       return false;
     }
-    
+
     //make the actual join request to the server
-    $.ajax({ cache: false,
-             type: "GET", // XXX should be POST
-             dataType: "json",
-             url: "/join",
-             data: { alias: alias },
-             error: function (xhr, ajaxOptions, thrownError) {
-                console.log(xhr);
-                console.log(ajaxOptions);
-                console.log(thrownError);
-                alert("Error connecting to server. "+thrownError);
-                showConnect();
-             },
-             success: onConnect
-           });
-    return false;
+    socket.emit("join", { alias: alias });
+    return true;
   });
 
-  if (CONFIG.debug) {
+  /*if (CONFIG.debug) {
     $("#loading").hide();
     $("#connect").hide();
     scrollDown();
     return;
-  }
+  }*/
 
   // remove fixtures
-  $("#log div").remove();
+  //$("#log div").remove();
 
   //begin listening for updates right away
   //interestingly, we don't need to join a room to get its updates
   //we just don't show the chat stream to the user until we create a session
-  longPoll();
+  //longPoll(); // not necessary since socket is always long-polling.
 
-  showConnect();
+  showConnect(); // possibly move to socket join response callback.
 });
 
 //if we can, notify the server that we're going away.
 $(window).unload(function () {
-  jQuery.get("/part", {id: CONFIG.id}, function (data) { }, "json");
+  socket.emit("part", {id: CONFIG.id});
 });
