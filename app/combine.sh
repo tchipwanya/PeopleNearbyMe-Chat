@@ -1,2 +1,2 @@
 #!/bin/bash
-cat init.js channel.js session.js ajax.js > ../app.js
+cat init.js ajax.js > ../app.js
