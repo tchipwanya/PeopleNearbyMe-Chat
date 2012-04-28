@@ -222,7 +222,7 @@ function userPart(alias, timestamp) {
 var first_poll = true;
 
 function onMessage(data) {
-  console.log(data);
+//  console.log(data);
 //  if (data && data.messages) {
 //    for (var i = 0; i < data.messages.length; i++) {
       var message = data//data.messages[i];
@@ -259,13 +259,14 @@ function onMessage(data) {
 
 function onError(data) {
   alert(data.error);
+  showConnect();
 }
 
 //submit a new message to the server
 function send(msg) {
   socket.emit("send", {id: CONFIG.id, text: msg});
   console.log("message: "+msg);
-}`
+}
 
 //Transition the page to the state that prompts the user for a alias
 function showConnect () {
@@ -343,7 +344,7 @@ var socket = io.connect();
 socket.on("recv", onMessage);
 socket.on("join", onJoin);
 socket.on("who", whoCallback);
-socket.on("error" onError);
+socket.on("error", onError);
 $(document).ready(function() {
 
   /* Event binding */

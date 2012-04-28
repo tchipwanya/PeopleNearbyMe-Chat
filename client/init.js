@@ -3,7 +3,7 @@ var socket = io.connect();
 socket.on("recv", onMessage);
 socket.on("join", onJoin);
 socket.on("who", whoCallback);
-socket.on("error" onError);
+socket.on("error", onError);
 $(document).ready(function() {
 
   /* Event binding */

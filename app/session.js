@@ -1,21 +1,28 @@
 /* server.js subfile 3 */
 
-var sessions = {};
+//var SESSION_TIMEOUT = 1 * 60 * 60 * 1000; // 1 hour session timeout time
 
-function createSession (alias) { // probably more secure than we need at the moment.
-	if (alias.length > 50) return null;
-	if (/[^\w_\-^!]/.exec(alias)) return null;
+//var sessions = {};
+/*
+function createSession (socket, alias) { // probably more secure than we need at the moment.
+	if (/[^\w_\-^!]/.exec(alias)) return "Alias contains invalid characters.";
+	if (alias === null) return "Alias was not included in join request.";
+	if (alias.length === 0) return "You forgot to enter your alias silly.";
+	if (alias.length > 50) return "The alias you entered is too long.";
 
-	for (var i in sessions) {
-		var session = sessions[i];
-		if (session && session.alias === alias) return null;
+	var clients = io.of('/').clients();
+	console.log(clients);
+	for (var client in clients) {
+		//console.log(client);
+		var user = client.handshake.session.user;
+		if (user.alias === alias) return null; // not sure why session is part of the condition... took that out.
 	}
 
-	var session = {
-		alias: alias,
-		id: Math.floor(Math.random()*99999999999).toString(),
+	var user = {
+		alias: alias /*,
+		id: socket.handshake.sessionID,
 		timestamp: new Date(),
-
+	
 		poke: function () {
 			session.timestamp = new Date();
 		},
@@ -29,14 +36,17 @@ function createSession (alias) { // probably more secure than we need at the mom
 			};
 			io.sockets.emit("recv", m);
 			delete sessions[session.id];
-		}
-	};
-
-	sessions[session.id] = session;
-	return session;
+		} */
+/*	};
+	var session = socket.handshake.session;
+	session.user = user;
+	session.save();
+	//sessions[session.id] = session;
+	return user;
 }
 
 // interval to kill off old sessions
+/*
 setInterval(function () {
 	var now = new Date();
 	for (var id in sessions) {
@@ -47,4 +57,4 @@ setInterval(function () {
 			session.destroy();
 		}
 	}
-}, 1000);
+}, 10000); */
