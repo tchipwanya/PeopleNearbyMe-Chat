@@ -21,22 +21,22 @@ app.configure(function() {
   app.use(express.static(__dirname + '/public'));
   app.use(express.cookieParser());
   app.use(express.session({store: sessionStore, secret: 'JHgzU1IWXZmAJpETpPgTYsjtiojqn7mseIbzboQW', key: 'express.sid'}));
-  app.use(app.router);  
+  app.use(app.router);
 });
 
 app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function(){
-  app.use(express.errorHandler()); 
+  app.use(express.errorHandler());
 });
 
 
-io.configure(function () { 
+io.configure(function () {
   //io.set('log level', 1); // reduce logging FOR PRODUCTION ONLY
-  io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 10); 
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 10);
   io.set('authorization', function (data, accept) {
     if (data.headers.cookie) {
         data.cookie = parseCookie(data.headers.cookie);
@@ -62,7 +62,7 @@ app.get('/', routes.index);
 
 var PORT = process.env.PORT || 3000;
 if (!module.parent) {
-  app.listen(PORT, function(){ 
+  app.listen(PORT, function(){
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
   });
 }
@@ -83,7 +83,7 @@ io.sockets.on("connection", function (socket) {
     // setup an inteval that will keep our session fresh
     var intervalID = setInterval(function () {
         // reload the session (just in case something changed
-        hs.session.reload( function () { 
+        hs.session.reload( function () {
             // "touch" it (resetting maxAge and lastAccess) and save it back again.
             hs.session.touch().save();
         });
@@ -101,10 +101,14 @@ io.sockets.on("connection", function (socket) {
 		var clients = io.sockets.clients();
 		for (var i in clients) {
 			client = clients[i];
-			if (!client.handshake.session.hasOwnProperty(user)) continue; // skip user if not "authenticated"
 			var user = client.handshake.session.user;
-			aliases.push(user.alias);
+			if(user) {
+				aliases.push(user.alias);
+			}
 		}
+		console.log();
+		console.log();
+		console.log(aliases);
 		socket.emit("who", { aliases: aliases});
 	});
 
@@ -127,13 +131,12 @@ io.sockets.on("connection", function (socket) {
 		session.save();
 		return user;
 	}
-
 	socket.on("join", function (userData) {
 
 		var alias = userData.alias;
 		var error = "";
 		if (alias === null) error += "Alias was not included in join request. ";
-		if (/[^\w_\-^!]/.exec(alias)) error += "Alias contains invalid characters and is far too silly. ";	
+		if (/[^\w_\-^!]/.exec(alias)) error += "Alias contains invalid characters and is far too silly. ";
 		if (alias.length === 0) error += "You forgot to enter your alias silly. ";
 		if (alias.length > 50) error += "The alias you entered is too long. ";
 
@@ -155,7 +158,7 @@ io.sockets.on("connection", function (socket) {
 		session.user = user;
 		session.save();
 
-		var m = { 	
+		var m = {
 			alias: user.alias,
 			type: "join", // "msg", "join", "part",
 			timestamp: (new Date()).getTime()
@@ -173,7 +176,7 @@ io.sockets.on("connection", function (socket) {
 		var text = userData.text;
 		hs.session.touch().save();
 
-		var m = { 	
+		var m = {
 			alias: hs.session.user.alias,
 			type: "msg", // "msg", "join", "part",
 			text: text,

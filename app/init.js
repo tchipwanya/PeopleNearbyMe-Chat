@@ -21,22 +21,22 @@ app.configure(function() {
   app.use(express.static(__dirname + '/public'));
   app.use(express.cookieParser());
   app.use(express.session({store: sessionStore, secret: 'JHgzU1IWXZmAJpETpPgTYsjtiojqn7mseIbzboQW', key: 'express.sid'}));
-  app.use(app.router);  
+  app.use(app.router);
 });
 
 app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function(){
-  app.use(express.errorHandler()); 
+  app.use(express.errorHandler());
 });
 
 
-io.configure(function () { 
+io.configure(function () {
   //io.set('log level', 1); // reduce logging FOR PRODUCTION ONLY
-  io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 10); 
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 10);
   io.set('authorization', function (data, accept) {
     if (data.headers.cookie) {
         data.cookie = parseCookie(data.headers.cookie);
@@ -62,7 +62,7 @@ app.get('/', routes.index);
 
 var PORT = process.env.PORT || 3000;
 if (!module.parent) {
-  app.listen(PORT, function(){ 
+  app.listen(PORT, function(){
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
   });
 }

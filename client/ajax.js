@@ -7,6 +7,7 @@ function userJoin(alias, timestamp) {
     if (aliases[i] == alias) return;
   aliases.push(alias);
   updateUsersLink();
+  who();
 }
 
 // Handles when a user leaves the chatroom
@@ -24,7 +25,7 @@ function userPart(alias, timestamp) {
 var first_poll = true;
 
 function onMessage(data) {
-      var message = data
+      var message = data;
       if (message.timestamp > CONFIG.last_message_time)
         CONFIG.last_message_time = message.timestamp;
 
@@ -124,15 +125,19 @@ function outputUsers () {
   var alias_string = aliases.length > 0 ? aliases.join(", ") : "(none)";
   addMessage("users:", alias_string, new Date(), "notice");
   return false;
-} 
+}
 
 //get a list of the users presently in the room, and add it to the stream
-function who () {
+function who() {
+  console.log("Pulling who!");
   socket.emit("who", {});
 }
 
 function whoCallback (data) {
+    console.log(data);
     if (data.status != "success") return;
+    console.log("Pulling who!");
     aliases = data.aliases;
+    console.log(aliases);
     outputUsers();
 }
