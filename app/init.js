@@ -61,7 +61,7 @@ io.configure(function () {
 app.get('/', routes.index);
 
 if (!module.parent) {
-  app.listen(3000, function(){
+  app.listen(80, function(){ // 80 for PRODUCTION 3000 for DEVELOPMENT
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
   });
 }
