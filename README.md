@@ -1,7 +1,7 @@
 PeopleNearby.me
 ===============
 
-An geo-social app for conversing with people nearby you.
+A geo-social app for conversing with people nearby you.
 --------------------------------------------------------
 
 # To run locally:
