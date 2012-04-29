@@ -11,6 +11,17 @@ function updateUsersLink ( ) {
 //the event may be a msg, join or part type
 //from is the user, text is the body and time is the timestamp, defaulting to now
 //_class is a css class to apply to the message, usefull for system events
+function updateWhoList(aliases) {
+  $('#who').html('');
+  var content = "";
+  for(var x in aliases) {
+    var alias = aliases[x];
+    content += '<div class="person">';
+    content += alias;
+    content += '</div>';
+  }
+  $('#who').html(content);
+}
 function addMessage (from, text, time, _class) {
   if (text === null)
     return;
@@ -71,6 +82,7 @@ function showConnect () {
   $("#toolbar").css('display','none');
   $("#map_canvas").css('display','block');
   $("#log").css('display','none');
+  $("#who").css('display','none');
   $("#aliasInput").focus();
 }
 
@@ -87,6 +99,7 @@ function showChat (alias) {
   $("#map_canvas").css('display','none');
   $("#toolbar").css('display','block');
   $("#log").css('display','block');
+  $("#who").css('display','block');
   $("#entry").focus();
 
   $("#connect").css('display','none');

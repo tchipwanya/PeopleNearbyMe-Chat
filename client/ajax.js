@@ -101,15 +101,15 @@ function outputUsers () {
 
 //get a list of the users presently in the room, and add it to the stream
 function who() {
-  console.log("Pulling who!");
+
   socket.emit("who", {});
 }
 
 function whoCallback (data) {
     console.log(data);
-    if (data.status != "success") return;
-    console.log("Pulling who!");
+
+
     aliases = data.aliases;
-    console.log(aliases);
-    outputUsers();
+    updateWhoList(aliases);
+    //outputUsers();
 }

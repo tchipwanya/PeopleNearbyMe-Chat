@@ -148,7 +148,17 @@ a:hover { text-decoration: underline; color: #aaa; }
   height:400px;
   background:rgba(255,255,255,0.7);
 }
-
+#who {
+  float:right;
+  width:200px;
+  height: 400px;
+  overflow-y:scroll;
+  background:rgba(59, 140, 62,.4);
+}
+.person {
+  padding:5px;
+  display:block;
+}
 /* not very important info */
 #aliasInput {
   font-size: 14pt;
