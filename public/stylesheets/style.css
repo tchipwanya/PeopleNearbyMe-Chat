@@ -1,4 +1,5 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,700);
+* { outline: 0 }
 
 body {
   border-top: 10px solid #3B8C3E;  
@@ -50,13 +51,21 @@ a:hover { text-decoration: underline; color: #aaa; }
 #links {
   float: right;
 }
-
 #links a { margin-left: 10px; font-size: 10pt; }
 
+#header { position: relative; }
 #footer { font-size: 10pt; text-align: right; }
 
+#logo {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 23px;
+  right: 5px;
+}
+
 #flag {
-  padding:0px 10px;
+  padding:15px 0 0 0;
   font-weight:300;
   font-size:40px;
   letter-spacing:-1px;
@@ -74,9 +83,9 @@ a:hover { text-decoration: underline; color: #aaa; }
   padding: 10px 0 0 0;
 }
 
-#loading, #log, #toolbar{ display:none; }
+#connect, #loading, #log, #toolbar, #error { display:none; }
 
-#connectButton {
+#joinButton {
   -moz-box-shadow:inset 0px 0px 0px -50px #bbdaf7;
   -webkit-box-shadow:inset 0px 0px 0px -50px #bbdaf7;
   box-shadow:inset 0px 0px 0px -50px #bbdaf7;
@@ -90,11 +99,13 @@ a:hover { text-decoration: underline; color: #aaa; }
   font-size:14pt;
   font-weight:bold;
   padding:.5em;
+  width: 470px;
+  text-align: center;
   text-decoration:none;
   text-shadow:1px 1px 0px #528ecc;
-  margin:0 0 0 4px;
+  margin:10px 0 0 0px;
 }
-#connectButton:hover {
+#joinButton:hover {
   /*background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #378de5), color-stop(1, #79bbff) );
   background:-moz-linear-gradient( center top, #378de5 5%, #79bbff 100% );
   filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#378de5', endColorstr='#79bbff');*/
@@ -109,10 +120,19 @@ a:hover { text-decoration: underline; color: #aaa; }
   top:1px;
 }
 
-#loading p, #connect fieldset  {
- /* font-family: "Helvetica Neue", sans-serif; */
-  border: 0;
+#loading {
   text-align:center;
+  height: 400px;
+}
+
+#error {
+  width: 945px;
+  padding: .5em;
+  font-size: 10pt;
+  border: 1px solid #FF7373;
+  background: #FFCFCF;
+  color: black;
+  margin-bottom: 10px;
 }
 
 #toolbar {
@@ -125,7 +145,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 #entry {
   width: 100%;
   font-size: inherit;
-  padding: 1em;
+  padding: .5em;
   margin: 0;
   border-width: 0;
   outline-width: 0;
@@ -161,15 +181,23 @@ a:hover { text-decoration: underline; color: #aaa; }
 #roomSelect {
   margin-top: 10px;
   width: 470px;
+  height: 290px;
   border: 1px solid #D6D6D6;
   font-size: 14pt;
   font-weight:lighter;
-  width: 448px;
 }
 
-#roomSelect option {
-  padding: 10px;
+#roomSelect optgroup {
+  background-color:#C1E0C3;
+  font-style: normal;
+  font-weight: 700;
 }
+
+#roomSelect optgroup option {
+  margin-left:15px;
+  padding-left: 15px;
+}
+
 
 .notice td, .join td, .part td, .message { color: #555; }
 .error td { color: #933; }

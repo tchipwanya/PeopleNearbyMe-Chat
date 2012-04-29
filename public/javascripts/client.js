@@ -191,7 +191,10 @@ function updateTitle(){
 }
 
 //Transition the page to the state that prompts the user for a alias
-function showConnect () {
+function showConnect (errorMessage) {
+  if (errorMessage)
+    $("#error").html(errorMessage).css('display', 'block');
+  
   $("#connect").css('display','block');
   $("#loading").css('display','none');
   $("#toolbar").css('display','none');
@@ -202,6 +205,7 @@ function showConnect () {
 
 //transition the page to the loading screen
 function showLoad () {
+  $("#error").css('display', 'none');
   $("#connect").css('display','none');
   $("#loading").css('display','block');
   $("#toolbar").css('display','none');
@@ -214,7 +218,7 @@ function showChat (alias) {
   $("#toolbar").css('display','block');
   $("#log").css('display','block');
   $("#entry").focus();
-
+  $("#error").css('display', 'none');
   $("#connect").css('display','none');
   $("#loading").css('display','none');
 
@@ -229,6 +233,7 @@ function userJoin(alias, timestamp) {
     if (aliases[i] == alias) return;
   aliases.push(alias);
   updateUsersLink();
+  who();
 }
 
 // Handles when a user leaves the chatroom
@@ -246,7 +251,7 @@ function userPart(alias, timestamp) {
 var first_poll = true;
 
 function onMessage(data) {
-      var message = data
+      var message = data;
       if (message.timestamp > CONFIG.last_message_time)
         CONFIG.last_message_time = message.timestamp;
 
@@ -276,21 +281,18 @@ function onMessage(data) {
 }
 
 function onError(data) {
-  alert(data.error);
-  showConnect();
+  showConnect(data.error);
 }
 
 //submit a new message to the server
 function send(msg) {
   socket.emit("send", {id: CONFIG.id, text: msg});
-  console.log("message: "+msg);
 }
 
 //handle the server's response to our alias and join request
 function onJoin (session) {
   if (session.error) {
-    alert("error connecting: " + session.error);
-    showConnect();
+    showConnect(session.error);
     return;
   }
 
@@ -318,14 +320,15 @@ function outputUsers () {
   var alias_string = aliases.length > 0 ? aliases.join(", ") : "(none)";
   addMessage("users:", alias_string, new Date(), "notice");
   return false;
-} 
+}
 
 //get a list of the users presently in the room, and add it to the stream
-function who () {
+function who() {
   socket.emit("who", {});
 }
 
 function whoCallback (data) {
+    console.log(data);
     if (data.status != "success") return;
     aliases = data.aliases;
     outputUsers();
@@ -337,6 +340,10 @@ socket.on("join", onJoin);
 socket.on("who", whoCallback);
 socket.on("error", onError);
 $(document).ready(function() {
+  if($("#content").attr("showChat") === "true")
+    showChat();
+  else
+    showConnect();
 
   /* Event binding */
 
@@ -354,15 +361,13 @@ $(document).ready(function() {
     var alias = $("#aliasInput").attr("value");
 
     if (alias.length > 50) {
-      alert("alias too long. 50 character max.");
-      showConnect();
+      showConnect("alias too long. 50 character max.");
       return false;
     }
 
     //more validations
     if (/[^\w_\-^!]/.exec(alias)) {
-      alert("Bad character in alias. Can only have letters, numbers, and '_', '-', '^', '!'");
-      showConnect();
+      showConnect("Bad character in alias. Can only have letters, numbers, and '_', '-', '^', '!'");
       return false;
     }
 
@@ -373,7 +378,7 @@ $(document).ready(function() {
 
   var myOptions = {
     center: new google.maps.LatLng(44.013536,-73.181516),
-    zoom: 15,
+    zoom: 16,
     zoomControl: false,
     streetViewControl: false,
     scaleControl: false,

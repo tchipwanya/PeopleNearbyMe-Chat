@@ -65,7 +65,10 @@ function updateTitle(){
 }
 
 //Transition the page to the state that prompts the user for a alias
-function showConnect () {
+function showConnect (errorMessage) {
+  if (errorMessage)
+    $("#error").html(errorMessage).css('display', 'block');
+  
   $("#connect").css('display','block');
   $("#loading").css('display','none');
   $("#toolbar").css('display','none');
@@ -76,6 +79,7 @@ function showConnect () {
 
 //transition the page to the loading screen
 function showLoad () {
+  $("#error").css('display', 'none');
   $("#connect").css('display','none');
   $("#loading").css('display','block');
   $("#toolbar").css('display','none');
@@ -88,7 +92,7 @@ function showChat (alias) {
   $("#toolbar").css('display','block');
   $("#log").css('display','block');
   $("#entry").focus();
-
+  $("#error").css('display', 'none');
   $("#connect").css('display','none');
   $("#loading").css('display','none');
 

@@ -11,8 +11,9 @@ html
 		#wrapper
 			#header
 				#links
-					a About
-					a How it Works
+					a(href="http://peoplenearby.github.com/PeopleNearbyMe/") About
+					a(href="https://github.com/PeopleNearby/PeopleNearbyMe-Chat#readme") How To
+				img#logo(src="/images/logo.jpg", alt="logo")
 				#flag #PeopleNearby.me
-			#content!=body
+			#content(showChat="#{loggedIn}")!=body
 			#footer v0.0.2

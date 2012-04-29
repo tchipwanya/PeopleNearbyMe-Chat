@@ -106,8 +106,6 @@ io.sockets.on("connection", function (socket) {
 				aliases.push(user.alias);
 			}
 		}
-		console.log();
-		console.log();
 		console.log(aliases);
 		socket.emit("who", { aliases: aliases});
 	});
@@ -135,7 +133,7 @@ io.sockets.on("connection", function (socket) {
 
 		var alias = userData.alias;
 		var error = "";
-		if (alias === null) error += "Alias was not included in join request. ";
+		if (!alias) error += "Alias was not included in join request. ";
 		if (/[^\w_\-^!]/.exec(alias)) error += "Alias contains invalid characters and is far too silly. ";
 		if (alias.length === 0) error += "You forgot to enter your alias silly. ";
 		if (alias.length > 50) error += "The alias you entered is too long. ";
@@ -149,7 +147,7 @@ io.sockets.on("connection", function (socket) {
 
 		if(error.length !== 0) {
 			socket.emit("error", {error: error});
-			return;
+			return null;
 		}
 
 		var user = { alias: alias };
@@ -174,14 +172,17 @@ io.sockets.on("connection", function (socket) {
 	socket.on("send", function (userData) {
 		var id = userData.id;
 		var text = userData.text;
-		hs.session.touch().save();
+		// If a registered user.
+		if(hs.session.user) {
+			hs.session.touch().save();
 
-		var m = {
-			alias: hs.session.user.alias,
-			type: "msg", // "msg", "join", "part",
-			text: text,
-			timestamp: (new Date()).getTime()
-		};
-		io.sockets.emit("recv", m);
+			var m = {
+				alias: hs.session.user.alias,
+				type: "msg", // "msg", "join", "part",
+				text: text,
+				timestamp: (new Date()).getTime()
+			};
+			io.sockets.emit("recv", m);
+		}
 	});
 });

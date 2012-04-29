@@ -6,6 +6,10 @@ socket.on("join", onJoin);
 socket.on("who", whoCallback);
 socket.on("error", onError);
 $(document).ready(function() {
+  if($("#content").attr("showChat") === "true")
+    showChat();
+  else
+    showConnect();
 
   /* Event binding */
 
@@ -23,15 +27,13 @@ $(document).ready(function() {
     var alias = $("#aliasInput").attr("value");
 
     if (alias.length > 50) {
-      alert("alias too long. 50 character max.");
-      showConnect();
+      showConnect("alias too long. 50 character max.");
       return false;
     }
 
     //more validations
     if (/[^\w_\-^!]/.exec(alias)) {
-      alert("Bad character in alias. Can only have letters, numbers, and '_', '-', '^', '!'");
-      showConnect();
+      showConnect("Bad character in alias. Can only have letters, numbers, and '_', '-', '^', '!'");
       return false;
     }
 
@@ -42,7 +44,7 @@ $(document).ready(function() {
 
   var myOptions = {
     center: new google.maps.LatLng(44.013536,-73.181516),
-    zoom: 15,
+    zoom: 16,
     zoomControl: false,
     streetViewControl: false,
     scaleControl: false,
