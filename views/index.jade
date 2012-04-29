@@ -1,9 +1,14 @@
-#map_canvas	
 #connect
-	form#aliasForm
-		fieldset
-			input(id="aliasInput", class="text", type="text", name="alias", value="", placeholder="Type your name here")
-			input(id="connectButton", class="button", type="submit", name="", value="Join")
+	#map_canvas	
+	form#joinForm
+		input(id="aliasInput", class="text", type="text", name="alias", value="", placeholder="Type your name here")	
+		select(id="roomSelect", multiple="multiple", name="room")
+			option(value="volvo") Volvo
+			option(value="saab") Saab
+			option(value="opel") Opel
+			option(value="audi") Audi
+		input(id="connectButton", class="button", type="submit", name="", value="Join")
+	.clear
 #loading
 	p loading
 #log

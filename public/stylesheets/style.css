@@ -1,7 +1,8 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,700);
 
 body {
-  padding: 0;
+  border-top: 10px solid #3B8C3E;  
+  padding: 4px 0 0 0;
   margin: 0;
   font-family: 'Open Sans', sans-serif;
 }
@@ -43,9 +44,16 @@ a:hover { text-decoration: underline; color: #aaa; }
 .center {
   text-align: center;
 }
+.right {
+  float:right;
+}
 #links {
   float: right;
 }
+
+#links a { margin-left: 10px; font-size: 10pt; }
+
+#footer { font-size: 10pt; text-align: right; }
 
 #flag {
   padding:0px 10px;
@@ -63,7 +71,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 
   height: 100%;
   width: inherit;
-  padding: 1em;
+  padding: 10px 0 0 0;
 }
 
 #loading, #log, #toolbar{ display:none; }
@@ -129,6 +137,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 #entry:focus {
   outline:none;
 }
+.clear { clear: both; height:0; margin:0; padding: 0; }
 
 #log {
   /* enough padding to clear the toolbar.. is there a better way to do this? */
@@ -145,9 +154,24 @@ a:hover { text-decoration: underline; color: #aaa; }
   font-size: 14pt;
   padding:.5em;
   font-weight:lighter;
-  width: 220px;
+  width: 448px;
+  border: 1px solid #D6D6D6;
 }
-.notice td, .join td, .part td, .message .date { color: #555; }
+
+#roomSelect {
+  margin-top: 10px;
+  width: 470px;
+  border: 1px solid #D6D6D6;
+  font-size: 14pt;
+  font-weight:lighter;
+  width: 448px;
+}
+
+#roomSelect option {
+  padding: 10px;
+}
+
+.notice td, .join td, .part td, .message { color: #555; }
 .error td { color: #933; }
 .personal .alias, .notice .alias { color: #cd5; }
 
@@ -162,11 +186,17 @@ a:hover { text-decoration: underline; color: #aaa; }
 
 .alias { 
   font-weight: bold;
-  padding: 0 1em 0 0.5em;
+  padding: 0 1em 0 0 0;
 }
 
 .alias a {
   color: inherit;
+}
+
+#joinForm {
+  float:right;
+  width: 470px;
+  text-align: left;
 }
 #status {
     background: #733;
@@ -188,11 +218,20 @@ a:hover { text-decoration: underline; color: #aaa; }
 }
 
 #map_canvas {
-  z-index: -1;
-  width: 960px;
+  width: 470px;
   height: 400px;
-  position: absolute:
-  top:0px;
-  left:0px;
-  background: transparent;
+  float: left;
+}
+.message:hover .date {
+  opacity:1;
+}
+.date {
+  float:right;
+  opacity:0;
+  transition: opacity .8s ease-in;
+  -moz-transition: opacity .8s ease-in;
+  -webkit-transition: opacity .15s ease-in;
+  -o-transition: opacity .8s ease-in;
+  font-size: 10pt;
+  color: #CCC;
 }

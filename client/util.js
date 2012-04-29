@@ -104,7 +104,12 @@ util = {
   timeString: function (date) {
     var minutes = date.getMinutes().toString();
     var hours = date.getHours().toString();
-    return this.zeroPad(2, hours) + ":" + this.zeroPad(2, minutes);
+    var ampm = "am"
+    if (hours > 12) {
+      ampm = "pm";
+      hours -= 12;
+    }
+    return hours + ":" + this.zeroPad(2, minutes) + ampm;
   },
 
   //does the argument only contain whitespace?
