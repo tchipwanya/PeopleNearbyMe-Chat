@@ -34,6 +34,7 @@ app.configure('production', function(){
 
 
 io.configure(function () { 
+  io.set('log level', 1); // reduce logging FOR PRODUCTION ONLY
   io.set("transports", ["xhr-polling"]); 
   io.set("polling duration", 10); 
   io.set('authorization', function (data, accept) {
