@@ -3,7 +3,8 @@
   , "version": "0.0.1"
   , "private": true
   , "dependencies": {
-      "express": "2.5.8"
+      "node": "0.4.7"
+    , "express": "2.5.8"
     , "jade": ">= 0.0.1"
     , "socket.io": "0.9.6"
     , "connect": "2.2.1"
