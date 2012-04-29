@@ -1,8 +1,8 @@
 PeopleNearby.me
 ===============
 
-An geosocial app for conversing with people nearby you.
--------------------------------------------------------
+An geo-social app for conversing with people nearby you.
+--------------------------------------------------------
 
 # To run locally:
 
@@ -16,15 +16,26 @@ An geosocial app for conversing with people nearby you.
 	$ node app.js
 4. In your browser, navigate to [http://localhost:3000](http://localhost:3000).
 
+
 # To deploy to Heroku:
 
-1. In client/init.js line 2 uncomment the appropriate line:
+1. Change server address in client/init.js line 2. Uncomment the appropriate line:
 	//var socket = io.connect(); // DEVELOPMENT
 	var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
-2. Recompile source:
+2. Disable verbose logging in app/init.js line 37. Uncomment it.
+	io.set('log level', 1); // reduce logging FOR PRODUCTION ONLY
+3. Recompile source:
 	./make.sh
-3. Commit to git:
+4. Commit locally to git:
 	git add .
 	git commit -m "Deploying"
-4. Push to heroku:
+5. Push to heroku:
 	git push heroku
+6. Reverse your changes in steps 1+2 and re-commit locally to prevent pushing production settings to github.
+
+# TODO
+
+* Convert session store over to [MongoDB](https://github.com/masylum/connect-mongodb)
+* Maintain user list on client side.
+* Convert timestamps to 12-hour.
+* Add multiple chatroom functionality.
