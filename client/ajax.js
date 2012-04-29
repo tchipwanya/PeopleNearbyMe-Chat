@@ -1,44 +1,30 @@
 /* client.js subfile 3 */
 
-// some of these functions are not ajax. also.. some should not be anonymous.
-
-//handles another person joining chat
+// Handles when a user joins the chatroom
 function userJoin(alias, timestamp) {
-  //put it in the stream
   addMessage(alias, "joined", timestamp, "join");
-  //if we already know about this user, ignore it
   for (var i = 0; i < aliases.length; i++)
     if (aliases[i] == alias) return;
-  //otherwise, add the user to the list
   aliases.push(alias);
-  //update the UI
   updateUsersLink();
 }
 
-//handles someone leaving
+// Handles when a user leaves the chatroom
 function userPart(alias, timestamp) {
-  //put it in the stream
   addMessage(alias, "left", timestamp, "part");
-  //remove the user from the list
   for (var i = 0; i < aliases.length; i++) {
     if (aliases[i] == alias) {
       aliases.splice(i,1);
       break;
     }
   }
-  //update the UI
   updateUsersLink();
 }
 
 var first_poll = true;
 
 function onMessage(data) {
-//  console.log(data);
-//  if (data && data.messages) {
-//    for (var i = 0; i < data.messages.length; i++) {
-      var message = data//data.messages[i];
-
-      //track oldest message so we only request newer messages from server
+      var message = data
       if (message.timestamp > CONFIG.last_message_time)
         CONFIG.last_message_time = message.timestamp;
 
@@ -58,7 +44,6 @@ function onMessage(data) {
           userPart(message.alias, message.timestamp);
           break;
       }
-    //update the document title to include unread message count if blurred
     updateTitle();
 
     // should we include this data in chatroom join callback?
@@ -116,7 +101,7 @@ function onJoin (session) {
   }
 
   CONFIG.alias = session.alias;
-  CONFIG.id   = session.id;
+  CONFIG.id = session.id;
 
   //update the UI to show the chat
   showChat(CONFIG.alias);

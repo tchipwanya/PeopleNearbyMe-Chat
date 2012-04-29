@@ -172,11 +172,7 @@ function addMessage (from, text, time, _class) {
   content+= '</div>';
               
   messageElement.html(content);
-
-  //the log is the stream that we view
   $("#log").append(messageElement);
-
-  //always view the most recent message when it is added
   scrollDown();
 }
 
@@ -189,45 +185,31 @@ function updateTitle(){
   }
 }/* client.js subfile 3 */
 
-// some of these functions are not ajax. also.. some should not be anonymous.
-
-//handles another person joining chat
+// Handles when a user joins the chatroom
 function userJoin(alias, timestamp) {
-  //put it in the stream
   addMessage(alias, "joined", timestamp, "join");
-  //if we already know about this user, ignore it
   for (var i = 0; i < aliases.length; i++)
     if (aliases[i] == alias) return;
-  //otherwise, add the user to the list
   aliases.push(alias);
-  //update the UI
   updateUsersLink();
 }
 
-//handles someone leaving
+// Handles when a user leaves the chatroom
 function userPart(alias, timestamp) {
-  //put it in the stream
   addMessage(alias, "left", timestamp, "part");
-  //remove the user from the list
   for (var i = 0; i < aliases.length; i++) {
     if (aliases[i] == alias) {
       aliases.splice(i,1);
       break;
     }
   }
-  //update the UI
   updateUsersLink();
 }
 
 var first_poll = true;
 
 function onMessage(data) {
-//  console.log(data);
-//  if (data && data.messages) {
-//    for (var i = 0; i < data.messages.length; i++) {
-      var message = data//data.messages[i];
-
-      //track oldest message so we only request newer messages from server
+      var message = data
       if (message.timestamp > CONFIG.last_message_time)
         CONFIG.last_message_time = message.timestamp;
 
@@ -247,7 +229,6 @@ function onMessage(data) {
           userPart(message.alias, message.timestamp);
           break;
       }
-    //update the document title to include unread message count if blurred
     updateTitle();
 
     // should we include this data in chatroom join callback?
@@ -305,7 +286,7 @@ function onJoin (session) {
   }
 
   CONFIG.alias = session.alias;
-  CONFIG.id   = session.id;
+  CONFIG.id = session.id;
 
   //update the UI to show the chat
   showChat(CONFIG.alias);
@@ -340,8 +321,8 @@ function whoCallback (data) {
     aliases = data.aliases;
     outputUsers();
 }/* client.js subfile 4 */
-//var socket = io.connect(); // DEVELOPMENT
-var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
+var socket = io.connect(); // DEVELOPMENT
+//var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
 socket.on("recv", onMessage);
 socket.on("join", onJoin);
 socket.on("who", whoCallback);
@@ -350,7 +331,6 @@ $(document).ready(function() {
 
   /* Event binding */
 
-  //submit new messages when the user hits enter if the message isnt blank
   $("#entry").keypress(function (e) {
     if (e.keyCode != 13 /* Return */) return;
     var msg = $("#entry").attr("value").replace("\n", "");
@@ -358,16 +338,12 @@ $(document).ready(function() {
     $("#entry").attr("value", ""); // clear the entry field.
   });
 
-  //$("#usersLink").click(outputUsers);
-
   //try joining the chat when the user clicks the connect button
   $("#aliasForm").submit(function (i) {
     i.preventDefault();
-    //lock the UI while waiting for a response
     showLoad();
     var alias = $("#aliasInput").attr("value");
 
-    //dont bother the backend if we fail easy validations
     if (alias.length > 50) {
       alert("alias too long. 50 character max.");
       showConnect();

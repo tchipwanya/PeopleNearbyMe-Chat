@@ -1,6 +1,6 @@
 /* client.js subfile 4 */
-//var socket = io.connect(); // DEVELOPMENT
-var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
+var socket = io.connect(); // DEVELOPMENT
+//var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
 socket.on("recv", onMessage);
 socket.on("join", onJoin);
 socket.on("who", whoCallback);
@@ -9,7 +9,6 @@ $(document).ready(function() {
 
   /* Event binding */
 
-  //submit new messages when the user hits enter if the message isnt blank
   $("#entry").keypress(function (e) {
     if (e.keyCode != 13 /* Return */) return;
     var msg = $("#entry").attr("value").replace("\n", "");
@@ -17,16 +16,12 @@ $(document).ready(function() {
     $("#entry").attr("value", ""); // clear the entry field.
   });
 
-  //$("#usersLink").click(outputUsers);
-
   //try joining the chat when the user clicks the connect button
   $("#aliasForm").submit(function (i) {
     i.preventDefault();
-    //lock the UI while waiting for a response
     showLoad();
     var alias = $("#aliasInput").attr("value");
 
-    //dont bother the backend if we fail easy validations
     if (alias.length > 50) {
       alert("alias too long. 50 character max.");
       showConnect();

@@ -6,20 +6,15 @@ io.sockets.on("connection", function (socket) {
     console.log('A socket with sessionID ' + hs.sessionID + ' connected!');
     // setup an inteval that will keep our session fresh
     var intervalID = setInterval(function () {
-        // reload the session (just in case something changed,
-        // we don't want to override anything, but the age)
-        // reloading will also ensure we keep an up2date copy
-        // of the session with our connection.
+        // reload the session (just in case something changed
         hs.session.reload( function () { 
-            // "touch" it (resetting maxAge and lastAccess)
-            // and save it back again.
+            // "touch" it (resetting maxAge and lastAccess) and save it back again.
             hs.session.touch().save();
         });
     }, 60 * 1000);
 
     socket.on('disconnect', function () {
-        console.log('A socket with sessionID ' + hs.sessionID 
-            + ' disconnected!');
+        console.log('A socket with sessionID ' + hs.sessionID + ' disconnected!');
         // clear the socket interval to stop refreshing the session
         clearInterval(intervalID);
     });
@@ -105,13 +100,6 @@ io.sockets.on("connection", function (socket) {
 	socket.on("send", function (userData) {
 		var id = userData.id;
 		var text = userData.text;
-		//var session = sessions[id];
-		/*if (!session || !text) {
-			socket.emit("error", { error: "No such session id" });
-			return;
-		}*/
-
-		//session.poke();
 		hs.session.touch().save();
 
 		var m = { 	

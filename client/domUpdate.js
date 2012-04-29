@@ -51,11 +51,7 @@ function addMessage (from, text, time, _class) {
   content+= '</div>';
               
   messageElement.html(content);
-
-  //the log is the stream that we view
   $("#log").append(messageElement);
-
-  //always view the most recent message when it is added
   scrollDown();
 }
 
