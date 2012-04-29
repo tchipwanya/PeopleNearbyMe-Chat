@@ -65,34 +65,6 @@ function send(msg) {
   console.log("message: "+msg);
 }
 
-//Transition the page to the state that prompts the user for a alias
-function showConnect () {
-  $("#connect").css('display','block');
-  $("#loading").css('display','none');
-  $("#toolbar").css('display','none');
-  $("#log").css('display','none');
-  $("#aliasInput").focus();
-}
-
-//transition the page to the loading screen
-function showLoad () {
-  $("#connect").css('display','none');
-  $("#loading").css('display','block');
-  $("#toolbar").css('display','none');
-}
-
-//transition the page to the main chat view, putting the cursor in the textfield
-function showChat (alias) {
-  $("#toolbar").css('display','block');
-  $("#log").css('display','block');
-  $("#entry").focus();
-
-  $("#connect").css('display','none');
-  $("#loading").css('display','none');
-
-  scrollDown();
-}
-
 //handle the server's response to our alias and join request
 function onJoin (session) {
   if (session.error) {

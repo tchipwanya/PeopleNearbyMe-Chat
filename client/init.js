@@ -17,7 +17,7 @@ $(document).ready(function() {
   });
 
   //try joining the chat when the user clicks the connect button
-  $("#aliasForm").submit(function (i) {
+  $("#joinForm").submit(function (i) {
     i.preventDefault();
     showLoad();
     var alias = $("#aliasInput").attr("value");
@@ -42,11 +42,19 @@ $(document).ready(function() {
 
   var myOptions = {
     center: new google.maps.LatLng(44.013536,-73.181516),
-    zoom: 13,
+    zoom: 15,
+    zoomControl: false,
+    streetViewControl: false,
+    scaleControl: false,
+    rotateControl: false,
+    panControl: false,
+    overviewMapControl: false,
+    mapTypeControl: false,
+    disableDoubleClickZoom: true,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-  //showConnect(); // possibly move to socket join response callback.
+  
 });
 
 //if we can, notify the server that we're going away.

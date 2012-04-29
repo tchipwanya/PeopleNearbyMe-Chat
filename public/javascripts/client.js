@@ -104,7 +104,12 @@ util = {
   timeString: function (date) {
     var minutes = date.getMinutes().toString();
     var hours = date.getHours().toString();
-    return this.zeroPad(2, hours) + ":" + this.zeroPad(2, minutes);
+    var ampm = "am"
+    if (hours > 12) {
+      ampm = "pm";
+      hours -= 12;
+    }
+    return hours + ":" + this.zeroPad(2, minutes) + ampm;
   },
 
   //does the argument only contain whitespace?
@@ -183,7 +188,39 @@ function updateTitle(){
   } else {
     document.title = "#PeopleNearby.me";
   }
-}/* client.js subfile 3 */
+}
+
+//Transition the page to the state that prompts the user for a alias
+function showConnect () {
+  $("#connect").css('display','block');
+  $("#loading").css('display','none');
+  $("#toolbar").css('display','none');
+  $("#map_canvas").css('display','block');
+  $("#log").css('display','none');
+  $("#aliasInput").focus();
+}
+
+//transition the page to the loading screen
+function showLoad () {
+  $("#connect").css('display','none');
+  $("#loading").css('display','block');
+  $("#toolbar").css('display','none');
+
+}
+
+//transition the page to the main chat view, putting the cursor in the textfield
+function showChat (alias) {
+  $("#map_canvas").css('display','none');
+  $("#toolbar").css('display','block');
+  $("#log").css('display','block');
+  $("#entry").focus();
+
+  $("#connect").css('display','none');
+  $("#loading").css('display','none');
+
+  scrollDown();
+}
+/* client.js subfile 3 */
 
 // Handles when a user joins the chatroom
 function userJoin(alias, timestamp) {
@@ -249,34 +286,6 @@ function send(msg) {
   console.log("message: "+msg);
 }
 
-//Transition the page to the state that prompts the user for a alias
-function showConnect () {
-  $("#connect").css('display','block');
-  $("#loading").css('display','none');
-  $("#toolbar").css('display','none');
-  $("#log").css('display','none');
-  $("#aliasInput").focus();
-}
-
-//transition the page to the loading screen
-function showLoad () {
-  $("#connect").css('display','none');
-  $("#loading").css('display','block');
-  $("#toolbar").css('display','none');
-}
-
-//transition the page to the main chat view, putting the cursor in the textfield
-function showChat (alias) {
-  $("#toolbar").css('display','block');
-  $("#log").css('display','block');
-  $("#entry").focus();
-
-  $("#connect").css('display','none');
-  $("#loading").css('display','none');
-
-  scrollDown();
-}
-
 //handle the server's response to our alias and join request
 function onJoin (session) {
   if (session.error) {
@@ -339,7 +348,7 @@ $(document).ready(function() {
   });
 
   //try joining the chat when the user clicks the connect button
-  $("#aliasForm").submit(function (i) {
+  $("#joinForm").submit(function (i) {
     i.preventDefault();
     showLoad();
     var alias = $("#aliasInput").attr("value");
@@ -364,11 +373,19 @@ $(document).ready(function() {
 
   var myOptions = {
     center: new google.maps.LatLng(44.013536,-73.181516),
-    zoom: 13,
+    zoom: 15,
+    zoomControl: false,
+    streetViewControl: false,
+    scaleControl: false,
+    rotateControl: false,
+    panControl: false,
+    overviewMapControl: false,
+    mapTypeControl: false,
+    disableDoubleClickZoom: true,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-  //showConnect(); // possibly move to socket join response callback.
+  
 });
 
 //if we can, notify the server that we're going away.
