@@ -1,9 +1,9 @@
 PeopleNearby.me
 ===============
-### A geo-social app for conversing with people nearby you.
+## 	A geo-social app for conversing with people nearby you.
 --------------------------------------------------------
 
-# To run locally:
+### To run locally:
 
 1. Install Node.js. Requires that Homebrew be installed. (http://mxcl.github.com/homebrew/)
 	$ brew install node
@@ -16,7 +16,7 @@ PeopleNearby.me
 4. In your browser, navigate to [http://localhost:3000](http://localhost:3000).
 
 
-# To deploy to Heroku:
+### To deploy to Heroku:
 
 1. Change server address in client/init.js line 2. Uncomment the appropriate line:
 	//var socket = io.connect(); // DEVELOPMENT
@@ -32,7 +32,7 @@ PeopleNearby.me
 	git push heroku
 6. Reverse your changes in steps 1+2 and re-commit locally to prevent pushing production settings to github.
 
-# TODO
+### TODO
 
 * Convert session store over to [MongoDB](https://github.com/masylum/connect-mongodb)
 * Maintain user list on client side.
