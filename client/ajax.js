@@ -103,7 +103,6 @@ function who() {
 
 function whoCallback (data) {
     console.log(data);
-    if (data.status != "success") return;
     aliases = data.aliases;
-    outputUsers();
+    updateWhoList(aliases);
 }
