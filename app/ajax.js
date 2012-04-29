@@ -88,14 +88,9 @@ io.sockets.on("connection", function (socket) {
 		socket.emit("join", { id: hs.sessionID, alias: hs.session.user.alias });
 	});
 
-/*	socket.on("part", function (user) {
-		var id = user.id;
-		var session;
-		if (id && sessions[id]) {
-			//session = sessions[id];
-			//session.destroy();
-		}
-	});*/
+	socket.on("part", function (userData) {
+		clearInterval(intervalID);
+	});
 
 	socket.on("send", function (userData) {
 		var id = userData.id;
