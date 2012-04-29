@@ -1,13 +1,14 @@
 
 
-var mongodb = require('mongodb');
-var collection;
-var server = new mongodb.Server("127.0.0.1", 27017, {});
-var db = new mongodb.Db('nodechat', server, {});
-db.open(function (error, client) {
-	if (error) throw error;
-	collection = new mongodb.Collection(client, 'user');
-});
+db.open(function(err, db) {
+  if(!err) {
+    console.log("Successfuly connected to MongoDB.");
+    db.ollection('messages', function(err, collection) {
+
+    });
+
+  } else { console.log(err); }
+}); 
 
 
 /*

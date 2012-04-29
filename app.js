@@ -20,7 +20,7 @@ app.configure(function() {
   app.use(express.methodOverride());
   app.use(express.static(__dirname + '/public'));
   app.use(express.cookieParser());
-  app.use(express.session({store: sessionStore, secret: 'SECRET_HERE', key: 'express.sid'}));
+  app.use(express.session({store: sessionStore, secret: 'JHgzU1IWXZmAJpETpPgTYsjtiojqn7mseIbzboQW', key: 'express.sid'}));
   app.use(app.router);  
 });
 
@@ -34,7 +34,7 @@ app.configure('production', function(){
 
 
 io.configure(function () { 
-  io.set('log level', 1); // reduce logging FOR PRODUCTION ONLY
+  //io.set('log level', 1); // reduce logging FOR PRODUCTION ONLY
   io.set("transports", ["xhr-polling"]); 
   io.set("polling duration", 10); 
   io.set('authorization', function (data, accept) {
@@ -68,18 +68,12 @@ if (!module.parent) {
 }
 
 /* Mongodb connection */
-/*
+
 var mongo = require('mongodb')
   , Server = mongo.Server
   , Db = mongo.Db
   , server = new Server('localhost', 27017, {auto_reconnect: true})
-  , db = new Db('exampleDb', server);
-
-db.open(function(err, db) {
-  if(!err) {
-    console.log("We are connected");
-  } else { console.log(err); }
-}); */
+  , db = new Db('peoplenearbyme', server);
 /* server.js subfile 4 */
 
 io.sockets.on("connection", function (socket) {
@@ -170,14 +164,9 @@ io.sockets.on("connection", function (socket) {
 		socket.emit("join", { id: hs.sessionID, alias: hs.session.user.alias });
 	});
 
-/*	socket.on("part", function (user) {
-		var id = user.id;
-		var session;
-		if (id && sessions[id]) {
-			//session = sessions[id];
-			//session.destroy();
-		}
-	});*/
+	socket.on("part", function (userData) {
+		clearInterval(intervalID);
+	});
 
 	socket.on("send", function (userData) {
 		var id = userData.id;

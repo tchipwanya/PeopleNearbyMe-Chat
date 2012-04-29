@@ -40,7 +40,13 @@ $(document).ready(function() {
     return true;
   });
 
-  showConnect(); // possibly move to socket join response callback.
+  var myOptions = {
+    center: new google.maps.LatLng(44.013536,-73.181516),
+    zoom: 13,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+  //showConnect(); // possibly move to socket join response callback.
 });
 
 //if we can, notify the server that we're going away.

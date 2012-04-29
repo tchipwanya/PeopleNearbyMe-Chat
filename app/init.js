@@ -34,7 +34,7 @@ app.configure('production', function(){
 
 
 io.configure(function () { 
-  io.set('log level', 1); // reduce logging FOR PRODUCTION ONLY
+  //io.set('log level', 1); // reduce logging FOR PRODUCTION ONLY
   io.set("transports", ["xhr-polling"]); 
   io.set("polling duration", 10); 
   io.set('authorization', function (data, accept) {
@@ -68,15 +68,9 @@ if (!module.parent) {
 }
 
 /* Mongodb connection */
-/*
+
 var mongo = require('mongodb')
   , Server = mongo.Server
   , Db = mongo.Db
   , server = new Server('localhost', 27017, {auto_reconnect: true})
-  , db = new Db('exampleDb', server);
-
-db.open(function(err, db) {
-  if(!err) {
-    console.log("We are connected");
-  } else { console.log(err); }
-}); */
+  , db = new Db('peoplenearbyme', server);
