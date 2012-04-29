@@ -2,7 +2,7 @@
 	#error
 	#map_canvas	
 	form#joinForm
-		input(id="aliasInput", class="text", type="text", name="alias", value="", placeholder="Type a username here, then select your location.")	
+		input(id="aliasInput", class="text", type="text", name="alias", autocomplete="off", value="", placeholder="Type a username here, then select your location.")	
 		select(id="roomSelect", name="room", size="2")
 			optgroup(label="McCardell Bicentennial Hall")
 			option(value="1234") Computer Science Lab - 632
@@ -14,6 +14,9 @@
 #loading
 	p loading
 #who
+	#whoTitle People nearby you:
+	ul#whoList
+
 #log
 #toolbar
 	input(tabindex="1", type="text", id="entry")	

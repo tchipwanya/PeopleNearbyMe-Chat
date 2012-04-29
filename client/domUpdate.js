@@ -12,15 +12,15 @@ function updateUsersLink ( ) {
 //from is the user, text is the body and time is the timestamp, defaulting to now
 //_class is a css class to apply to the message, usefull for system events
 function updateWhoList(aliases) {
-  $('#who').html('');
+  $('#whoList').html('');
   var content = "";
-  for(var x in aliases) {
-    var alias = aliases[x];
-    content += '<div class="person">';
+  for(var i in aliases) {
+    var alias = aliases[i];
+    content += '<li class="person">';
     content += alias;
-    content += '</div>';
+    content += '</li>';
   }
-  $('#who').html(content);
+  $('#whoList').html(content);
 }
 function addMessage (from, text, time, _class) {
   if (text === null)

@@ -143,7 +143,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 
 
 #entry {
-  width: 100%;
+  width: 941px;
   font-size: inherit;
   padding: .5em;
   margin: 0;
@@ -171,7 +171,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 #who {
   float:right;
   width:200px;
-  height: 400px;
+  height: 495px;
   overflow-y:scroll;
   background:rgba(59, 140, 62,.4);
 }
@@ -239,16 +239,6 @@ a:hover { text-decoration: underline; color: #aaa; }
 #status {
     background: #733;
     clear:both;
-}
-#toolbar ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-#toolbar li {
-  display: inline-block; 
-  margin: 0 2em 0 0;
 }
 
 #usersLink {
