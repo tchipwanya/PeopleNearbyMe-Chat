@@ -2,8 +2,6 @@ PeopleNearby.me
 ===============
 ## 	A geo-social app for conversing with people nearby you.
 
-----------------------------------------------------------
-
 ### To run locally:
 
 1. Install Node.js. Requires that Homebrew be installed. (http://mxcl.github.com/homebrew/)
