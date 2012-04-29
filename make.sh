@@ -1,6 +1,6 @@
 #!/bin/bash
 cd app/
-bash combine.sh
+./combine.sh
 cd ../client/
-bash combine.sh
+./combine.sh
 cd ../

@@ -40,15 +40,11 @@ io.configure(function () {
     if (data.headers.cookie) {
         data.cookie = parseCookie(data.headers.cookie);
         data.sessionID = data.cookie['express.sid'];
-        // save the session store to the data object 
-        // (as required by the Session constructor)
         data.sessionStore = sessionStore;
         sessionStore.get(data.sessionID, function (err, session) {
            if (err || !session) {
               accept('Error null session', false);
             } else {
-                // create a session object, passing data as request and our
-                // just acquired session data
                 data.session = new Session(data, session);
                 accept(null, true);
             }
@@ -63,15 +59,22 @@ io.configure(function () {
 
 app.get('/', routes.index);
 
-// Only listen on $ node app.js
-
 if (!module.parent) {
   app.listen(3000, function(){
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
   });
 }
 
-//io.listen(80);
+/* Mongodb connection */
+/*
+var mongo = require('mongodb')
+  , Server = mongo.Server
+  , Db = mongo.Db
+  , server = new Server('localhost', 27017, {auto_reconnect: true})
+  , db = new Db('exampleDb', server);
 
-//var MESSAGE_BACKLOG = 200,
-
+db.open(function(err, db) {
+  if(!err) {
+    console.log("We are connected");
+  } else { console.log(err); }
+}); */

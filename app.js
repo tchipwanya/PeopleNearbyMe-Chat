@@ -40,15 +40,11 @@ io.configure(function () {
     if (data.headers.cookie) {
         data.cookie = parseCookie(data.headers.cookie);
         data.sessionID = data.cookie['express.sid'];
-        // save the session store to the data object 
-        // (as required by the Session constructor)
         data.sessionStore = sessionStore;
         sessionStore.get(data.sessionID, function (err, session) {
            if (err || !session) {
               accept('Error null session', false);
             } else {
-                // create a session object, passing data as request and our
-                // just acquired session data
                 data.session = new Session(data, session);
                 accept(null, true);
             }
@@ -63,138 +59,26 @@ io.configure(function () {
 
 app.get('/', routes.index);
 
-// Only listen on $ node app.js
-
 if (!module.parent) {
   app.listen(3000, function(){
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
   });
 }
 
-//io.listen(80);
+/* Mongodb connection */
 
-//var MESSAGE_BACKLOG = 200,
+var mongo = require('mongodb')
+  , Server = mongo.Server
+  , Db = mongo.Db
+  , server = new Server('localhost', 27017, {auto_reconnect: true})
+  , db = new Db('exampleDb', server);
 
-/* server.js subfile 2 */
-/*
-var channel = new function () {
-	
-	var messages = [], 
-		callbacks = [];
-
-	this.appendMessage = function (alias, type, text) {
-		var m = { 	alias: alias,
-					type: type, // "msg", "join", "part",
-					text: text,
-					timestamp: (new Date()).getTime()
-				};
-
-		switch (type) {
-			case "msg":
-				console.log("<" + alias + "> " + text);
-				break;
-			case "join":
-				console.log(alias + " join");
-				break;
-			case "part":
-				console.log(alias + " part");
-				break;
-		}
-
-		//messages.push( m );
-		socket.broadcast.emit("recv", m);		
-
-		/*while (callbacks.length > 0) {
-			callbacks.shift().callback([m]);
-		}
-
-		while (messages.length > MESSAGE_BACKLOG)
-			messages.shift();
-	};
-
-	this.query = function (since, callback) {
-		var matching = [];
-		for (var i = 0; i < messages.length; i++) {
-			var message = messages[i];
-			if (message.timestamp > since)
-				matching.push(message);
-		}
-
-		if (matching.length !== 0) {
-			callback(matching);
-		} else {
-			callbacks.push({ timestamp: new Date(), callback: callback });
-		}
-	};
-
-	// clear old callbacks
-	// they can hang around for at most 30 seconds.
-	setInterval(function () {
-		var now = new Date();
-		while (callbacks.length > 0 && now - callbacks[0].timestamp > 30*1000) {
-			callbacks.shift().callback([]);
-		}
-	}, 3000);
-};*//* server.js subfile 3 */
-
-//var SESSION_TIMEOUT = 1 * 60 * 60 * 1000; // 1 hour session timeout time
-
-//var sessions = {};
-/*
-function createSession (socket, alias) { // probably more secure than we need at the moment.
-	if (/[^\w_\-^!]/.exec(alias)) return "Alias contains invalid characters.";
-	if (alias === null) return "Alias was not included in join request.";
-	if (alias.length === 0) return "You forgot to enter your alias silly.";
-	if (alias.length > 50) return "The alias you entered is too long.";
-
-	var clients = io.of('/').clients();
-	console.log(clients);
-	for (var client in clients) {
-		//console.log(client);
-		var user = client.handshake.session.user;
-		if (user.alias === alias) return null; // not sure why session is part of the condition... took that out.
-	}
-
-	var user = {
-		alias: alias /*,
-		id: socket.handshake.sessionID,
-		timestamp: new Date(),
-	
-		poke: function () {
-			session.timestamp = new Date();
-		},
-
-		destroy: function () {
-			//channel.appendMessage(session.alias, "part");
-			var m = {
-				alias: session.alias,
-				type: "part", // "msg", "join", "part",
-				timestamp: (new Date()).getTime()
-			};
-			io.sockets.emit("recv", m);
-			delete sessions[session.id];
-		} */
-/*	};
-	var session = socket.handshake.session;
-	session.user = user;
-	session.save();
-	//sessions[session.id] = session;
-	return user;
-}
-
-// interval to kill off old sessions
-/*
-setInterval(function () {
-	var now = new Date();
-	for (var id in sessions) {
-		if (!sessions.hasOwnProperty(id)) continue;
-		var session = sessions[id];
-
-		if (now - session.timestamp > SESSION_TIMEOUT) {
-			session.destroy();
-		}
-	}
-}, 10000); *//* server.js subfile 4 */
+db.open(function(err, db) {
+  if(!err) {
+    console.log("We are connected");
+  } else { console.log(err); }
+});
+/* server.js subfile 4 */
 
 io.sockets.on("connection", function (socket) {
 

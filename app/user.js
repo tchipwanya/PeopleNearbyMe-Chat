@@ -20,8 +20,8 @@ o	Password Hash
 o	Chat Room ID
 o	Username
 o	Valid?
-
 */
+
 function User() {
 	var id,email,fbToken,chatroomID,username,valid;
 	
