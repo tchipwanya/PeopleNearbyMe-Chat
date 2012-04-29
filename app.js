@@ -34,6 +34,7 @@ app.configure('production', function(){
 
 
 io.configure(function () { 
+  io.set('log level', 1); // reduce logging FOR PRODUCTION ONLY
   io.set("transports", ["xhr-polling"]); 
   io.set("polling duration", 10); 
   io.set('authorization', function (data, accept) {
@@ -60,13 +61,13 @@ io.configure(function () {
 app.get('/', routes.index);
 
 if (!module.parent) {
-  app.listen(3000, function(){
+  app.listen(80, function(){ // 80 for PRODUCTION 3000 for DEVELOPMENT
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
   });
 }
 
 /* Mongodb connection */
-
+/*
 var mongo = require('mongodb')
   , Server = mongo.Server
   , Db = mongo.Db
@@ -77,7 +78,7 @@ db.open(function(err, db) {
   if(!err) {
     console.log("We are connected");
   } else { console.log(err); }
-});
+}); */
 /* server.js subfile 4 */
 
 io.sockets.on("connection", function (socket) {
