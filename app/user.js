@@ -1,16 +1,4 @@
 
-
-db.open(function(err, db) {
-  if(!err) {
-    console.log("Successfuly connected to MongoDB.");
-    db.ollection('messages', function(err, collection) {
-
-    });
-
-  } else { console.log(err); }
-}); 
-
-
 /*
 Database
 o	Users
@@ -30,10 +18,16 @@ function User() {
 		this.username=username;
 		this.email=email;
 		this.password=password;
-		var user = {username:username,email:email,password:password};
-		db.user.insert(user);
-	
-	};	
+
+		db.open(function(err, db) {
+			if(!err) {
+				console.log("Successfuly connected to MongoDB.");
+				db.collection('user', function(err, collection) {
+					collection.insert({username: username,email:email,password:password});
+				});
+			} else { console.log(err); }
+		});
+	};
 	this.login = function(user,password) {
 		collection.find({username:username,password:password});
 	
@@ -44,44 +38,34 @@ function User() {
 	this.enterRoom = function(roomID) {
 		this.chatroomID=roomID;
 	};
-<<<<<<< HEAD
+
 	this.updateUsername = function(name) {
 		//check to see if a username is already in use
-		var check = collection.find({name:{$exists : true}});
-		if(check !=true){
-			return false;	//need to tell the user the name is invalid	
-		};
+
+		db.open(function(err, db) {
+			if(!err) {
+				console.log("Successfuly connected to MongoDB.");
+				db.collection('user', function(err, collection) {
+					collection.find();
+				});
+			} else { console.log(err); }
+		});
 	};
 	this.updateEmail = function(email) {
 		var check = collection.find({email:{$exists : true}});
-		if(check != true){
-			return false;	//need to tell the user the name is invalid	
-		};
-=======
+		if(check !== true){
+			return false;
+		}
+	};
+
 	this.updateUsername = function() {
-		write("You're current username is" + username);
-		var username = prompt("Username", "type username here");
-		write("You're new username is" + username);
+
 	};
 	this.updateEmail = function() {
-		write("You're current email is" + email);
-		var email = prompt("Email", "type email here");
-		write("You're new email is" + email);
->>>>>>> Updated User Model, just filled it out a bit
+
 	};
-	this.setRoom = function() {
-		write("You're current room is" + roomID);
-		var roomID = prompt("Room", "type room here");
+	this.setRoom = function(roomID) {
 		this.chatroomID=roomID;
 	};
 
-}
-
-var will = new User();
-will.create("william","william@wpotter.me","asdf");
-will.updateUsername("Will");
-will.updateEmail("will@middlebury.edu);
-
-var trevor =new User();
-trevor.create("trevor","tharron@middlebury.edu","1234");
-
+};
