@@ -74,6 +74,12 @@ io.sockets.on("connection", function (socket) {
 			return null;
 		}
 
+		if (userData.roomInput) {
+			// insert new room into MongoDB and join it. TODO
+		} else { 
+			// use 'userData.room' to get room selection. TODO
+		}
+
 		var user = { alias: alias };
 		var session = socket.handshake.session;
 		
@@ -108,5 +114,23 @@ io.sockets.on("connection", function (socket) {
 			};
 			io.sockets.emit("recv", m);
 		}
+	});
+
+	socket.on("location", function(position) {
+	  	/* use mongodb to search for location. TODO
+	  	   Should return object array of rooms nearby 'position' in the format: 
+	  		   	[ { name:"Computer Science Lab", 
+	  				roomNum:"632", 
+	  				building:"McCardell Bicentennial Hall",
+	  				roomId:"f2Eq17",
+	  				occupants:5 
+	  			  } ]
+	  	*/
+	  	socket.emit("location", [ { name:"Computer Science Lab", // Mock filer data.
+	  								roomNum:"632", 
+	  								building:"McCardell Bicentennial Hall",
+	  								roomId:"f2Eq17",
+	  								occupants:5 
+	  							  }]);
 	});
 });

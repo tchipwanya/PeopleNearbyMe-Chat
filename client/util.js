@@ -125,3 +125,50 @@ function scrollDown () {
   //  addMessage2("sys", ($("#log").scrollTop() +  $("#log").innerHeight()).toString() + " " + ($("#log")[0].scrollHeight).toString() + " " + doAutoscroll );
   if (doAutoscroll) $("#log").scrollTop($("#log")[0].scrollHeight);
 }
+
+function onLocation(position) {
+  mapsInit(position);
+  socket.emit("location", position);
+}
+
+function mapsInit(position) {
+  var myOptions = {
+    center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+    zoom: 16,
+    zoomControl: false,
+    streetViewControl: false,
+    scaleControl: false,
+    rotateControl: false,
+    panControl: false,
+    overviewMapControl: false,
+    mapTypeControl: false,
+    disableDoubleClickZoom: true,
+    scrollwheel: false,
+    mapTypeId: google.maps.MapTypeId.HYBRID
+  };
+  var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+}
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(onLocation, 
+      function (error) {
+        switch(error.code) {
+          case error.TIMEOUT:
+            console.log('Timeout');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            console.log('Position unavailable');
+            break;
+          case error.PERMISSION_DENIED:
+            console.log('Permission denied');
+            break;
+          case error.UNKNOWN_ERROR:
+            console.log('Unknown error');
+            break;
+        }
+      });
+  } else {
+    console.log("Error: Old or non-compliant browser.");
+  }
+}

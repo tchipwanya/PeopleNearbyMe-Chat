@@ -124,6 +124,53 @@ function scrollDown () {
   var doAutoscroll = (($("#log").scrollTop()+ $("#log").innerHeight() + 40)>=($("#log")[0].scrollHeight));
   //  addMessage2("sys", ($("#log").scrollTop() +  $("#log").innerHeight()).toString() + " " + ($("#log")[0].scrollHeight).toString() + " " + doAutoscroll );
   if (doAutoscroll) $("#log").scrollTop($("#log")[0].scrollHeight);
+}
+
+function onLocation(position) {
+  mapsInit(position);
+  socket.emit("location", position);
+}
+
+function mapsInit(position) {
+  var myOptions = {
+    center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+    zoom: 16,
+    zoomControl: false,
+    streetViewControl: false,
+    scaleControl: false,
+    rotateControl: false,
+    panControl: false,
+    overviewMapControl: false,
+    mapTypeControl: false,
+    disableDoubleClickZoom: true,
+    scrollwheel: false,
+    mapTypeId: google.maps.MapTypeId.HYBRID
+  };
+  var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+}
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(onLocation, 
+      function (error) {
+        switch(error.code) {
+          case error.TIMEOUT:
+            console.log('Timeout');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            console.log('Position unavailable');
+            break;
+          case error.PERMISSION_DENIED:
+            console.log('Permission denied');
+            break;
+          case error.UNKNOWN_ERROR:
+            console.log('Unknown error');
+            break;
+        }
+      });
+  } else {
+    console.log("Error: Old or non-compliant browser.");
+  }
 }/* client.js subfile 2 */
 
 //updates the users link to reflect the number of active users
@@ -345,8 +392,8 @@ function whoCallback (data) {
     aliases = data.aliases;
     updateWhoList(aliases);
 }/* client.js subfile 4 */
-//var socket = io.connect(); // DEVELOPMENT
-var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
+var socket = io.connect(); // DEVELOPMENT
+//var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
 socket.on("recv", onMessage);
 socket.on("join", onJoin);
 socket.on("who", whoCallback);
@@ -357,6 +404,7 @@ $(document).ready(function() {
   else
     showConnect();
 
+  getLocation();
   /* Event binding */
 
   $("#entry").keypress(function (e) {
@@ -371,10 +419,17 @@ $(document).ready(function() {
     i.preventDefault();
     showLoad();
     var alias = $("#aliasInput").attr("value");
+    var roomSelect = "ROOM_SELECT_VAL"; // TODO FIGURE OUT HOW TO GET OPTION SELECTED HERE
+    var roomInput = $("#roomInput").attr("value");
 
     if (alias.length > 50) {
       showConnect("alias too long. 50 character max.");
       return false;
+    }
+
+    if (alias.length === 0) {
+      showConnect("You forgot to enter your alias silly.");
+      return;
     }
 
     //more validations
@@ -383,26 +438,12 @@ $(document).ready(function() {
       return false;
     }
 
+    // TODO validate roomInput.
+
     //make the actual join request to the server
-    socket.emit("join", { alias: alias });
+    socket.emit("join", { alias: alias, roomInput: roomInput, roomSelect: roomSelect });
     return true;
   });
-
-  var myOptions = {
-    center: new google.maps.LatLng(44.013536,-73.181516),
-    zoom: 16,
-    zoomControl: false,
-    streetViewControl: false,
-    scaleControl: false,
-    rotateControl: false,
-    panControl: false,
-    overviewMapControl: false,
-    mapTypeControl: false,
-    disableDoubleClickZoom: true,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
-  var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-  
 });
 
 //if we can, notify the server that we're going away.

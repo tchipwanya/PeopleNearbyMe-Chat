@@ -99,11 +99,10 @@ a:hover { text-decoration: underline; color: #aaa; }
   font-size:14pt;
   font-weight:bold;
   padding:.5em;
-  width: 470px;
+  width: 475px;
   text-align: center;
   text-decoration:none;
   text-shadow:1px 1px 0px #528ecc;
-  margin:10px 0 0 0px;
 }
 #joinButton:hover {
   /*background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #378de5), color-stop(1, #79bbff) );
@@ -180,18 +179,19 @@ a:hover { text-decoration: underline; color: #aaa; }
   display:block;
 }
 /* not very important info */
-#aliasInput {
+#aliasInput, #roomInput {
   font-size: 14pt;
   padding:.5em;
   font-weight:lighter;
-  width: 448px;
+  width: 455px;
   border: 1px solid #D6D6D6;
+  margin: 0 0 10px 0;
 }
 
 #roomSelect {
-  margin-top: 10px;
-  width: 470px;
-  height: 290px;
+  margin: 0 0 10px 0;
+  width: 475px;
+  height: 242px;
   border: 1px solid #D6D6D6;
   font-size: 14pt;
   font-weight:lighter;
@@ -233,7 +233,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 
 #joinForm {
   float:right;
-  width: 470px;
+  width: 475px;
   text-align: left;
 }
 #status {
@@ -246,7 +246,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 }
 
 #map_canvas {
-  width: 470px;
+  width: 475px;
   height: 400px;
   float: left;
 }

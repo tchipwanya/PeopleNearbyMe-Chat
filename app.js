@@ -34,7 +34,7 @@ app.configure('production', function(){
 
 
 io.configure(function () {
-  io.set('log level', 1); // reduce logging FOR PRODUCTION ONLY
+  //io.set('log level', 1); // reduce logging FOR PRODUCTION ONLY
   io.set("transports", ["xhr-polling"]);
   io.set("polling duration", 10);
   io.set('authorization', function (data, accept) {
@@ -68,13 +68,13 @@ if (!module.parent) {
 }
 
 /* Mongodb connection */
-/*
+
 var mongo = require('mongodb')
   , Server = mongo.Server
   , Db = mongo.Db
   , server = new Server('localhost', 27017, {auto_reconnect: true})
   , db = new Db('peoplenearbyme', server);
-*//* server.js subfile 4 */
+/* server.js subfile 4 */
 
 io.sockets.on("connection", function (socket) {
 
@@ -150,6 +150,12 @@ io.sockets.on("connection", function (socket) {
 			return null;
 		}
 
+		if (userData.roomInput) {
+			// insert new room into MongoDB and join it. TODO
+		} else { 
+			// use 'userData.room' to get room selection. TODO
+		}
+
 		var user = { alias: alias };
 		var session = socket.handshake.session;
 		
@@ -184,5 +190,23 @@ io.sockets.on("connection", function (socket) {
 			};
 			io.sockets.emit("recv", m);
 		}
+	});
+
+	socket.on("location", function(position) {
+	  	/* use mongodb to search for location. TODO
+	  	   Should return object array of rooms nearby 'position' in the format: 
+	  		   	[ { name:"Computer Science Lab", 
+	  				roomNum:"632", 
+	  				building:"McCardell Bicentennial Hall",
+	  				roomId:"f2Eq17",
+	  				occupants:5 
+	  			  } ]
+	  	*/
+	  	socket.emit("location", [ { name:"Computer Science Lab", // Mock filer data.
+	  								roomNum:"632", 
+	  								building:"McCardell Bicentennial Hall",
+	  								roomId:"f2Eq17",
+	  								occupants:5 
+	  							  }]);
 	});
 });
