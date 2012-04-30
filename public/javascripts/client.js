@@ -345,8 +345,8 @@ function whoCallback (data) {
     aliases = data.aliases;
     updateWhoList(aliases);
 }/* client.js subfile 4 */
-var socket = io.connect(); // DEVELOPMENT
-//var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
+//var socket = io.connect(); // DEVELOPMENT
+var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
 socket.on("recv", onMessage);
 socket.on("join", onJoin);
 socket.on("who", whoCallback);
