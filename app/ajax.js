@@ -131,6 +131,12 @@ io.sockets.on("connection", function (socket) {
 	  								building:"McCardell Bicentennial Hall",
 	  								roomId:"f2Eq17",
 	  								occupants:5 
-	  							  }]);
+	  							  }, 
+									{ name:"Computer Science Lab", // Mock filer data.
+	  								roomNum:"531", 
+	  								building:"McCardell Bicentennial Hall",
+	  								roomId:"f2Eq17",
+	  								occupants:5 
+	  							  } ]);
 	});
 });

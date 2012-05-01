@@ -130,7 +130,9 @@ function onLocation(position) {
   mapsInit(position);
   socket.emit("location", position);
 }
-
+function locationCallback(data) {
+  updateRoomList(data);
+}
 function mapsInit(position) {
   var myOptions = {
     center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
@@ -151,7 +153,7 @@ function mapsInit(position) {
 
 function getLocation() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(onLocation, 
+    navigator.geolocation.getCurrentPosition(onLocation,
       function (error) {
         switch(error.code) {
           case error.TIMEOUT:

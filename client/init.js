@@ -4,6 +4,7 @@ var socket = io.connect(); // DEVELOPMENT
 socket.on("recv", onMessage);
 socket.on("join", onJoin);
 socket.on("who", whoCallback);
+socket.on("location", locationCallback);
 socket.on("error", onError);
 $(document).ready(function() {
   if($("#content").attr("showChat") === "true")

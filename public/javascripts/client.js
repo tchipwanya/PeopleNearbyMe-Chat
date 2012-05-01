@@ -130,7 +130,9 @@ function onLocation(position) {
   mapsInit(position);
   socket.emit("location", position);
 }
-
+function locationCallback(data) {
+  updateRoomList(data);
+}
 function mapsInit(position) {
   var myOptions = {
     center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
@@ -151,7 +153,7 @@ function mapsInit(position) {
 
 function getLocation() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(onLocation, 
+    navigator.geolocation.getCurrentPosition(onLocation,
       function (error) {
         switch(error.code) {
           case error.TIMEOUT:
@@ -194,6 +196,19 @@ function updateWhoList(aliases) {
     content += '</li>';
   }
   $('#whoList').html(content);
+}
+function updateRoomList(data) {
+  $('#roomSelect').html('');
+  console.log("Data:");
+  console.log(data);
+
+  var content = "";
+  for(var x in data) {
+    content += '<option value="'+data[x].roomId+'">';
+    content += data[x].name+" - "+data[x].roomNum;
+    content += "</option>";
+  }
+  $('#roomSelect').html(content);
 }
 function addMessage (from, text, time, _class) {
   if (text === null)
@@ -397,6 +412,7 @@ var socket = io.connect(); // DEVELOPMENT
 socket.on("recv", onMessage);
 socket.on("join", onJoin);
 socket.on("who", whoCallback);
+socket.on("location", locationCallback);
 socket.on("error", onError);
 $(document).ready(function() {
   if($("#content").attr("showChat") === "true")
