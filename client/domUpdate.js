@@ -2,9 +2,9 @@
 
 //updates the users link to reflect the number of active users
 function updateUsersLink ( ) {
-  var t = aliases.length.toString() + " user";
-  if (aliases.length != 1) t += "s";
-  $("#usersLink").text(t);
+	var t = aliases.length.toString() + " user";
+	if (aliases.length != 1) t += "s";
+	$("#usersLink").text(t);
 }
 
 //inserts an event into the stream for display
@@ -13,113 +13,117 @@ function updateUsersLink ( ) {
 //_class is a css class to apply to the message, usefull for system events
 //aliases is global for better or for worse...
 function updateWhoList() {
-  $('#whoList').html('');
-  var content = "";
-  for(var i in aliases) {
-    var alias = aliases[i];
-    content += '<li class="person">';
-    content += alias;
-    content += '</li>';
-  }
-  $('#whoList').html(content);
+	$('#whoList').html('');
+	var content = "";
+	for(var i in aliases) {
+		var alias = aliases[i];
+		content += '<li class="person">';
+		content += alias;
+		content += '</li>';
+	}
+	$('#whoList').html(content);
 }
 function updateRoomList(data) {
-  $('#roomSelect').html('');
+	$('#roomSelect').html('');
 
-  var content = "";
-  for(var x in data) {
-    content += '<option value="'+data[x].roomId+'">';
-    content += data[x].name+" - "+data[x].roomNum;
-    content += "</option>";
-  }
-  $('#roomSelect').html(content);
+	var content = "";
+	for(var x in data) {
+		content += '<option value="'+data[x]._id+'">';
+		content += data[x].name;
+		content += "</option>";
+	}
+	$('#roomSelect').html(content);
 }
 function addMessage (from, text, time, _class) {
-  if (text === null)
-    return;
+	if (text === null)
+		return;
 
-  if (time === null) {
-    // if the time is null or undefined, use the current time.
-    time = new Date();
-  } else if ((time instanceof Date) === false) {
-    // if it's a timestamp, interpret it
-    time = new Date(time);
-  }
+	if (time === null) {
+		// if the time is null or undefined, use the current time.
+		time = new Date();
+	} else if ((time instanceof Date) === false) {
+		// if it's a timestamp, interpret it
+		time = new Date(time);
+	}
 
-  //every message you see is actually a table with 3 cols:
-  //  the time,
-  //  the person who caused the event,
-  //  and the content
-  var messageElement = $(document.createElement("div"));
+	//every message you see is actually a table with 3 cols:
+	//  the time,
+	//  the person who caused the event,
+	//  and the content
+	var messageElement = $(document.createElement("div"));
 
-  messageElement.addClass("message");
-  if (_class)
-    messageElement.addClass(_class);
+	messageElement.addClass("message");
+	if (_class)
+		messageElement.addClass(_class);
 
-  // sanitize
-  text = util.toStaticHTML(text);
+	// sanitize
+	text = util.toStaticHTML(text);
 
-  // If the current user said this, add a special css class
-  var alias_re = new RegExp(CONFIG.alias);
-  if (alias_re.exec(text))
-    messageElement.addClass("personal");
+	// If the current user said this, add a special css class
+	var alias_re = new RegExp(CONFIG.alias);
+	if (alias_re.exec(text))
+		messageElement.addClass("personal");
 
-  // replace URLs with links
-  text = text.replace(util.urlRE, '<a target="_blank" href="$&">$&</a>');
+	// replace URLs with links
+	text = text.replace(util.urlRE, '<a target="_blank" href="$&">$&</a>');
 
-  var content = '<div>';
-  content+= '  <span class="date">' + util.timeString(time) + '</span>';
-  content+= '  <span class="alias">' + util.toStaticHTML(from) + '</span>';
-  content+= '  <span class="msg-text">' + text  + '</td>';
-  content+= '</div>';
-              
-  messageElement.html(content);
-  $("#log").append(messageElement);
-  scrollDown();
+	var content = '<div>';
+	content+= '  <span class="date">' + util.timeString(time) + '</span>';
+	content+= '  <span class="alias">' + util.toStaticHTML(from) + '</span>';
+	content+= '  <span class="msg-text">' + text  + '</td>';
+	content+= '</div>';
+							
+	messageElement.html(content);
+	$("#log").append(messageElement);
+	scrollDown();
 }
 
 //we want to show a count of unread messages when the window does not have focus
 function updateTitle(){
-  if (CONFIG.unread) {
-    document.title = "(" + CONFIG.unread.toString() + ") #PeopleNearby.me";
-  } else {
-    document.title = "#PeopleNearby.me";
-  }
+	if (CONFIG.unread) {
+		document.title = "(" + CONFIG.unread.toString() + ") #PeopleNearby.me";
+	} else {
+		document.title = "#PeopleNearby.me";
+	}
+}
+
+function updateRoomTitle() {
+	$("#roomTitle").html(CONFIG.room);
 }
 
 //Transition the page to the state that prompts the user for a alias
 function showConnect (errorMessage) {
-  if (errorMessage)
-    $("#error").html(errorMessage).css('display', 'block');
-  
-  $("#connect").css('display','block');
-  $("#loading").css('display','none');
-  $("#toolbar").css('display','none');
-  $("#map_canvas").css('display','block');
-  $("#log").css('display','none');
-  $("#who").css('display','none');
-  $("#aliasInput").focus();
+	if (errorMessage)
+		$("#error").html(errorMessage).css('display', 'block');
+	
+	$("#connect").css('display','block');
+	$("#loading").css('display','none');
+	$("#toolbar").css('display','none');
+	$("#map_canvas").css('display','block');
+	$("#log").css('display','none');
+	$("#who").css('display','none');
+	$("#aliasInput").focus();
 }
 
 //transition the page to the loading screen
 function showLoad () {
-  $("#error").css('display', 'none');
-  $("#connect").css('display','none');
-  $("#loading").css('display','block');
-  $("#toolbar").css('display','none');
+	$("#error").css('display', 'none');
+	$("#connect").css('display','none');
+	$("#loading").css('display','block');
+	$("#toolbar").css('display','none');
 
 }
 
 //transition the page to the main chat view, putting the cursor in the textfield
 function showChat (alias) {
-  $("#map_canvas").css('display','none');
-  $("#toolbar").css('display','block');
-  $("#log").css('display','block');
-  $("#who").css('display','block');
-  $("#entry").focus();
-  $("#error").css('display', 'none');
-  $("#connect").css('display','none');
-  $("#loading").css('display','none');
+	$("#map_canvas").css('display','none');
+	$("#toolbar").css('display','block');
+	$("#log").css('display','block');
+	$("#who").css('display','block');
+	$("#entry").focus();
+	$("#error").css('display', 'none');
+	$("#connect").css('display','none');
+	$("#loading").css('display','none');
 
-  scrollDown();
+	scrollDown();
 }

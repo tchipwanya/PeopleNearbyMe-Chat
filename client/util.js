@@ -183,24 +183,23 @@ function bindEvents() {
 	socket.on("error", onError);
 	socket.on("join", onJoin);
 	socket.on("location", onLocation);
-	
+
 	// Entry send
-	$("#entry").keypress(function (e) { 
-		if (e.keyCode != 13 /* Return */) 
-			return;
-		var msg = $("#entry").attr("value").replace("\n", "");
-		if (!util.isBlank(msg)) 
+	$("#entryForm").submit(function (i) { 
+		i.preventDefault();
+		var msg = $("#entry").val().replace("\n", "");
+		if (!util.isBlank(msg))
 			send(msg);
-		$("#entry").attr("value", "");
+		$("#entry").val('');
 	});
 
 	// Try joining the chat when the user clicks the connect button
 	$("#joinForm").submit(function (i) {
 		i.preventDefault();
 		showLoad();
-		var alias = $("#aliasInput").attr("value");
-		var roomSelect = "ROOM_SELECT_VAL"; // TODO FIGURE OUT HOW TO GET OPTION SELECTED HERE
-		var roomInput = $("#roomInput").attr("value");
+		var alias = $("#aliasInput").val();
+		var roomSelect = $("#roomSelect").val(); // I <3 jQuery
+		var roomInput = $("#roomInput").val();
 
 		if (alias.length > 50) {
 			showConnect("alias too long. 50 character max.");
@@ -218,7 +217,7 @@ function bindEvents() {
 			return false;
 		}
 
-		// TODO validate roomInput.
+		// TODO validate roomInput. 
 
 		//make the actual join request to the server
 		socket.emit("join", { alias: alias, roomInput: roomInput, roomSelect: roomSelect });

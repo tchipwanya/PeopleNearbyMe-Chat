@@ -73,4 +73,5 @@ var mongo = require('mongodb')
   , Server = mongo.Server
   , Db = mongo.Db
   , server = new Server('localhost', 27017, {auto_reconnect: true})
+  , BSON = mongo.BSONPure
   , db = new Db('peoplenearbyme', server);

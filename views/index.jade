@@ -4,16 +4,18 @@
 	form#joinForm
 		input(id="aliasInput", class="text", type="text", name="alias", autocomplete="off", value="", placeholder="Enter a username here, then select your location.")	
 		select(id="roomSelect", name="room", size="2")
-			option(value="1234") Loading
+			optgroup Loading
 		input(id="roomInput", class="text", type="text", name="roomInput", autocomplete="off", value="", placeholder="If your room wasn't listed above, enter it here.")
 		input(id="joinButton", class="button", type="submit", name="", value="Join")
 	.clear
 #loading
 	p loading
 #who
+	h4#roomtitle
 	#whoTitle People nearby you:
 	ul#whoList
 
 #log
 #toolbar
-	input(tabindex="1", type="text", id="entry")	
+	form#entryForm
+		input(tabindex="1", type="text", id="entry")	

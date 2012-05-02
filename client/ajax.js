@@ -60,7 +60,9 @@ function onJoin (data) {
 
 	CONFIG.alias = data.alias;
 	CONFIG.id = data.id;
-
+	CONFIG.room = data.room;
+	updateRoomTitle();
+	
     aliases = data.aliases;
     updateWhoList();
 
