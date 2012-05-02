@@ -11,7 +11,8 @@ function updateUsersLink ( ) {
 //the event may be a msg, join or part type
 //from is the user, text is the body and time is the timestamp, defaulting to now
 //_class is a css class to apply to the message, usefull for system events
-function updateWhoList(aliases) {
+//aliases is global for better or for worse...
+function updateWhoList() {
   $('#whoList').html('');
   var content = "";
   for(var i in aliases) {
@@ -24,8 +25,6 @@ function updateWhoList(aliases) {
 }
 function updateRoomList(data) {
   $('#roomSelect').html('');
-  console.log("Data:");
-  console.log(data);
 
   var content = "";
   for(var x in data) {

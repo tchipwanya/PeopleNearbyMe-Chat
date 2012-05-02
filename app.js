@@ -79,7 +79,7 @@ var mongo = require('mongodb')
 io.sockets.on("connection", function (socket) {
 
 	var hs = socket.handshake;
-    console.log('A socket with sessionID ' + hs.sessionID + ' connected!');
+
     // setup an inteval that will keep our session fresh
     var intervalID = setInterval(function () {
         // reload the session (just in case something changed
@@ -95,22 +95,7 @@ io.sockets.on("connection", function (socket) {
         clearInterval(intervalID);
     });
 
-
-	socket.on("who", function (data) {
-		var aliases = [];
-		var clients = io.sockets.clients();
-		for (var i in clients) {
-			client = clients[i];
-			var user = client.handshake.session.user;
-			if(user) {
-				aliases.push(user.alias);
-			}
-		}
-		console.log(aliases);
-		socket.emit("who", { aliases: aliases});
-	});
-
-	function createSession (socket, alias) { // probably more secure than we need at the moment.
+	function createSession (socket, alias) {
 		if (/[^\w_\-^!]/.exec(alias)) return "Alias contains invalid characters.";
 		if (alias === null) return "Alias was not included in join request.";
 		if (alias.length === 0) return "You forgot to enter your alias silly.";
@@ -129,6 +114,7 @@ io.sockets.on("connection", function (socket) {
 		session.save();
 		return user;
 	}
+
 	socket.on("join", function (userData) {
 
 		var alias = userData.alias;
@@ -162,17 +148,29 @@ io.sockets.on("connection", function (socket) {
 		session.user = user;
 		session.save();
 
-		var m = {
-			alias: user.alias,
-			type: "join", // "msg", "join", "part",
-			timestamp: (new Date()).getTime()
-		};
-		socket.broadcast.emit("recv", m);
-		socket.emit("join", { id: hs.sessionID, alias: hs.session.user.alias });
+		// who function copied in here and removed.
+		var aliases = [];
+		var clients = io.sockets.clients();
+		for (var i in clients) {
+			client = clients[i];
+			var user = client.handshake.session.user;
+			if(user) {
+				aliases.push(user.alias);
+			}
+		}
+
+		socket.broadcast.emit("someoneJoin", {	alias: user.alias,
+												timestamp: (new Date()).getTime() });
+
+		socket.emit("join", { 	id: hs.sessionID, 
+								alias: hs.session.user.alias,
+								aliases: aliases });
 	});
 
 	socket.on("part", function (userData) {
 		clearInterval(intervalID);
+		socket.broadcast.emit("someonePart", {	alias: user.alias,
+												timestamp: (new Date()).getTime() });
 	});
 
 	socket.on("send", function (userData) {
@@ -181,14 +179,9 @@ io.sockets.on("connection", function (socket) {
 		// If a registered user.
 		if(hs.session.user) {
 			hs.session.touch().save();
-
-			var m = {
-				alias: hs.session.user.alias,
-				type: "msg", // "msg", "join", "part",
-				text: text,
-				timestamp: (new Date()).getTime()
-			};
-			io.sockets.emit("recv", m);
+			io.sockets.emit("message", {	alias: hs.session.user.alias,
+											text: text,
+											timestamp: (new Date()).getTime() });
 		}
 	});
 
@@ -215,4 +208,5 @@ io.sockets.on("connection", function (socket) {
 	  								occupants:5 
 	  							  } ]);
 	});
+
 });

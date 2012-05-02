@@ -1,11 +1,11 @@
 /* client.js subfile 1 */
 
 var CONFIG = {alias: "#",   // set in onConnect,
-              id: null,    // set in onConnect,
-              last_message_time: 1,
-              focus: true, //event listeners bound in onConnect,
-              unread: 0 //updated in the message-processing loop
-             };
+							id: null,    // set in onConnect,
+							last_message_time: 1,
+							focus: true, //event listeners bound in onConnect,
+							unread: 0 //updated in the message-processing loop
+						 };
 
 var aliases = [];
 
@@ -31,42 +31,42 @@ var aliases = [];
  *
  */
 Date.prototype.toRelativeTime = function(now_threshold) {
-  var delta = new Date() - this;
+	var delta = new Date() - this;
 
-  now_threshold = parseInt(now_threshold, 10);
+	now_threshold = parseInt(now_threshold, 10);
 
-  if (isNaN(now_threshold)) {
-    now_threshold = 0;
-  }
+	if (isNaN(now_threshold)) {
+		now_threshold = 0;
+	}
 
-  if (delta <= now_threshold) {
-    return 'Just now';
-  }
+	if (delta <= now_threshold) {
+		return 'Just now';
+	}
 
-  var units = null;
-  var conversions = {
-    millisecond: 1, // ms    -> ms
-    second: 1000,   // ms    -> sec
-    minute: 60,     // sec   -> min
-    hour:   60,     // min   -> hour
-    day:    24,     // hour  -> day
-    month:  30,     // day   -> month (roughly)
-    year:   12      // month -> year
-  };
+	var units = null;
+	var conversions = {
+		millisecond: 1, // ms    -> ms
+		second: 1000,   // ms    -> sec
+		minute: 60,     // sec   -> min
+		hour:   60,     // min   -> hour
+		day:    24,     // hour  -> day
+		month:  30,     // day   -> month (roughly)
+		year:   12      // month -> year
+	};
 
-  for (var key in conversions) {
-    if (delta < conversions[key]) {
-      break;
-    } else {
-      units = key; // keeps track of the selected key over the iteration
-      delta = delta / conversions[key];
-    }
-  }
+	for (var key in conversions) {
+		if (delta < conversions[key]) {
+			break;
+		} else {
+			units = key; // keeps track of the selected key over the iteration
+			delta = delta / conversions[key];
+		}
+	}
 
-  // pluralize a unit when the difference is greater than 1.
-  delta = Math.floor(delta);
-  if (delta !== 1) { units += "s"; }
-  return [delta, units].join(" ");
+	// pluralize a unit when the difference is greater than 1.
+	delta = Math.floor(delta);
+	if (delta !== 1) { units += "s"; }
+	return [delta, units].join(" ");
 };
 
 /*
@@ -74,105 +74,156 @@ Date.prototype.toRelativeTime = function(now_threshold) {
  * representation of a Date, and want back a date object.
  */
 Date.fromString = function(str) {
-  return new Date(Date.parse(str));
+	return new Date(Date.parse(str));
 };
 
 util = {
-  urlRE: /https?:\/\/([-\w\.]+)+(:\d+)?(\/([^\s]*(\?\S+)?)?)?/g,
+	urlRE: /https?:\/\/([-\w\.]+)+(:\d+)?(\/([^\s]*(\?\S+)?)?)?/g,
 
-  //html sanitizer
-  toStaticHTML: function(inputHtml) {
-    inputHtml = inputHtml.toString();
-    return inputHtml.replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;");
-  },
+	//html sanitizer
+	toStaticHTML: function(inputHtml) {
+		inputHtml = inputHtml.toString();
+		return inputHtml.replace(/&/g, "&amp;")
+										.replace(/</g, "&lt;")
+										.replace(/>/g, "&gt;");
+	},
 
-  //pads n with zeros on the left,
-  //digits is minimum length of output
-  //zeroPad(3, 5); returns "005"
-  //zeroPad(2, 500); returns "500"
-  zeroPad: function (digits, n) {
-    n = n.toString();
-    while (n.length < digits)
-      n = '0' + n;
-    return n;
-  },
+	//pads n with zeros on the left,
+	//digits is minimum length of output
+	//zeroPad(3, 5); returns "005"
+	//zeroPad(2, 500); returns "500"
+	zeroPad: function (digits, n) {
+		n = n.toString();
+		while (n.length < digits)
+			n = '0' + n;
+		return n;
+	},
 
-  //it is almost 8 o'clock PM here
-  //timeString(new Date); returns "19:49"
-  timeString: function (date) {
-    var minutes = date.getMinutes().toString();
-    var hours = date.getHours().toString();
-    var ampm = "am"
-    if (hours > 12) {
-      ampm = "pm";
-      hours -= 12;
-    }
-    return hours + ":" + this.zeroPad(2, minutes) + ampm;
-  },
+	//it is almost 8 o'clock PM here
+	//timeString(new Date); returns "19:49"
+	timeString: function (date) {
+		var minutes = date.getMinutes().toString();
+		var hours = date.getHours().toString();
+		var ampm = "am"
+		if (hours > 12) {
+			ampm = "pm";
+			hours -= 12;
+		}
+		return hours + ":" + this.zeroPad(2, minutes) + ampm;
+	},
 
-  //does the argument only contain whitespace?
-  isBlank: function(text) {
-    var blank = /^\s*$/;
-    return (text.match(blank) !== null);
-  }
+	//does the argument only contain whitespace?
+	isBlank: function(text) {
+		var blank = /^\s*$/;
+		return (text.match(blank) !== null);
+	}
 };
 
 //used to keep the most recent messages visible
 function scrollDown () {
-  var doAutoscroll = (($("#log").scrollTop()+ $("#log").innerHeight() + 40)>=($("#log")[0].scrollHeight));
-  //  addMessage2("sys", ($("#log").scrollTop() +  $("#log").innerHeight()).toString() + " " + ($("#log")[0].scrollHeight).toString() + " " + doAutoscroll );
-  if (doAutoscroll) $("#log").scrollTop($("#log")[0].scrollHeight);
+	var doAutoscroll = (($("#log").scrollTop()+ $("#log").innerHeight() + 40)>=($("#log")[0].scrollHeight));
+	//  addMessage2("sys", ($("#log").scrollTop() +  $("#log").innerHeight()).toString() + " " + ($("#log")[0].scrollHeight).toString() + " " + doAutoscroll );
+	if (doAutoscroll) $("#log").scrollTop($("#log")[0].scrollHeight);
 }
 
-function onLocation(position) {
-  mapsInit(position);
-  socket.emit("location", position);
+function gotLocation(position) {
+	mapsInit(position);
+	socket.emit("location", position);
 }
-function locationCallback(data) {
-  updateRoomList(data);
+
+function onLocation(data) {
+	updateRoomList(data);
 }
 function mapsInit(position) {
-  var myOptions = {
-    center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
-    zoom: 16,
-    zoomControl: false,
-    streetViewControl: false,
-    scaleControl: false,
-    rotateControl: false,
-    panControl: false,
-    overviewMapControl: false,
-    mapTypeControl: false,
-    disableDoubleClickZoom: true,
-    scrollwheel: false,
-    mapTypeId: google.maps.MapTypeId.HYBRID
-  };
-  var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+	var myOptions = {
+		center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+		zoom: 16,
+		zoomControl: false,
+		streetViewControl: false,
+		scaleControl: false,
+		rotateControl: false,
+		panControl: false,
+		overviewMapControl: false,
+		mapTypeControl: false,
+		disableDoubleClickZoom: true,
+		scrollwheel: false,
+		mapTypeId: google.maps.MapTypeId.HYBRID
+	};
+	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 }
 
 function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(onLocation,
-      function (error) {
-        switch(error.code) {
-          case error.TIMEOUT:
-            console.log('Timeout');
-            break;
-          case error.POSITION_UNAVAILABLE:
-            console.log('Position unavailable');
-            break;
-          case error.PERMISSION_DENIED:
-            console.log('Permission denied');
-            break;
-          case error.UNKNOWN_ERROR:
-            console.log('Unknown error');
-            break;
-        }
-      });
-  } else {
-    console.log("Error: Old or non-compliant browser.");
-  }
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(gotLocation,
+			function (error) {
+				switch(error.code) {
+					case error.TIMEOUT:
+						console.log('Timeout');
+						break;
+					case error.POSITION_UNAVAILABLE:
+						console.log('Position unavailable');
+						break;
+					case error.PERMISSION_DENIED:
+						console.log('Permission denied');
+						break;
+					case error.UNKNOWN_ERROR:
+						console.log('Unknown error');
+						break;
+				}
+			});
+	} else {
+		console.log("Error: Old or non-compliant browser.");
+	}
+}
+
+function bindEvents() {
+	socket.on("someoneJoin", onSomeoneJoin);
+	socket.on("someonePart", onSomeonePart);
+	socket.on("message", onMessage);
+	socket.on("error", onError);
+	socket.on("join", onJoin);
+	socket.on("location", onLocation);
+	
+	// Entry send
+	$("#entry").keypress(function (e) { 
+		if (e.keyCode != 13 /* Return */) 
+			return;
+		var msg = $("#entry").attr("value").replace("\n", "");
+		if (!util.isBlank(msg)) 
+			send(msg);
+		$("#entry").attr("value", "");
+	});
+
+	// Try joining the chat when the user clicks the connect button
+	$("#joinForm").submit(function (i) {
+		i.preventDefault();
+		showLoad();
+		var alias = $("#aliasInput").attr("value");
+		var roomSelect = "ROOM_SELECT_VAL"; // TODO FIGURE OUT HOW TO GET OPTION SELECTED HERE
+		var roomInput = $("#roomInput").attr("value");
+
+		if (alias.length > 50) {
+			showConnect("alias too long. 50 character max.");
+			return false;
+		}
+
+		if (alias.length === 0) {
+			showConnect("You forgot to enter your alias silly.");
+			return;
+		}
+
+		//more validations
+		if (/[^\w_\-^!]/.exec(alias)) {
+			showConnect("Bad character in alias. Can only have letters, numbers, and '_', '-', '^', '!'");
+			return false;
+		}
+
+		// TODO validate roomInput.
+
+		//make the actual join request to the server
+		socket.emit("join", { alias: alias, roomInput: roomInput, roomSelect: roomSelect });
+		return true;
+	});
 }/* client.js subfile 2 */
 
 //updates the users link to reflect the number of active users
@@ -186,7 +237,8 @@ function updateUsersLink ( ) {
 //the event may be a msg, join or part type
 //from is the user, text is the body and time is the timestamp, defaulting to now
 //_class is a css class to apply to the message, usefull for system events
-function updateWhoList(aliases) {
+//aliases is global for better or for worse...
+function updateWhoList() {
   $('#whoList').html('');
   var content = "";
   for(var i in aliases) {
@@ -199,8 +251,6 @@ function updateWhoList(aliases) {
 }
 function updateRoomList(data) {
   $('#roomSelect').html('');
-  console.log("Data:");
-  console.log(data);
 
   var content = "";
   for(var x in data) {
@@ -302,164 +352,95 @@ function showChat (alias) {
 /* client.js subfile 3 */
 
 // Handles when a user joins the chatroom
-function userJoin(alias, timestamp) {
-  addMessage(alias, "joined", timestamp, "join");
-  for (var i = 0; i < aliases.length; i++)
-    if (aliases[i] == alias) return;
-  aliases.push(alias);
-  updateUsersLink();
-  who();
+
+function onSomeoneJoin(data) {
+	var alias = data.alias;
+	var timestamp = data.timestamp;
+	addMessage(alias, "joined", timestamp, "join");
+	updateTitle();      
+	for (var i = 0; i < aliases.length; i++)
+		if (aliases[i] == alias) return;
+	aliases.push(alias);
+	updateUsersLink();
 }
 
 // Handles when a user leaves the chatroom
-function userPart(alias, timestamp) {
-  addMessage(alias, "left", timestamp, "part");
-  for (var i = 0; i < aliases.length; i++) {
-    if (aliases[i] == alias) {
-      aliases.splice(i,1);
-      break;
-    }
-  }
-  updateUsersLink();
+
+function onSomeonePart(data) {
+	var alias = data.alias;
+	var timestamp = data.timestamp;
+
+	addMessage(alias, "left", timestamp, "part");
+	for (var i = 0; i < aliases.length; i++) {
+		if (aliases[i] == alias) {
+			aliases.splice(i,1);
+			break;
+		}
+	}
+    updateWhoList();
+	updateTitle();
+	updateUsersLink();
 }
 
-var first_poll = true;
 
 function onMessage(data) {
-      var message = data;
-      if (message.timestamp > CONFIG.last_message_time)
-        CONFIG.last_message_time = message.timestamp;
-
-      switch (message.type) { // later on we can break these up into different callbacks and message types.
-        case "msg":
-          if (!CONFIG.focus) {
-            CONFIG.unread++;
-          }
-          addMessage(message.alias, message.text, message.timestamp);
-          break;
-
-        case "join":
-          userJoin(message.alias, message.timestamp);
-          break;
-
-        case "part":
-          userPart(message.alias, message.timestamp);
-          break;
-      }
-    updateTitle();
-
-    // should we include this data in chatroom join callback?
-    if (first_poll) {
-      first_poll = false;
-      who();
-    }
+	if (!CONFIG.focus) {
+		CONFIG.unread++;
+	}
+	if (data.timestamp > CONFIG.last_message_time)
+		CONFIG.last_message_time = data.timestamp;
+	addMessage(data.alias, data.text, data.timestamp);
+	updateTitle();
 }
 
 function onError(data) {
-  showConnect(data.error);
+	showConnect(data.error);
 }
 
-//submit a new message to the server
+// submit a new message to the server
 function send(msg) {
-  socket.emit("send", {id: CONFIG.id, text: msg});
+	socket.emit("send", {id: CONFIG.id, text: msg});
 }
 
 //handle the server's response to our alias and join request
-function onJoin (session) {
-  if (session.error) {
-    showConnect(session.error);
-    return;
-  }
+function onJoin (data) {
+	if (data.error) {
+		showConnect(data.error);
+		return;
+	}
 
-  CONFIG.alias = session.alias;
-  CONFIG.id = session.id;
+	CONFIG.alias = data.alias;
+	CONFIG.id = data.id;
 
-  //update the UI to show the chat
-  showChat(CONFIG.alias);
-
-  //listen for browser events so we know to update the document title
-  $(window).bind("blur", function() {
-    CONFIG.focus = false;
-    updateTitle();
-  });
-
-  $(window).bind("focus", function() {
-    CONFIG.focus = true;
-    CONFIG.unread = 0;
-    updateTitle();
-  });
-}
-
-//add a list of present chat members to the stream
-function outputUsers () {
-  var alias_string = aliases.length > 0 ? aliases.join(", ") : "(none)";
-  addMessage("users:", alias_string, new Date(), "notice");
-  return false;
-}
-
-//get a list of the users presently in the room, and add it to the stream
-function who() {
-  socket.emit("who", {});
-}
-
-function whoCallback (data) {
-    console.log(data);
     aliases = data.aliases;
-    updateWhoList(aliases);
+    updateWhoList();
+
+	//update the UI to show the chat
+	showChat(CONFIG.alias);
+
+	//listen for browser events so we know to update the document title
+	$(window).bind("blur", function() {
+		CONFIG.focus = false;
+		updateTitle();
+	});
+
+	$(window).bind("focus", function() {
+		CONFIG.focus = true;
+		CONFIG.unread = 0;
+		updateTitle();
+	});
 }/* client.js subfile 4 */
+
 var socket = io.connect(); // DEVELOPMENT
 //var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
-socket.on("recv", onMessage);
-socket.on("join", onJoin);
-socket.on("who", whoCallback);
-socket.on("location", locationCallback);
-socket.on("error", onError);
+
 $(document).ready(function() {
   if($("#content").attr("showChat") === "true")
     showChat();
   else
     showConnect();
-
   getLocation();
-  /* Event binding */
-
-  $("#entry").keypress(function (e) {
-    if (e.keyCode != 13 /* Return */) return;
-    var msg = $("#entry").attr("value").replace("\n", "");
-    if (!util.isBlank(msg)) send(msg);
-    $("#entry").attr("value", ""); // clear the entry field.
-  });
-
-  //try joining the chat when the user clicks the connect button
-  $("#joinForm").submit(function (i) {
-    i.preventDefault();
-    showLoad();
-    var alias = $("#aliasInput").attr("value");
-    var roomSelect = "ROOM_SELECT_VAL"; // TODO FIGURE OUT HOW TO GET OPTION SELECTED HERE
-    var roomInput = $("#roomInput").attr("value");
-
-    if (alias.length > 50) {
-      showConnect("alias too long. 50 character max.");
-      return false;
-    }
-
-    if (alias.length === 0) {
-      showConnect("You forgot to enter your alias silly.");
-      return;
-    }
-
-    //more validations
-    if (/[^\w_\-^!]/.exec(alias)) {
-      showConnect("Bad character in alias. Can only have letters, numbers, and '_', '-', '^', '!'");
-      return false;
-    }
-
-    // TODO validate roomInput.
-
-    //make the actual join request to the server
-    socket.emit("join", { alias: alias, roomInput: roomInput, roomSelect: roomSelect });
-    return true;
-  });
+  bindEvents();
 });
 
 //if we can, notify the server that we're going away.
