@@ -71,17 +71,33 @@ db.open(function(err, db) {
 	    				collection.insert(room); //TODO see what this function returns
 					} else if (userData.roomSelect) {
 			    		collection.findOne({'_id': new BSON.ObjectID(userData.roomSelect)}, function(err, item) {
-			    			if(!err) {
-			    				room = item;
+			    			if(!err) { 
+			    				room = item; 
+			//    				console.log(room);	room is not null  				THE ERROR IS HERE
 				    		} else { console.log(err); }
+			// 				console.log(room); room is not null
 			    		});
+			//    		console.log(room); room is null ????
+			// WHAT THE FUCK
+			/* Test function here works fine with closure.
+			var y = null;
+			function foo(bar){bar();}
+			foo(function(qwer){ var m = {name:"Knox"}; y = m });
+			console.log(y); */
 					} else { 
 						socket.emit("error", {error: "No room specified."});
 						return null; 
 					}
 
+					if (!room) { 
+						socket.emit("error", {error: "Room could not be resolved."});
+						return null;
+					}
+
+			//		console.log(room);
+
 					//socket.join(room._id);  // TODO insert room join codez
-					var user = { alias: alias, room: room._id};
+					var user = { alias: alias, room: room.name};
 					var session = socket.handshake.session;
 					
 					session.user = user;

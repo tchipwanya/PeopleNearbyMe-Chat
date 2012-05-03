@@ -149,7 +149,9 @@ db.open(function(err, db) {
 					} else if (userData.roomSelect) {
 			    		collection.findOne({'_id': new BSON.ObjectID(userData.roomSelect)}, function(err, item) {
 			    			if(!err) {
-			    				room = item;
+			    				room = {name:item.name, _id:item._id}; 
+			    				// OK so after 4 hours of looking at this I've found that 
+			    				// in javascript you cannot do assignment by reference within a closure.
 				    		} else { console.log(err); }
 			    		});
 					} else { 
@@ -157,8 +159,15 @@ db.open(function(err, db) {
 						return null; 
 					}
 
+					if (!room) { 
+						socket.emit("error", {error: "Room could not be resolved."});
+						return null;
+					}
+
+//					console.log(room);
+
 					//socket.join(room._id);  // TODO insert room join codez
-					var user = { alias: alias, room: room._id};
+					var user = { alias: alias, room: room.name};
 					var session = socket.handshake.session;
 					
 					session.user = user;
