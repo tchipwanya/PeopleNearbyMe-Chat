@@ -6,6 +6,7 @@ db.open(function(err, db) {
 	} else {
 		io.sockets.on("connection", function (socket) { 
 			var hs = socket.handshake;
+			var room = null;
 
 		    // setup an inteval that will keep our session fresh
 		    var intervalID = setInterval(function () {
@@ -27,7 +28,7 @@ db.open(function(err, db) {
 				if (alias.length === 0) return "You forgot to enter your alias silly.";
 				if (alias.length > 50) return "The alias you entered is too long.";
 
-				var clients = io.sockets.clients();
+				var clients = io.sockets.in(room._id).clients();
 				for (var i in clients) {
 					var client = clients[i];
 					var user = client.handshake.session.user;
@@ -42,51 +43,46 @@ db.open(function(err, db) {
 			}
 
 			socket.on("join", function (userData) {
-				var alias = userData.alias;
-				var error = "";
-
-				if (!alias){ error += "Alias was not included in join request. "; }
-				if (/[^\w_\-^!]/.exec(alias)) { error += "Alias contains invalid characters and is far too silly. "; }
-				if (alias.length === 0) { error += "You forgot to enter your alias silly. "; }
-				if (alias.length > 50) { error += "The alias you entered is too long. "; }
-
-				var clients = io.sockets.clients();
-
-				for (var i in clients) {
-					var client = clients[i];
-					var user = client.handshake.session.user;
-					if (user && user.alias === alias) { error += "The alias you entered is already in use."; }
-				}
-
-				if(error.length !== 0) {
-					socket.emit("error", {error: error});
-					return null;
-				}
-
-	    		db.collection('rooms', function(err, collection) {
-	    			
-	    			var room = null;
+	    		db.collection('rooms', function(err, collection) { 			
 					if (userData.roomInput) {  			
 	    				room = {name: userData.roomInput};
 	    				collection.insert(room); //TODO see what this function returns
+	    				onRetrieveRoom();
 					} else if (userData.roomSelect) {
 			    		collection.findOne({'_id': new BSON.ObjectID(userData.roomSelect)}, function(err, item) {
 			    			if(!err) { 
-			    				room = item; 
-			//    				console.log(room);	room is not null  				THE ERROR IS HERE
-				    		} else { console.log(err); }
-			// 				console.log(room); room is not null
-			    		});
-			//    		console.log(room); room is null ????
-			// WHAT THE FUCK
-			/* Test function here works fine with closure.
-			var y = null;
-			function foo(bar){bar();}
-			foo(function(qwer){ var m = {name:"Knox"}; y = m });
-			console.log(y); */
+			    				room = item;
+			    				onRetrieveRoom(); 
+				    		} else { 
+				    			console.log(err); 
+				    		}
+			    		}); 
 					} else { 
 						socket.emit("error", {error: "No room specified."});
 						return null; 
+					}
+				});
+
+				function onRetrieveRoom() {
+					var alias = userData.alias;
+					var error = "";
+
+					if (!alias){ error += "Alias was not included in join request. "; }
+					if (/[^\w_\-^!]/.exec(alias)) { error += "Alias contains invalid characters and is far too silly. "; }
+					if (alias.length === 0) { error += "You forgot to enter your alias silly. "; }
+					if (alias.length > 50) { error += "The alias you entered is too long. "; }
+
+					var clients = io.sockets.in(room._id).clients();
+
+					for (var i in clients) {
+						var client = clients[i];
+						var user = client.handshake.session.user;
+						if (user && user.alias === alias) { error += "The alias you entered is already in use."; }
+					}
+
+					if(error.length !== 0) {
+						socket.emit("error", {error: error});
+						return null;
 					}
 
 					if (!room) { 
@@ -94,10 +90,8 @@ db.open(function(err, db) {
 						return null;
 					}
 
-			//		console.log(room);
-
-					//socket.join(room._id);  // TODO insert room join codez
-					var user = { alias: alias, room: room.name};
+					socket.join(room._id);  // TODO insert room join codez
+					var user = { alias: alias, room: room};
 					var session = socket.handshake.session;
 					
 					session.user = user;
@@ -105,7 +99,7 @@ db.open(function(err, db) {
 
 					// who function copied in here and removed.
 					var aliases = [];
-					var clients = io.sockets.clients();
+					var clients = io.sockets.in(room._id).clients();
 					for (var i in clients) {
 						client = clients[i];
 						var user = client.handshake.session.user;
@@ -114,19 +108,19 @@ db.open(function(err, db) {
 						}
 					}
 
-					socket.broadcast.emit("someoneJoin", {	alias: user.alias,
+					socket.broadcast.to(room._id).emit("someoneJoin", {	alias: user.alias,
 															timestamp: (new Date()).getTime() });
 
 					socket.emit("join", { 	id: hs.sessionID, 
 											alias: hs.session.user.alias,
 											aliases: aliases,
 											room: room });
-				});
+				};
 			});
 
 			socket.on("part", function (userData) {
 				clearInterval(intervalID);
-				socket.broadcast.emit("someonePart", {	alias: userData.alias,
+				socket.broadcast.to(room._id).emit("someonePart", {	alias: userData.alias,
 														timestamp: (new Date()).getTime() });
 			});
 
@@ -136,7 +130,7 @@ db.open(function(err, db) {
 				// If a registered user.
 				if(hs.session.user) {
 					hs.session.touch().save();
-					io.sockets.emit("message", {	alias: hs.session.user.alias,
+					io.sockets.in(room._id).emit("message", {	alias: hs.session.user.alias,
 													text: text,
 													timestamp: (new Date()).getTime() });
 				}
