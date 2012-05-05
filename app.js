@@ -1,17 +1,28 @@
 /* server.js subfile 1 */
 
+/* Mongodb connection */
+
+var mongo = require('mongodb')
+  , Server = mongo.Server
+  , Db = mongo.Db
+  , server = new Server('localhost', 27017, {auto_reconnect: true})
+  , BSON = mongo.BSONPure
+  , db = new Db('peoplenearbyme', server)
+  , MongoStore = require('connect-mongodb');
+
+/* Express init */
+
 var express = require('express')
   , routes = require('./routes')
   , io = require('socket.io')
-  , MemoryStore = express.session.MemoryStore
-  , sessionStore = new MemoryStore({ reapInterval: 1000 * 60 * 60 })
+  , sessionStore = new MongoStore({db: db, reapInterval: 1000 * 60 * 60 })
   , connect = require('connect')
   , Session = connect.middleware.session.Session
   , parseCookie = connect.utils.parseCookie
   , app = module.exports = express.createServer()
   , io = io.listen(app);
 
-// Configuration
+/* Configuration */
 
 app.configure(function() {
   app.set('views', __dirname + '/views');
@@ -43,7 +54,9 @@ io.configure(function () {
         data.sessionID = data.cookie['express.sid'];
         data.sessionStore = sessionStore;
         sessionStore.get(data.sessionID, function (err, session) {
-           if (err || !session) {
+            if (err) {
+              accept(err, false);
+            } else if (!session) {
               accept('Error null session', false);
             } else {
                 data.session = new Session(data, session);
@@ -56,7 +69,7 @@ io.configure(function () {
   });
 });
 
-// Routes
+/* Routes */
 
 app.get('/', routes.index);
 
@@ -67,14 +80,7 @@ if (!module.parent) {
   });
 }
 
-/* Mongodb connection */
 
-var mongo = require('mongodb')
-  , Server = mongo.Server
-  , Db = mongo.Db
-  , server = new Server('localhost', 27017, {auto_reconnect: true})
-  , BSON = mongo.BSONPure
-  , db = new Db('peoplenearbyme', server);
 /* server.js subfile 4 */
 
 db.open(function(err, db) {
@@ -82,7 +88,7 @@ db.open(function(err, db) {
 		console.log(err); 
 	} else {
 		io.sockets.on("connection", function (socket) { 
-			var hs = socket.handshake;
+			var hs = socket.handshake; // don't store shit here, not persistent over pageloads.
 			var room = null;
 
 		    // setup an inteval that will keep our session fresh
@@ -123,7 +129,8 @@ db.open(function(err, db) {
 	    		db.collection('rooms', function(err, collection) { 			
 					if (userData.roomInput) {  			
 	    				room = {name: userData.roomInput};
-	    				collection.insert(room); //TODO see what this function returns
+	    				// TODO validation here of roomInput
+	    				room = collection.insert(room); //TODO see what this function returns
 	    				onRetrieveRoom();
 					} else if (userData.roomSelect) {
 			    		collection.findOne({'_id': new BSON.ObjectID(userData.roomSelect)}, function(err, item) {
@@ -174,18 +181,10 @@ db.open(function(err, db) {
 					session.user = user;
 					session.save();
 
-					// who function copied in here and removed.
-					var aliases = [];
-					var clients = io.sockets.in(room._id).clients();
-					for (var i in clients) {
-						client = clients[i];
-						var user = client.handshake.session.user;
-						if(user) {
-							aliases.push(user.alias);
-						}
-					}
-
-					socket.broadcast.to(room._id).emit("someoneJoin", {	alias: user.alias,
+					var aliases = who();
+					console.log("RIGHT HERE");
+					console.log(userData);
+					socket.broadcast.to(room._id).emit("someoneJoin", {	user: user,
 															timestamp: (new Date()).getTime() });
 
 					socket.emit("join", { 	id: hs.sessionID, 
@@ -195,11 +194,56 @@ db.open(function(err, db) {
 				};
 			});
 
+			function who() {
+				// who function copied in here and removed.
+				var aliases = [];
+				var clients = io.sockets.in(room._id).clients();
+				for (var i in clients) {
+					client = clients[i];
+					var user = client.handshake.session.user;
+					if(user) {
+						aliases.push(user.alias);
+					}
+				}
+				return aliases;
+			}
+
+			socket.on("rejoin", function (userData) {
+				var user = hs.session.user;
+				socket.join(user.room._id);
+				room = user.room;
+				var aliases = who();
+				socket.emit("rejoin", { 	id: hs.sessionID, 
+											alias: user.alias,
+											aliases: aliases,
+											room: user.room});
+				socket.broadcast.to(room._id).emit("someoneJoin", {	user: user,
+																	timestamp: (new Date()).getTime() });
+			});
+
 			socket.on("part", function (userData) {
-				clearInterval(intervalID);
+				if(room) {
+					socket.leave(room._id);
+				}
+
 				socket.broadcast.to(room._id).emit("someonePart", {	alias: userData.alias,
 														timestamp: (new Date()).getTime() });
+				clearInterval(intervalID);
 			});
+
+			socket.on("logout", function (userData) {
+				socket.broadcast.to(room._id).emit("someonePart", {	alias: hs.session.user.alias,
+																	timestamp: (new Date()).getTime() });
+				if(room) {
+					socket.leave(room);
+				}
+
+				clearInterval(intervalID);
+				hs.session.destroy();
+				hs.session.regenerate().save();
+				console.log(hs.session);
+			});
+
 
 			socket.on("send", function (userData) {
 				var id = userData.id;

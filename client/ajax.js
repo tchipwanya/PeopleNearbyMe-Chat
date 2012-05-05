@@ -2,8 +2,12 @@
 
 // Handles when a user joins the chatroom
 
+function onConnect () {
+
+}
+
 function onSomeoneJoin(data) {
-	var alias = data.alias;
+	var alias = data.user.alias;
 	var timestamp = data.timestamp;
 	addMessage(alias, "joined", timestamp, "join");
 	updateTitle();      
@@ -49,6 +53,39 @@ function onError(data) {
 // submit a new message to the server
 function send(msg) {
 	socket.emit("send", {id: CONFIG.id, text: msg});
+}
+
+// Called when page is randomly left with no warning.
+function part() {
+	socket.emit("part", {id: CONFIG.id}); // Session not deleted.
+}
+
+// Called when logout button is explicitly pressed.
+function logout () {
+	socket.emit("logout", {});
+// fuck it just reloading page
+	window.location.reload();
+
+// 	CONFIG.id = null;
+// 	CONFIG.room = null;
+// 	CONFIG.alias = null;
+// 	showConnect();
+//	socket.server.close();
+// 	socketConnect();
+}
+
+function reJoin() {
+	socket.emit("rejoin", {});
+}
+
+// return of reJoin emit.
+function onReJoin(data) {
+	CONFIG.alias = data.alias;
+	CONFIG.room = data.room;
+	CONFIG.id = data.id;
+	aliases = data.aliases;
+	updateWhoList();
+	updateRoomTitle();
 }
 
 //handle the server's response to our alias and join request

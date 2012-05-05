@@ -1,11 +1,12 @@
 /* client.js subfile 1 */
 
-var CONFIG = {alias: "#",   // set in onConnect,
-							id: null,    // set in onConnect,
-							last_message_time: 1,
-							focus: true, //event listeners bound in onConnect,
-							unread: 0 //updated in the message-processing loop
-						 };
+var CONFIG = {	alias: "#",   // set in onConnect,
+				room: null,
+				id: null,    // set in onConnect,
+				last_message_time: 1,
+				focus: true, //event listeners bound in onConnect,
+				unread: 0 //updated in the message-processing loop
+			 };
 
 var aliases = [];
 
@@ -177,11 +178,13 @@ function getLocation() {
 }
 
 function bindEvents() {
+	socket.on("connection", onConnect);
 	socket.on("someoneJoin", onSomeoneJoin);
 	socket.on("someonePart", onSomeonePart);
 	socket.on("message", onMessage);
 	socket.on("error", onError);
 	socket.on("join", onJoin);
+	socket.on("rejoin", onReJoin);
 	socket.on("location", onLocation);
 
 	// Entry send
@@ -223,6 +226,8 @@ function bindEvents() {
 		socket.emit("join", { alias: alias, roomInput: roomInput, roomSelect: roomSelect });
 		return true;
 	});
+
+	$("#logout").click(logout);
 }/* client.js subfile 2 */
 
 //updates the users link to reflect the number of active users
@@ -356,8 +361,12 @@ function showChat (alias) {
 
 // Handles when a user joins the chatroom
 
+function onConnect () {
+
+}
+
 function onSomeoneJoin(data) {
-	var alias = data.alias;
+	var alias = data.user.alias;
 	var timestamp = data.timestamp;
 	addMessage(alias, "joined", timestamp, "join");
 	updateTitle();      
@@ -405,6 +414,39 @@ function send(msg) {
 	socket.emit("send", {id: CONFIG.id, text: msg});
 }
 
+// Called when page is randomly left with no warning.
+function part() {
+	socket.emit("part", {id: CONFIG.id}); // Session not deleted.
+}
+
+// Called when logout button is explicitly pressed.
+function logout () {
+	socket.emit("logout", {});
+// fuck it just reloading page
+	window.location.reload();
+
+// 	CONFIG.id = null;
+// 	CONFIG.room = null;
+// 	CONFIG.alias = null;
+// 	showConnect();
+//	socket.server.close();
+// 	socketConnect();
+}
+
+function reJoin() {
+	socket.emit("rejoin", {});
+}
+
+// return of reJoin emit.
+function onReJoin(data) {
+	CONFIG.alias = data.alias;
+	CONFIG.room = data.room;
+	CONFIG.id = data.id;
+	aliases = data.aliases;
+	updateWhoList();
+	updateRoomTitle();
+}
+
 //handle the server's response to our alias and join request
 function onJoin (data) {
 	if (data.error) {
@@ -435,20 +477,23 @@ function onJoin (data) {
 		updateTitle();
 	});
 }/* client.js subfile 4 */
+var socket = null;
+function socketConnect() {
+	socket = io.connect(); // DEVELOPMENT
+	//var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
+}
 
-var socket = io.connect(); // DEVELOPMENT
-//var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
-
+socketConnect();
 $(document).ready(function() {
-  if($("#content").attr("showChat") === "true")
-    showChat();
-  else
-    showConnect();
-  getLocation();
-  bindEvents();
+	if($("#content").attr("showChat") === "true") {
+		showChat();
+		reJoin();
+	} else {
+		showConnect();
+	}
+	getLocation();
+	bindEvents();
 });
 
 //if we can, notify the server that we're going away.
-$(window).unload(function () {
-  socket.emit("part", {id: CONFIG.id});
-});
+$(window).unload(part);

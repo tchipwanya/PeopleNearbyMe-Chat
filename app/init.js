@@ -1,17 +1,28 @@
 /* server.js subfile 1 */
 
+/* Mongodb connection */
+
+var mongo = require('mongodb')
+  , Server = mongo.Server
+  , Db = mongo.Db
+  , server = new Server('localhost', 27017, {auto_reconnect: true})
+  , BSON = mongo.BSONPure
+  , db = new Db('peoplenearbyme', server)
+  , MongoStore = require('connect-mongodb');
+
+/* Express init */
+
 var express = require('express')
   , routes = require('./routes')
   , io = require('socket.io')
-  , MemoryStore = express.session.MemoryStore
-  , sessionStore = new MemoryStore({ reapInterval: 1000 * 60 * 60 })
+  , sessionStore = new MongoStore({db: db, reapInterval: 1000 * 60 * 60 })
   , connect = require('connect')
   , Session = connect.middleware.session.Session
   , parseCookie = connect.utils.parseCookie
   , app = module.exports = express.createServer()
   , io = io.listen(app);
 
-// Configuration
+/* Configuration */
 
 app.configure(function() {
   app.set('views', __dirname + '/views');
@@ -43,7 +54,9 @@ io.configure(function () {
         data.sessionID = data.cookie['express.sid'];
         data.sessionStore = sessionStore;
         sessionStore.get(data.sessionID, function (err, session) {
-           if (err || !session) {
+            if (err) {
+              accept(err, false);
+            } else if (!session) {
               accept('Error null session', false);
             } else {
                 data.session = new Session(data, session);
@@ -56,7 +69,7 @@ io.configure(function () {
   });
 });
 
-// Routes
+/* Routes */
 
 app.get('/', routes.index);
 
@@ -67,11 +80,4 @@ if (!module.parent) {
   });
 }
 
-/* Mongodb connection */
 
-var mongo = require('mongodb')
-  , Server = mongo.Server
-  , Db = mongo.Db
-  , server = new Server('localhost', 27017, {auto_reconnect: true})
-  , BSON = mongo.BSONPure
-  , db = new Db('peoplenearbyme', server);

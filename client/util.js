@@ -1,11 +1,12 @@
 /* client.js subfile 1 */
 
-var CONFIG = {alias: "#",   // set in onConnect,
-							id: null,    // set in onConnect,
-							last_message_time: 1,
-							focus: true, //event listeners bound in onConnect,
-							unread: 0 //updated in the message-processing loop
-						 };
+var CONFIG = {	alias: "#",   // set in onConnect,
+				room: null,
+				id: null,    // set in onConnect,
+				last_message_time: 1,
+				focus: true, //event listeners bound in onConnect,
+				unread: 0 //updated in the message-processing loop
+			 };
 
 var aliases = [];
 
@@ -177,11 +178,13 @@ function getLocation() {
 }
 
 function bindEvents() {
+	socket.on("connection", onConnect);
 	socket.on("someoneJoin", onSomeoneJoin);
 	socket.on("someonePart", onSomeonePart);
 	socket.on("message", onMessage);
 	socket.on("error", onError);
 	socket.on("join", onJoin);
+	socket.on("rejoin", onReJoin);
 	socket.on("location", onLocation);
 
 	// Entry send
@@ -223,4 +226,6 @@ function bindEvents() {
 		socket.emit("join", { alias: alias, roomInput: roomInput, roomSelect: roomSelect });
 		return true;
 	});
+
+	$("#logout").click(logout);
 }

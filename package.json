@@ -12,5 +12,6 @@
     , "socket.io": "0.9.6"
     , "connect": "2.2.1"
     , "mongodb": "1.0.0"
+    , "connect-mongodb": "1.1.3"
   }
 }
