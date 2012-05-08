@@ -195,7 +195,6 @@ db.open(function(err, db) {
 			});
 
 			function who() {
-				// who function copied in here and removed.
 				var aliases = [];
 				var clients = io.sockets.in(room._id).clients();
 				for (var i in clients) {
