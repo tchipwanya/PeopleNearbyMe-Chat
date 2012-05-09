@@ -106,10 +106,12 @@ db.open(function(err, db) {
 		    });
 
 			function createSession (socket, alias) {
+			//facebook or anoynomous
 				if (/[^\w_\-^!]/.exec(alias)) return "Alias contains invalid characters.";
 				if (alias === null) return "Alias was not included in join request.";
 				if (alias.length === 0) return "You forgot to enter your alias silly.";
 				if (alias.length > 50) return "The alias you entered is too long.";
+				// if (alias.flagCount >= 5) return "you have been banned for poor conduct.";
 
 				var clients = io.sockets.in(room._id).clients();
 				for (var i in clients) {
@@ -146,6 +148,23 @@ db.open(function(err, db) {
 						return null; 
 					}
 				});
+				
+		/*just a function increasing the flag counter
+			function flagCount(){
+				var user = { alias: alias };
+				var session = socket.handshake.session;
+				var flagged = handshake.session.user.flagCount;//get this stuff make sure query is right
+				flagged++;	
+				if (flagged > 5){
+					flagged = 0;
+					flagged.save();
+					 socket.on('disconnect', function (data) { //logging out
+		        // clear the socket interval to stop refreshing the session
+		        	clearInterval(intervalID);
+				}
+				flagged.save(); //saving the flag count before kicking out
+			};*/
+		
 
 				function onRetrieveRoom() {
 					var alias = userData.alias;
@@ -193,9 +212,9 @@ db.open(function(err, db) {
 											room: room });
 				};
 			});
-
+			
+			
 			function who() {
-				// who function copied in here and removed.
 				var aliases = [];
 				var clients = io.sockets.in(room._id).clients();
 				for (var i in clients) {

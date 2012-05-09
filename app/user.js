@@ -67,5 +67,9 @@ function User() {
 	this.setRoom = function(roomID) {
 		this.chatroomID=roomID;
 	};
+	
+	this.checkFlags = function(flagCount){
+		
+	};
 
 };

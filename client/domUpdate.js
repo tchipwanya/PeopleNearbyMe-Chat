@@ -15,11 +15,20 @@ function updateUsersLink ( ) {
 function updateWhoList() {
 	$('#whoList').html('');
 	var content = "";
-	for(var i in aliases) {
+	for(var i in aliases) { //An attempt to make a drop down menu with the flag option
 		var alias = aliases[i];
-		content += '<li class="person">';
+		content += '<ul class="dropv">'
+		content += '<li class="person"><a href = "#">';
 		content += alias;
+		content +='</a>';
+		content += '<ul>';
+		content += '<li><a href = "#">';
+		content += "Flag User";
+		content += '</a></li>';
+		content += '</ul>';
 		content += '</li>';
+		content +='</ul>';
+		//content += '</br>';
 	}
 	$('#whoList').html(content);
 }

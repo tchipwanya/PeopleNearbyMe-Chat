@@ -74,6 +74,20 @@ function logout () {
 // 	socketConnect();
 }
 
+function flag(){
+	var user = data.user;
+	var session = socket.handshake.session;
+	var flagged = handshake.session.user.flagCount;//get this stuff make sure query is right
+		flagged++;	
+		socket.emit("flagged",{});
+	if (flagged > 5){
+			flagged = 0;
+			flagged.save();
+	 		logout;
+	 	}
+	flagged.save(); //saving the flag count before kicking out
+}
+
 function reJoin() {
 	socket.emit("rejoin", {});
 }
