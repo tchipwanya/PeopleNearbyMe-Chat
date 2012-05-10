@@ -175,14 +175,14 @@ a:hover { text-decoration: underline; color: #aaa; }
   background:rgba(59, 140, 62,.4);
 }
 
-.dropv, .dropv ul {padding: 0; margin: 0; list-style: none;}
-.dropv a {display: inline; width: 170px;}
-.dropv li {float: left; padding: 0px 8px 2px 0px;}  /* all list items */
-.dropv li ul {position: absolute; background:red; 
+#dropv, .dropv ul {padding: 0; margin: 0; list-style: none;}
+#dropv a {display: inline; width: 170px;}
+#dropv li {float: left; padding: 0px 8px 2px 0px;}  /* all list items */
+#dropv li ul {position: absolute; background:red; 
   padding: 0px 0px 0px 4px; width: 170px; left: -9999px;} /* second-level lists */
-.dropv li:hover ul {left: auto; } /* nest list under hovered list items */
-.dropv li ul li a {color: #ffffff; text-decoration: none; display: block;}
-.dropv li ul li a:hover {color: yellow; background:#663399;}
+#dropv li:hover ul {left: auto; } /* nest list under hovered list items */
+#dropv li ul li a {color: #ffffff; text-decoration: none; display: block;}
+#dropv li ul li a:hover {color: yellow; background:#663399;}
 
 .person {
   padding:5px;

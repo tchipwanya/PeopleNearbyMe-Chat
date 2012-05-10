@@ -247,7 +247,7 @@ function updateWhoList() {
 	var content = "";
 	for(var i in aliases) { //An attempt to make a drop down menu with the flag option
 		var alias = aliases[i];
-		content += '<ul class="dropv">'
+		content += '<ul id="dropv">'
 		content += '<li class="person"><a href = "#">';
 		content += alias;
 		content +='</a>';
@@ -258,9 +258,9 @@ function updateWhoList() {
 		content += '</ul>';
 		content += '</li>';
 		content +='</ul>';
-		//content += '</br>';
 	}
 	$('#whoList').html(content);
+	$('#dropv').click(flag(alias));
 }
 function updateRoomList(data) {
 	$('#roomSelect').html('');

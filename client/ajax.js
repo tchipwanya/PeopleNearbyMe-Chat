@@ -74,8 +74,8 @@ function logout () {
 // 	socketConnect();
 }
 
-function flag(){
-	var user = data.user;
+function flag(id){
+	var user = data.user.id;
 	var session = socket.handshake.session;
 	var flagged = handshake.session.user.flagCount;//get this stuff make sure query is right
 		flagged++;	
