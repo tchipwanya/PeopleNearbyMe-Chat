@@ -28,8 +28,8 @@ function updateWhoList() {
 		content += '</ul>';
 		content += '</li>';
 		content +='</ul>';
-		//content += '</br>';
 	}
+	//
 	$('#whoList').html(content);
 }
 function updateRoomList(data) {
@@ -43,6 +43,12 @@ function updateRoomList(data) {
 	}
 	$('#roomSelect').html(content);
 }
+
+function flagUser(){
+	content = "";
+	$('#dropv').click(onFlag(content));
+}
+
 function addMessage (from, text, time, _class) {
 	if (text === null)
 		return;

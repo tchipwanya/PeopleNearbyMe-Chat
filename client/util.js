@@ -186,6 +186,7 @@ function bindEvents() {
 	socket.on("join", onJoin);
 	socket.on("rejoin", onReJoin);
 	socket.on("location", onLocation);
+	socket.on("flag", onFlag)
 
 	// Entry send
 	$("#entryForm").submit(function (i) { 

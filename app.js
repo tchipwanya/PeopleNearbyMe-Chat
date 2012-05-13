@@ -275,6 +275,14 @@ db.open(function(err, db) {
 													timestamp: (new Date()).getTime() });
 				}
 			});
+			
+			//connecting the flagging socket
+			socket.on("flag", function (userData){
+				var id = userData.id;
+				var session = socket.handshake.session
+				var user = user.id.flagCount
+				user.session.save();
+			});
 
 			socket.on("location", function(position) {
 			  	/* 	   	Future schema?
