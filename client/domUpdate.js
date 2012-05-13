@@ -17,17 +17,20 @@ function updateWhoList() {
 	var content = "";
 	for(var i in aliases) { //An attempt to make a drop down menu with the flag option
 		var alias = aliases[i];
-		content += '<ul class="dropv">'
-		content += '<li class="person"><a href = "#">';
+		// content += '<ul class="dropv">'
+		// content += '<li class="person"><a href = "#">';
+		// content += alias;
+		// content +='</a>';
+		// content += '<ul>';
+		// content += '<li><a href = "#">';
+		// content += "Flag User";
+		// content += '</a></li>';
+		// content += '</ul>';
+		// content += '</li>';
+		// content +='</ul>';
+		content += '<div class="person">';
 		content += alias;
-		content +='</a>';
-		content += '<ul>';
-		content += '<li><a href = "#">';
-		content += "Flag User";
-		content += '</a></li>';
-		content += '</ul>';
-		content += '</li>';
-		content +='</ul>';
+		content += '</div>';
 		//content += '</br>';
 	}
 	$('#whoList').html(content);
