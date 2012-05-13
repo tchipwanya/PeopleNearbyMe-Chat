@@ -15,11 +15,23 @@ function updateUsersLink ( ) {
 function updateWhoList() {
 	$('#whoList').html('');
 	var content = "";
-	for(var i in aliases) {
+	for(var i in aliases) { //An attempt to make a drop down menu with the flag option
 		var alias = aliases[i];
-		content += '<li class="person">';
+		// content += '<ul class="dropv">'
+		// content += '<li class="person"><a href = "#">';
+		// content += alias;
+		// content +='</a>';
+		// content += '<ul>';
+		// content += '<li><a href = "#">';
+		// content += "Flag User";
+		// content += '</a></li>';
+		// content += '</ul>';
+		// content += '</li>';
+		// content +='</ul>';
+		content += '<div class="person">';
 		content += alias;
-		content += '</li>';
+		content += '</div>';
+		//content += '</br>';
 	}
 	$('#whoList').html(content);
 }
@@ -30,10 +42,20 @@ function updateRoomList(data) {
 	for(var x in data) {
 		content += '<option value="'+data[x]._id+'">';
 		content += data[x].name;
+		if(data[x].roomNum!= "000") {
+			content+=" - "+data[x].roomNum;
+		}
 		content += "</option>";
 	}
 	$('#roomSelect').html(content);
 }
+/*
+function flagUser(){
+	content = "";
+	$('#dropv').click(onFlag(content));
+	send(content);
+}
+*/
 function addMessage (from, text, time, _class) {
 	if (text === null)
 		return;

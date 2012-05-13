@@ -1,32 +1,34 @@
 /* server.js subfile 4 */
 
 db.open(function(err, db) {
-	if (err) { 
-		console.log(err); 
+	if (err) {
+		console.log(err);
 	} else {
-		io.sockets.on("connection", function (socket) { 
+		io.sockets.on("connection", function (socket) {
 			var hs = socket.handshake; // don't store shit here, not persistent over pageloads.
 			var room = null;
 
-		    // setup an inteval that will keep our session fresh
-		    var intervalID = setInterval(function () {
-		        // reload the session (just in case something changed
-		        hs.session.reload( function () {
-		            // "touch" it (resetting maxAge and lastAccess) and save it back again.
-		            hs.session.touch().save();
-		        });
-		    }, 60 * 1000);
+			// setup an inteval that will keep our session fresh
+			var intervalID = setInterval(function () {
+				// reload the session (just in case something changed
+				hs.session.reload( function () {
+					// "touch" it (resetting maxAge and lastAccess) and save it back again.
+					hs.session.touch().save();
+				});
+			}, 60 * 1000);
 
-		    socket.on('disconnect', function (data) {
-		        // clear the socket interval to stop refreshing the session
-		        clearInterval(intervalID);
-		    });
+			socket.on('disconnect', function (data) {
+				// clear the socket interval to stop refreshing the session
+				clearInterval(intervalID);
+			});
 
 			function createSession (socket, alias) {
+			//facebook or anoynomous
 				if (/[^\w_\-^!]/.exec(alias)) return "Alias contains invalid characters.";
 				if (alias === null) return "Alias was not included in join request.";
 				if (alias.length === 0) return "You forgot to enter your alias silly.";
 				if (alias.length > 50) return "The alias you entered is too long.";
+				// if (alias.flagCount >= 5) return "you have been banned for poor conduct.";
 
 				var clients = io.sockets.in(room._id).clients();
 				for (var i in clients) {
@@ -43,26 +45,42 @@ db.open(function(err, db) {
 			}
 
 			socket.on("join", function (userData) {
-	    		db.collection('rooms', function(err, collection) { 			
+				db.collection('rooms', function(err, collection) { 			
 					if (userData.roomInput) {  			
-	    				room = {name: userData.roomInput};
-	    				// TODO validation here of roomInput
-	    				room = collection.insert(room); //TODO see what this function returns
-	    				onRetrieveRoom();
+						room = {name: userData.roomInput};
+						var session = socket.handshake.session
+						room.coords=[session.lat,session.lng];
+						// TODO validation here of roomInput
+						collection.insert(room); //TODO see what this function returns
+						console.log("\n\n\n\n"+room.toString());
+						onRetrieveRoom();
 					} else if (userData.roomSelect) {
-			    		collection.findOne({'_id': new BSON.ObjectID(userData.roomSelect)}, function(err, item) {
-			    			if(!err) { 
-			    				room = item;
-			    				onRetrieveRoom(); 
-				    		} else { 
-				    			console.log(err); 
-				    		}
-			    		}); 
+						collection.findOne({'_id': new BSON.ObjectID(userData.roomSelect)}, function(err, item) {
+							if(!err) { 
+								room = item;
+								onRetrieveRoom(); 
+							} else { 
+								console.log(err); 
+							}
+						}); 
 					} else { 
 						socket.emit("error", {error: "No room specified."});
 						return null; 
 					}
 				});
+				
+		//just a function increasing the flag counter
+		/*	function flagCount(alias){
+				socket.on("flag", function (alias){
+				var id = alias.id;
+				var session = socket.handshake.session
+				var user = user.id.flagCount
+				send(user)
+				user.session.save();
+				});
+
+			};*/
+		
 
 				function onRetrieveRoom() {
 					var alias = userData.alias;
@@ -86,7 +104,7 @@ db.open(function(err, db) {
 						return null;
 					}
 
-					if (!room) { 
+					if (!room) {
 						socket.emit("error", {error: "Room could not be resolved."});
 						return null;
 					}
@@ -104,13 +122,14 @@ db.open(function(err, db) {
 					socket.broadcast.to(room._id).emit("someoneJoin", {	user: user,
 															timestamp: (new Date()).getTime() });
 
-					socket.emit("join", { 	id: hs.sessionID, 
+					socket.emit("join", {	id: hs.sessionID,
 											alias: hs.session.user.alias,
 											aliases: aliases,
 											room: room });
-				};
+				}
 			});
-
+			
+			
 			function who() {
 				var aliases = [];
 				var clients = io.sockets.in(room._id).clients();
@@ -149,7 +168,8 @@ db.open(function(err, db) {
 
 			socket.on("logout", function (userData) {
 				socket.broadcast.to(room._id).emit("someonePart", {	alias: hs.session.user.alias,
-																	timestamp: (new Date()).getTime() });
+					timestamp: (new Date()).getTime()
+				});
 				if(room) {
 					socket.leave(room);
 				}
@@ -167,27 +187,42 @@ db.open(function(err, db) {
 				// If a registered user.
 				if(hs.session.user) {
 					hs.session.touch().save();
-					io.sockets.in(room._id).emit("message", {	alias: hs.session.user.alias,
-													text: text,
-													timestamp: (new Date()).getTime() });
+					io.sockets.in(room._id).emit("message", { alias: hs.session.user.alias,
+						text: text,
+						timestamp: (new Date()).getTime()
+					});
 				}
 			});
-
+			
+			//connecting the flagging socket
+			
 			socket.on("location", function(position) {
-			  	/* 	   	Future schema?
-			  			{ 	name:"Computer Science Lab", 
-			  				roomNum:"632", 
-			  				building:"McCardell Bicentennial Hall",
-			  				roomId:"f2Eq17",
-			  				occupants:5 
-			  			 }
-			  	*/
+				/* Future schema?
+{	name:"The Lobby",
+	roomNum:"000",
+	building:"Burlington City Hall",
+	roomId:"asdf",
+	occupants:200,
+	coords:[44.476190, -73.213063]
+}
+				*/
+				// Make sure to:
+				// db.places.ensureIndex( { loc : "2d" } )
 
-			    db.collection('rooms', function(err, collection) {
-			    	collection.find().toArray(function(err, items) {
-			    		socket.emit("location", items);
-			    	});
-			    });
+				var lat = position["coords"]["latitude"];
+				var lng = position["coords"]["longitude"];
+
+				var session = socket.handshake.session
+				session.lat = lat;
+				session.lng = lng;
+				session.save();
+
+				//44.013506, -73.180891
+				db.collection('rooms', function(err, collection) {
+					collection.find( {coords:{$near:[lat,lng]}} ).toArray(function(err, items) {
+						socket.emit("location", items);
+					});
+				});
 
 			});
 		});

@@ -186,6 +186,7 @@ function bindEvents() {
 	socket.on("join", onJoin);
 	socket.on("rejoin", onReJoin);
 	socket.on("location", onLocation);
+	socket.on("flag", onFlag)
 
 	// Entry send
 	$("#entryForm").submit(function (i) { 
@@ -206,6 +207,10 @@ function bindEvents() {
 
 		if (alias.length > 50) {
 			showConnect("alias too long. 50 character max.");
+			return false;
+		}
+		if (alias.length < 4){
+			showConnect("alias too short. Enter at least 4 characters");
 			return false;
 		}
 

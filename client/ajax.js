@@ -63,15 +63,27 @@ function part() {
 // Called when logout button is explicitly pressed.
 function logout () {
 	socket.emit("logout", {});
-// fuck it just reloading page
-	window.location.reload();
+//basic logout that unfortunately gets rid of rooms previously in the db
+ 	CONFIG.id = null;
+ 	CONFIG.room = null;
+ 	CONFIG.alias = null;
+ 	showConnect();
+	socket.server.close();
+ 	socketConnect();
+}
 
-// 	CONFIG.id = null;
-// 	CONFIG.room = null;
-// 	CONFIG.alias = null;
-// 	showConnect();
-//	socket.server.close();
-// 	socketConnect();
+function onFlag(){ 
+	var user = data.user;
+	var flagged = socket.handshake.session.user.flagCount;//get this stuff make sure query is right
+		flagged++;	
+		send(flagged);
+		socket.emit("flagged",{});
+	if (flagged > 5){
+			flagged = 0;
+			flagged.save();
+	 		logout;
+	 	}
+	flagged.save();
 }
 
 function reJoin() {
