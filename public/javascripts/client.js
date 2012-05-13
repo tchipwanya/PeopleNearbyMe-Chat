@@ -460,15 +460,13 @@ function part() {
 // Called when logout button is explicitly pressed.
 function logout () {
 	socket.emit("logout", {});
-// fuck it just reloading page, old code
-//	window.location.reload();
-
- 	CONFIG.id = null;
+//basic logout that unfortunately gets rid of rooms previously in the db
+ 	/*CONFIG.id = null;
  	CONFIG.room = null;
  	CONFIG.alias = null;
  	showConnect();
 	socket.server.close();
- 	socketConnect();
+ 	socketConnect();*/
 }
 
 function onFlag(){ 
