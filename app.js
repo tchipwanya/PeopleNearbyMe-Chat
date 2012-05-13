@@ -131,8 +131,11 @@ db.open(function(err, db) {
 				db.collection('rooms', function(err, collection) { 			
 					if (userData.roomInput) {  			
 						room = {name: userData.roomInput};
+						var session = socket.handshake.session
+						room.coords=[session.lat,session.lng];
 						// TODO validation here of roomInput
-						room = collection.insert(room); //TODO see what this function returns
+						collection.insert(room); //TODO see what this function returns
+						console.log("\n\n\n\n"+room.toString());
 						onRetrieveRoom();
 					} else if (userData.roomSelect) {
 						collection.findOne({'_id': new BSON.ObjectID(userData.roomSelect)}, function(err, item) {
@@ -277,6 +280,14 @@ db.open(function(err, db) {
 					});
 				}
 			});
+			
+			//connecting the flagging socket
+			socket.on("flag", function (userData){
+				var id = userData.id;
+				var session = socket.handshake.session
+				var user = user.id.flagCount
+				user.session.save();
+			});
 
 			socket.on("location", function(position) {
 				/* Future schema?
@@ -293,10 +304,12 @@ db.open(function(err, db) {
 
 				var lat = position["coords"]["latitude"];
 				var lng = position["coords"]["longitude"];
-				console.log("\n\n\n");
-				console.log(lat);
-				console.log("\n\n\n");
-				console.log(lng);
+
+				var session = socket.handshake.session
+				session.lat = lat;
+				session.lng = lng;
+				session.save();
+
 				//44.013506, -73.180891
 				db.collection('rooms', function(err, collection) {
 					collection.find( {coords:{$near:[lat,lng]}} ).toArray(function(err, items) {

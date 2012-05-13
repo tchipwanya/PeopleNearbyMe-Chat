@@ -208,6 +208,10 @@ function bindEvents() {
 			showConnect("alias too long. 50 character max.");
 			return false;
 		}
+		if (alias.length < 4){
+			showConnect("alias too short. Enter at least 4 characters");
+			return false;
+		}
 
 		if (alias.length === 0) {
 			showConnect("You forgot to enter your alias silly.");
@@ -247,20 +251,23 @@ function updateWhoList() {
 	var content = "";
 	for(var i in aliases) { //An attempt to make a drop down menu with the flag option
 		var alias = aliases[i];
-		content += '<ul id="dropv">'
-		content += '<li class="person"><a href = "#">';
+		// content += '<ul class="dropv">'
+		// content += '<li class="person"><a href = "#">';
+		// content += alias;
+		// content +='</a>';
+		// content += '<ul>';
+		// content += '<li><a href = "#">';
+		// content += "Flag User";
+		// content += '</a></li>';
+		// content += '</ul>';
+		// content += '</li>';
+		// content +='</ul>';
+		content += '<div class="person">';
 		content += alias;
-		content +='</a>';
-		content += '<ul>';
-		content += '<li><a href = "#">';
-		content += "Flag User";
-		content += '</a></li>';
-		content += '</ul>';
-		content += '</li>';
-		content +='</ul>';
+		content += '</div>';
+		//content += '</br>';
 	}
 	$('#whoList').html(content);
-	$('#dropv').click(flag(alias));
 }
 function updateRoomList(data) {
 	$('#roomSelect').html('');
@@ -445,8 +452,8 @@ function logout () {
 // 	socketConnect();
 }
 
-function flag(){
-	var user = data.user;
+function flag(id){
+	var user = data.user.id;
 	var session = socket.handshake.session;
 	var flagged = handshake.session.user.flagCount;//get this stuff make sure query is right
 		flagged++;	
