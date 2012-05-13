@@ -30,8 +30,19 @@ function updateWhoList() {
 		// content +='</ul>';
 		content += '<div class="person">';
 		content += alias;
+/*<<<<<<< HEAD
+		content +='</a>';
+		content += '<ul>';
+		content += '<li><a href = "#">';
+		content += "Flag User";
+		content += '</a></li>';
+		content += '</ul>';
+		content += '</li>';
+		content +='</ul>';
+=======*/
 		content += '</div>';
 		//content += '</br>';
+//>>>>>>> 53ba03cd56f74c27651d553247f11aad7a58bf0f
 	}
 	$('#whoList').html(content);
 }
@@ -49,6 +60,13 @@ function updateRoomList(data) {
 	}
 	$('#roomSelect').html(content);
 }
+/*
+function flagUser(){
+	content = "";
+	$('#dropv').click(onFlag(content));
+	send(content);
+}
+*/
 function addMessage (from, text, time, _class) {
 	if (text === null)
 		return;
