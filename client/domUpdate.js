@@ -17,9 +17,20 @@ function updateWhoList() {
 	var content = "";
 	for(var i in aliases) { //An attempt to make a drop down menu with the flag option
 		var alias = aliases[i];
-		content += '<ul class="dropv">'
-		content += '<li class="person"><a href = "#">';
+		// content += '<ul class="dropv">'
+		// content += '<li class="person"><a href = "#">';
+		// content += alias;
+		// content +='</a>';
+		// content += '<ul>';
+		// content += '<li><a href = "#">';
+		// content += "Flag User";
+		// content += '</a></li>';
+		// content += '</ul>';
+		// content += '</li>';
+		// content +='</ul>';
+		content += '<div class="person">';
 		content += alias;
+<<<<<<< HEAD
 		content +='</a>';
 		content += '<ul>';
 		content += '<li><a href = "#">';
@@ -28,8 +39,11 @@ function updateWhoList() {
 		content += '</ul>';
 		content += '</li>';
 		content +='</ul>';
+=======
+		content += '</div>';
+		//content += '</br>';
+>>>>>>> 53ba03cd56f74c27651d553247f11aad7a58bf0f
 	}
-	//
 	$('#whoList').html(content);
 }
 function updateRoomList(data) {
