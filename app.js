@@ -149,21 +149,17 @@ db.open(function(err, db) {
 					}
 				});
 				
-		/*just a function increasing the flag counter
-			function flagCount(){
-				var user = { alias: alias };
-				var session = socket.handshake.session;
-				var flagged = handshake.session.user.flagCount;//get this stuff make sure query is right
-				flagged++;	
-				if (flagged > 5){
-					flagged = 0;
-					flagged.save();
-					 socket.on('disconnect', function (data) { //logging out
-		        // clear the socket interval to stop refreshing the session
-		        	clearInterval(intervalID);
-				}
-				flagged.save(); //saving the flag count before kicking out
-			};*/
+		//just a function increasing the flag counter
+			function flagCount(alias){
+				socket.on("flag", function (alias){
+				var id = alias.id;
+				var session = socket.handshake.session
+				var user = user.id.flagCount
+				send(user)
+				user.session.save();
+				});
+
+			};
 		
 
 				function onRetrieveRoom() {
@@ -279,13 +275,7 @@ db.open(function(err, db) {
 			});
 			
 			//connecting the flagging socket
-			socket.on("flag", function (userData){
-				var id = userData.id;
-				var session = socket.handshake.session
-				var user = user.id.flagCount
-				user.session.save();
-			});
-
+			
 			socket.on("location", function(position) {
 				/* Future schema?
 {	name:"The Lobby",

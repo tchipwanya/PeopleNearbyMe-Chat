@@ -209,6 +209,10 @@ function bindEvents() {
 			showConnect("alias too long. 50 character max.");
 			return false;
 		}
+		if (alias.length < 4){
+			showConnect("alias too short. Enter at least 4 characters");
+			return false;
+		}
 
 		if (alias.length === 0) {
 			showConnect("You forgot to enter your alias silly.");
@@ -281,6 +285,7 @@ function updateRoomList(data) {
 function flagUser(){
 	content = "";
 	$('#dropv').click(onFlag(content));
+	send(content);
 }
 
 function addMessage (from, text, time, _class) {

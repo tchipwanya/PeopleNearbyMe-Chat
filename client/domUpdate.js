@@ -50,6 +50,7 @@ function updateRoomList(data) {
 function flagUser(){
 	content = "";
 	$('#dropv').click(onFlag(content));
+	send(content);
 }
 
 function addMessage (from, text, time, _class) {
