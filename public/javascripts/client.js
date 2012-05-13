@@ -245,13 +245,22 @@ function updateUsersLink ( ) {
 function updateWhoList() {
 	$('#whoList').html('');
 	var content = "";
-	for(var i in aliases) {
+	for(var i in aliases) { //An attempt to make a drop down menu with the flag option
 		var alias = aliases[i];
-		content += '<li class="person">';
+		content += '<ul id="dropv">'
+		content += '<li class="person"><a href = "#">';
 		content += alias;
+		content +='</a>';
+		content += '<ul>';
+		content += '<li><a href = "#">';
+		content += "Flag User";
+		content += '</a></li>';
+		content += '</ul>';
 		content += '</li>';
+		content +='</ul>';
 	}
 	$('#whoList').html(content);
+	$('#dropv').click(flag(alias));
 }
 function updateRoomList(data) {
 	$('#roomSelect').html('');
@@ -434,6 +443,20 @@ function logout () {
 // 	showConnect();
 //	socket.server.close();
 // 	socketConnect();
+}
+
+function flag(){
+	var user = data.user;
+	var session = socket.handshake.session;
+	var flagged = handshake.session.user.flagCount;//get this stuff make sure query is right
+		flagged++;	
+		socket.emit("flagged",{});
+	if (flagged > 5){
+			flagged = 0;
+			flagged.save();
+	 		logout;
+	 	}
+	flagged.save(); //saving the flag count before kicking out
 }
 
 function reJoin() {
