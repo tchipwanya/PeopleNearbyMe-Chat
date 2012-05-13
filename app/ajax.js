@@ -67,7 +67,7 @@ db.open(function(err, db) {
 				});
 				
 		//just a function increasing the flag counter
-			function flagCount(alias){
+		/*	function flagCount(alias){
 				socket.on("flag", function (alias){
 				var id = alias.id;
 				var session = socket.handshake.session
@@ -76,7 +76,7 @@ db.open(function(err, db) {
 				user.session.save();
 				});
 
-			};
+			};*/
 		
 
 				function onRetrieveRoom() {

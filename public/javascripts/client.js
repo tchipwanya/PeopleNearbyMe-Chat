@@ -252,9 +252,20 @@ function updateWhoList() {
 	var content = "";
 	for(var i in aliases) { //An attempt to make a drop down menu with the flag option
 		var alias = aliases[i];
-		content += '<ul class="dropv">'
-		content += '<li class="person"><a href = "#">';
+		// content += '<ul class="dropv">'
+		// content += '<li class="person"><a href = "#">';
+		// content += alias;
+		// content +='</a>';
+		// content += '<ul>';
+		// content += '<li><a href = "#">';
+		// content += "Flag User";
+		// content += '</a></li>';
+		// content += '</ul>';
+		// content += '</li>';
+		// content +='</ul>';
+		content += '<div class="person">';
 		content += alias;
+/*<<<<<<< HEAD
 		content +='</a>';
 		content += '<ul>';
 		content += '<li><a href = "#">';
@@ -263,8 +274,11 @@ function updateWhoList() {
 		content += '</ul>';
 		content += '</li>';
 		content +='</ul>';
+=======*/
+		content += '</div>';
+		//content += '</br>';
+//>>>>>>> 53ba03cd56f74c27651d553247f11aad7a58bf0f
 	}
-	//
 	$('#whoList').html(content);
 }
 function updateRoomList(data) {
@@ -281,13 +295,13 @@ function updateRoomList(data) {
 	}
 	$('#roomSelect').html(content);
 }
-
+/*
 function flagUser(){
 	content = "";
 	$('#dropv').click(onFlag(content));
 	send(content);
 }
-
+*/
 function addMessage (from, text, time, _class) {
 	if (text === null)
 		return;
@@ -446,15 +460,15 @@ function part() {
 // Called when logout button is explicitly pressed.
 function logout () {
 	socket.emit("logout", {});
-// fuck it just reloading page
-	window.location.reload();
+// fuck it just reloading page, old code
+//	window.location.reload();
 
-// 	CONFIG.id = null;
-// 	CONFIG.room = null;
-// 	CONFIG.alias = null;
-// 	showConnect();
-//	socket.server.close();
-// 	socketConnect();
+ 	CONFIG.id = null;
+ 	CONFIG.room = null;
+ 	CONFIG.alias = null;
+ 	showConnect();
+	socket.server.close();
+ 	socketConnect();
 }
 
 function onFlag(){ 
