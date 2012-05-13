@@ -260,6 +260,9 @@ function updateRoomList(data) {
 	for(var x in data) {
 		content += '<option value="'+data[x]._id+'">';
 		content += data[x].name;
+		if(data[x].roomNum!= "000") {
+			content+=" - "+data[x].roomNum;
+		}
 		content += "</option>";
 	}
 	$('#roomSelect').html(content);
