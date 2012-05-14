@@ -265,19 +265,8 @@ function updateWhoList() {
 		// content +='</ul>';
 		content += '<div class="person">';
 		content += alias;
-/*<<<<<<< HEAD
-		content +='</a>';
-		content += '<ul>';
-		content += '<li><a href = "#">';
-		content += "Flag User";
-		content += '</a></li>';
-		content += '</ul>';
-		content += '</li>';
-		content +='</ul>';
-=======*/
 		content += '</div>';
 		//content += '</br>';
-//>>>>>>> 53ba03cd56f74c27651d553247f11aad7a58bf0f
 	}
 	$('#whoList').html(content);
 }
@@ -461,12 +450,12 @@ function part() {
 function logout () {
 	socket.emit("logout", {});
 //basic logout that unfortunately gets rid of rooms previously in the db
- 	/*CONFIG.id = null;
+ 	CONFIG.id = null;
  	CONFIG.room = null;
  	CONFIG.alias = null;
  	showConnect();
 	socket.server.close();
- 	socketConnect();*/
+ 	socketConnect();
 }
 
 function onFlag(){ 

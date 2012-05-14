@@ -64,12 +64,12 @@ function part() {
 function logout () {
 	socket.emit("logout", {});
 //basic logout that unfortunately gets rid of rooms previously in the db
- 	/*CONFIG.id = null;
+ 	CONFIG.id = null;
  	CONFIG.room = null;
  	CONFIG.alias = null;
  	showConnect();
 	socket.server.close();
- 	socketConnect();*/
+ 	socketConnect();
 }
 
 function onFlag(){ 
