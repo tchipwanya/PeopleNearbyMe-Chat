@@ -1,20 +1,23 @@
 !!!
 html
 	head
-		title #PeopleNearby.me	
+
+
 		script(src="/javascripts/jquery-1.2.6.min.js", type="text/javascript")
 		script(src="/socket.io/socket.io.js", type="text/javascript")
 		script(src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDUyWoBTnAqU5faKSREgi4-xfw1Slzk-0Q&sensor=true", type="text/javascript")
 		script(src="/javascripts/client.js", type="text/javascript")			
 		link(rel="stylesheet", href="/stylesheets/style.css", type="text/css")
+		
 	body
 		#wrapper
 			#header
 				#links
-					a#logout Logout
-					a(href="http://peoplenearby.github.com/PeopleNearbyMe/") About
-					a(href="https://github.com/PeopleNearby/PeopleNearbyMe-Chat#readme") How To
-				//img#logo(src="/images/logo.jpg", alt="logo")
+						a#logout Logout
+						a(href="http://peoplenearby.github.com/PeopleNearbyMe/") About
+						a(href="https://github.com/PeopleNearby/PeopleNearbyMe-Chat#readme") How To
 				#flag #PeopleNearby.me
+				h2 Find a Room That's Nearby and Start Chatting to People Around You
+				//img#logo(src="/images/newlogo.jpg", alt="logo")
 			#content(showChat="#{loggedIn}")!=body
-			#footer v0.0.2
+	#footer Created by Middlebury CS312
