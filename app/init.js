@@ -9,6 +9,11 @@ var mongo = require('mongodb')
   , BSON = mongo.BSONPure
   , db = new Db('peoplenearbyme', server)
   , MongoStore = require('connect-mongodb');
+/* Ensure geospatial indexing */
+db.collection('rooms', function(err, collection) {
+  db.places.ensureIndex( { coords : "2d" } )
+});
+
 
 /* Express init */
 

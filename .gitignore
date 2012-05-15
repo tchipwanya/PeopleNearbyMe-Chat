@@ -2,3 +2,5 @@ node_modules
 peoplenearbyme.sublime-project
 peoplenearbyme.sublime-workspace
 .gitignore
+app.js
+public/javascripts/client.js
