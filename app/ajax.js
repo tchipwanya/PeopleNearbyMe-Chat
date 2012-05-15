@@ -175,9 +175,10 @@ db.open(function(err, db) {
 				}
 
 				clearInterval(intervalID);
-				hs.session.destroy();
-				hs.session.regenerate().save();
-				console.log(hs.session);
+				//hs.session.destroy();
+				//hs.session.regenerate().save();
+			//	console.log(hs.session);
+				//hs.session.close();
 			});
 
 
