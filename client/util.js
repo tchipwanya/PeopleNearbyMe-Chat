@@ -2,7 +2,7 @@
 
 var CONFIG = {	alias: null,   // set in onConnect,
 				fbid: null,
-				fbhash: null,
+				fbname: null,
 				room: null,
 				id: null,    // set in onConnect,
 				last_message_time: 1,
@@ -189,7 +189,7 @@ function bindEvents() {
 	socket.on("join", onJoin);
 	socket.on("rejoin", onReJoin);
 	socket.on("location", onLocation);
-	socket.on("flag", onFlag)
+	socket.on("flag", onFlag);
 
 	// Entry send
 	$("#entryForm").submit(function (i) { 
@@ -199,6 +199,8 @@ function bindEvents() {
 			send(msg);
 		$("#entry").val('');
 	});
+
+	$("#fbLogin").click(fbLogin);
 
 	// Try joining the chat when the user clicks the connect button
 	$("#joinForm").submit(function (i) {

@@ -15,3 +15,14 @@ window.fbAsyncInit = function() {
 	js.src = "//connect.facebook.net/en_US/all.js";
 	ref.parentNode.insertBefore(js, ref);
 }(document));
+
+function fbLogin() {
+	FB.login(function(response) {
+		if (response.authResponse) {
+			FB.api('/me', function(response) {
+				CONFIG.fbid = response.name;
+			});
+		} else {
+		}
+	});
+};
