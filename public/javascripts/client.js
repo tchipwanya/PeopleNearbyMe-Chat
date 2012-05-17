@@ -207,28 +207,29 @@ function bindEvents() {
 		i.preventDefault();
 		showLoad();
 		var alias = $("#aliasInput").val();
+		console.log(alias);
 		var roomSelect = $("#roomSelect").val(); // I <3 jQuery
 		var roomInput = $("#roomInput").val();
 
-		if (alias.length > 50) {
-			showConnect("alias too long. 50 character max.");
-			return false;
-		}
-		if (alias.length < 4){
-			showConnect("alias too short. Enter at least 4 characters");
-			return false;
-		}
+		// if (alias.length > 50) {
+		// 	showConnect("alias too long. 50 character max.");
+		// 	return false;
+		// }
+		// if (alias.length < 4){
+		// 	showConnect("alias too short. Enter at least 4 characters");
+		// 	return false;
+		// }
 
-		if (alias.length === 0) {
-			showConnect("You forgot to enter your alias silly.");
-			return;
-		}
+		// if (alias.length === 0) {
+		// 	showConnect("You forgot to enter your alias silly.");
+		// 	return;
+		// }
 
-		//more validations
-		if (/[^\w_\-^!]/.exec(alias)) {
-			showConnect("Bad character in alias. Can only have letters, numbers, and '_', '-', '^', '!'");
-			return false;
-		}
+		// //more validations
+		// if (/[^\w_\-^!]/.exec(alias)) {
+		// 	showConnect("Bad character in alias. Can only have letters, numbers, and '_', '-', '^', '!'");
+		// 	return false;
+		// }
 
 		// TODO validate roomInput. 
 
@@ -282,9 +283,9 @@ function updateRoomList(data) {
 	for(var x in data) {
 		content += '<option value="'+data[x]._id+'">';
 		content += data[x].name;
-		if(data[x].roomNum!= "000") {
-			content+=" - "+data[x].roomNum;
-		}
+		//if(data[x].roomNum!= "000") {
+		//	content+=" - "+data[x].roomNum;
+		//}
 		content += "</option>";
 	}
 	$('#roomSelect').html(content);
@@ -563,6 +564,11 @@ function fbLogin() {
 		if (response.authResponse) {
 			FB.api('/me', function(response) {
 				CONFIG.fbid = response.name;
+				console.log(response.name);
+				$('#aliasInput').val(response.name);
+				$('#fbLogin').css('display','none');
+				$('#aliasDisplay').html(response.name);
+				$('#aliasDisplay').css('display','block');
 			});
 		} else {
 		}
