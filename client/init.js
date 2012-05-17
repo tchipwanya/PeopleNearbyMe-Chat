@@ -2,7 +2,7 @@
 var socket = null;
 function socketConnect() {
 	socket = io.connect(); // DEVELOPMENT
-	//var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
+	var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
 }
 
 socketConnect();
