@@ -1,6 +1,8 @@
 /* client.js subfile 1 */
 
-var CONFIG = {	alias: "#",   // set in onConnect,
+var CONFIG = {	alias: null,   // set in onConnect,
+				fbid: null,
+				fbhash: null,
 				room: null,
 				id: null,    // set in onConnect,
 				last_message_time: 1,
@@ -135,6 +137,7 @@ function gotLocation(position) {
 function onLocation(data) {
 	updateRoomList(data);
 }
+
 function mapsInit(position) {
 	var myOptions = {
 		center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),

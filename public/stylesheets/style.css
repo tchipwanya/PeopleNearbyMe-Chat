@@ -7,7 +7,6 @@
 }
 html, body {
 	height: 100%;
-	border-top: 10px solid #3B8C3E;  
   	margin: 0;
   	font-family: 'Open Sans', sans-serif;
 
@@ -16,34 +15,33 @@ html, body {
 	min-height: 100%;
 	height: auto !important;
 	height: 100%;
-	margin: 0 auto -80px; /* the bottom margin is the negative value of the footer's height */
+	margin: 0 auto; /* the bottom margin is the negative value of the footer's height */
 }
 
-
-#main {overflow:auto;
-	padding-bottom: 80px;}  /* must be same height as the footer */
-
-#footer {position: relative;
-	margin-top: -80px; /* negative value of footer height */
-	height: 100px;
-	clear:both;
+#footer {
+	height: 25px;
+/*	clear:both; */
 	text-align: center;
-	background-color: #3B8C3E;
-	
-
+	background-color: rgba(0,0,0,0.5);
+  color: white;
 }
 body, #entry {
   color: #000;
 }
 body, table {
   font-size: 14pt;
+  background-image: url('/images/wood2.jpg');
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  background-position:center; 
 }
 
 h2 {
-color:blue;
-font-family: 'Open Sans', sans-serif;
-font-style: italic;
-font-size:16px;
+  color:white;
+  font-family: 'Open Sans', sans-serif;
+  font-size:16px;
+  text-align:right;
+  display:none;
 }
 
 tr,td,table {
@@ -100,10 +98,11 @@ a:hover { text-decoration: underline; color: #aaa; }
 
 #flag {
   padding:15px 0 0 0;
+  color:white;
   font-weight:300;
   font-size:40px;
   letter-spacing:-1px;
-  border-bottom: 1pt solid black;
+  border-bottom: 1pt solid white;
   text-shadow:1px 1px 2px #fff;
 }
 #wrapper {
@@ -115,6 +114,10 @@ a:hover { text-decoration: underline; color: #aaa; }
   height: 100%;
   width: inherit;
   padding: 10px 0 0 0;
+}
+
+#content {
+  background: rgba(0,0,0,0.5);
 }
 
 #connect, #loading, #log, #toolbar, #error { display:none; }

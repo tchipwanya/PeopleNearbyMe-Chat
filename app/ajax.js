@@ -1,5 +1,3 @@
-/* server.js subfile 4 */
-
 db.open(function(err, db) {
 	if (err) {
 		console.log(err);

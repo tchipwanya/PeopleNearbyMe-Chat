@@ -1,5 +1,3 @@
-/* server.js subfile 1 */
-
 /* Mongodb connection */
 
 var mongo = require('mongodb')
