@@ -11,7 +11,9 @@ var mongo = require('mongodb')
   , MongoStore = require('connect-mongodb');
 /* Ensure geospatial indexing */
 db.collection('rooms', function(err, collection) {
-  db.places.ensureIndex( { coords : "2d" } )
+  db.collection('rooms',{ coords : "2d" }, function() {
+    console.log("Geospatial Index Created.");
+  });
 });
 
 
