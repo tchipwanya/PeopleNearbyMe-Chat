@@ -1,0 +1,325 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,700);
+* { outline: 0 }
+
+  
+* {
+	margin: 0;
+}
+html, body {
+	height: 100%;
+  	margin: 0;
+  	font-family: 'Open Sans', sans-serif;
+
+}
+#wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto; /* the bottom margin is the negative value of the footer's height */
+}
+
+#footer {
+	height: 25px;
+/*	clear:both; */
+	text-align: center;
+	background-color: rgba(0,0,0,0.5);
+  color: white;
+}
+body, #entry {
+  color: #fff;
+}
+body, table {
+  font-size: 14pt;
+  background-image: url('/images/wood2.jpg');
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  background-position:center; 
+}
+
+h2 {
+  color:white;
+  font-family: 'Open Sans', sans-serif;
+  font-size:16px;
+  text-align:right;
+  display:none;
+}
+
+tr,td,table {
+  padding: 0;
+  margin: 0;
+  outline-width: 0;
+  border-width: 0;
+}
+tr,td {
+  width: auto;
+}
+table {
+  line-height: 150%;
+  padding:5px;
+  border-radius: 5px;
+  width:890px;
+  background:rgba(255,255,255,0.7);
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 10px 0;
+}
+
+
+a { text-decoration: none; color: #888; }
+a:hover { text-decoration: underline; color: #aaa; }
+::-moz-selection,
+::selection {
+  color: inherit;
+  background: hsl(324, 96%, 50%)#ffffff;
+}
+
+.center {
+  text-align: center;
+}
+.right {
+  float:right;
+}
+#links {
+  float: right;
+}
+#links a { margin-left: 10px; font-size: 10pt; }
+
+#header { position: relative; }
+
+
+
+#logo {
+  width: 160px;
+  height: 160px;
+  position: absolute;
+  top: 23px;
+  left: 60px;
+}
+
+#flag {
+  padding:15px 0 0 0;
+  color:white;
+  font-weight:300;
+  font-size:40px;
+  letter-spacing:-1px;
+  border-bottom: 1pt solid white;
+  text-shadow:1px 1px 2px #fff;
+}
+#wrapper {
+  width:960px;
+  margin: 0 auto;
+}
+#loading, #connect {
+
+  height: 100%;
+  width: inherit;
+  padding: 10px 0 0 0;
+}
+
+#content {
+  background: rgba(0,0,0,0.5);
+}
+
+#connect, #loading, #log, #toolbar, #error { display:none; }
+
+#joinButton {
+  -moz-box-shadow:inset 0px 0px 0px -50px #bbdaf7;
+  -webkit-box-shadow:inset 0px 0px 0px -50px #bbdaf7;
+  box-shadow:inset 0px 0px 0px -50px #bbdaf7;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #79bbff), color-stop(1, #378de5) );
+  background:-moz-linear-gradient( center top, #79bbff 5%, #378de5 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#79bbff', endColorstr='#378de5');
+  background-color:#79bbff;
+  border:1px solid #84bbf3;
+  display:inline-block;
+  color:#ffffff;
+  font-size:14pt;
+  font-weight:bold;
+  padding:.5em;
+  width: 475px;
+  text-align: center;
+  text-decoration:none;
+  text-shadow:1px 1px 0px #528ecc;
+}
+#joinButton:hover {
+  /*background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #378de5), color-stop(1, #79bbff) );
+  background:-moz-linear-gradient( center top, #378de5 5%, #79bbff 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#378de5', endColorstr='#79bbff');*/
+  border:
+  -moz-box-shadow: 0px 0px 4px #949494;
+  -webkit-box-shadow: 0px 0px 4px #949494;
+  box-shadow: 0px 0px 4px #949494;
+  border:1px solid #4079B3;
+  }
+#connectButton:active {
+  position:relative;
+  top:1px;
+}
+
+#loading {
+  text-align:center;
+  height: 400px;
+}
+
+#error {
+  width: 945px;
+  padding: .5em;
+  font-size: 10pt;
+  border: 1px solid #FF7373;
+  background: #FFCFCF;
+  color: black;
+  margin-bottom: 10px;
+}
+
+#toolbar {
+
+  color: #fff;
+  width: inherit; 
+}
+
+
+#entry {
+  width: 941px;
+  font-size: inherit;
+  padding: .5em;
+  margin: 0;
+  border-width: 0;
+  outline-width: 0;
+  clear: both;
+  background:rgba(0,0,0,0.2);
+  border-top:1pt solid black;
+}
+#entry:active,
+#entry:focus {
+  outline:none;
+}
+.clear { clear: both; height:0; margin:0; padding: 0; }
+
+#log {
+  /* enough padding to clear the toolbar.. is there a better way to do this? */
+  padding-bottom: 5.1em; 
+  background: inherit;
+  overflow-x: visible;
+  overflow-y: scroll;
+  height:400px;
+  background:rgba(255,255,255,0.7);
+}
+#who {
+  float:right;
+  width:200px;
+  height: 495px;
+  overflow-y:scroll;
+  background:rgba(59, 140, 62,.4);
+}
+
+#dropv, .dropv ul {padding: 0; margin: 0; list-style: none;}
+#dropv a {display: inline; width: 170px;}
+#dropv li {float: left; padding: 0px 8px 2px 0px;}  /* all list items */
+#dropv li ul {position: absolute; background:red; 
+  padding: 0px 0px 0px 4px; width: 170px; left: -9999px;} /* second-level lists */
+#dropv li:hover ul {left: auto; } /* nest list under hovered list items */
+#dropv li ul li a {color: #ffffff; text-decoration: none; display: block;}
+#dropv li ul li a:hover {color: yellow; background:#663399;}
+
+.person {
+  padding:5px;
+  display:block;
+  color: green,
+}
+.person:hover{
+	color:green;
+	text-decoration: underline;
+}
+#text {
+  width:300px;
+  height: 40px;
+  background:rgba(225, 0, 0, .4);
+}
+/* not very important info */
+#aliasInput, #roomInput {
+  font-size: 14pt;
+  padding:.5em;
+  font-weight:lighter;
+  width: 455px;
+  border: 1px solid #D6D6D6;
+  margin: 0 0 10px 0;
+}
+
+#roomSelect {
+  margin: 0 0 10px 0;
+  width: 475px;
+  height: 242px;
+  border: 1px solid #D6D6D6;
+  font-size: 14pt;
+  font-weight:lighter;
+}
+
+#roomSelect optgroup {
+  background-color:#C1E0C3;
+  font-style: normal;
+  font-weight: 700;
+}
+
+#roomSelect optgroup option {
+  margin-left:15px;
+  padding-left: 15px;
+}
+#aliasDisplay {
+  background-color: white;
+  padding: 10px;
+}
+
+.notice td, .join td, .part td, .message { color: #555; }
+.error td { color: #933; }
+.personal .alias, .notice .alias { color: #cd5; }
+
+.message {
+  margin: 0;
+  padding: 5px;
+}
+
+.message td {
+  vertical-align: top;
+}
+
+.alias { 
+  font-weight: bold;
+  padding: 0 1em 0 0 0;
+}
+
+.alias a {
+  color: inherit;
+}
+
+#joinForm {
+  float:right;
+  width: 475px;
+  text-align: left;
+}
+#status {
+    background: #733;
+    clear:both;
+}
+
+#usersLink {
+  color: inherit;
+}
+
+#map_canvas {
+  width: 475px;
+  height: 400px;
+  float: left;
+}
+.message:hover .date {
+  opacity:1;
+}
+.date {
+  float:right;
+  opacity:0;
+  transition: opacity .8s ease-in;
+  -moz-transition: opacity .8s ease-in;
+  -webkit-transition: opacity .15s ease-in;
+  -o-transition: opacity .8s ease-in;
+  font-size: 10pt;
+  color: #CCC;
+}
