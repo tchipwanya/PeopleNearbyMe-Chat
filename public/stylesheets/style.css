@@ -65,8 +65,21 @@ table {
 }
 
 
-a { text-decoration: none; color: #888; }
-a:hover { text-decoration: underline; color: #aaa; }
+a { 
+  display: inline-block; 
+  text-decoration: none; 
+  color: white; 
+  padding: 5px; 
+  transition:all .1s ease-in;
+  -moz-transition:all .1s ease-in;
+  -webkit-transition:all .1s ease-in;
+  -o-transition:all .1s ease-in;
+  -ms-transition:all .1s ease-in;
+}
+a:hover { 
+  text-decoration: none; 
+  background:rgba(0,0,0,.3) 
+  }
 ::-moz-selection,
 ::selection {
   color: inherit;
@@ -207,14 +220,15 @@ a:hover { text-decoration: underline; color: #aaa; }
 #who {
   float:right;
   width:200px;
-  height: 455px;
-  padding: 20px 0;
+  height: 495px;
+  padding: 0px 0;
   font-size:12px;
   overflow-y:scroll;
-  background:rgba(59, 140, 62,.4);
+  background:rgba(37, 120, 46,.3);
 }
 #whoTitle {
-  padding: 5px;
+  padding: 5px 10px 10px 10px;
+
   font-weight:bold;
   font-size:14px;
 }
@@ -234,7 +248,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 .person:hover{
 }
 .person:nth-child(even) {
-    background:rgba(59, 140, 62,.7);
+    background:rgba(59, 140, 62,.4);
 }
 #text {
   width:300px;
@@ -276,19 +290,25 @@ a:hover { text-decoration: underline; color: #aaa; }
   padding: 10px;
 }
 
-.notice td, .join td, .part td, .message { color: #555; }
+.notice td, .join td, .part td, .message { color: #000  ; }
 .error td { color: #933; }
 .personal .alias, .notice .alias { color: #cd5; }
 
 .message {
   margin: 0;
   padding: 5px;
+  background:rgba(255,255,255,.5);
+  height:auto;
 }
-
+.message:nth-child(even) {
+  background:transparent;
+}
 .message td {
   vertical-align: top;
 }
+.msg-text {
 
+}
 .alias { 
   font-weight: bold;
   padding: 0 1em 0 0 0;
