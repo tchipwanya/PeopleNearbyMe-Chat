@@ -207,11 +207,17 @@ a:hover { text-decoration: underline; color: #aaa; }
 #who {
   float:right;
   width:200px;
-  height: 495px;
+  height: 455px;
+  padding: 20px 0;
+  font-size:12px;
   overflow-y:scroll;
   background:rgba(59, 140, 62,.4);
 }
-
+#whoTitle {
+  padding: 5px;
+  font-weight:bold;
+  font-size:14px;
+}
 #dropv, .dropv ul {padding: 0; margin: 0; list-style: none;}
 #dropv a {display: inline; width: 170px;}
 #dropv li {float: left; padding: 0px 8px 2px 0px;}  /* all list items */
@@ -222,13 +228,13 @@ a:hover { text-decoration: underline; color: #aaa; }
 #dropv li ul li a:hover {color: yellow; background:#663399;}
 
 .person {
-  padding:5px;
+  padding:2px 10px;
   display:block;
-  color: green,
 }
 .person:hover{
-	color:green;
-	text-decoration: underline;
+}
+.person:nth-child(even) {
+    background:rgba(59, 140, 62,.7);
 }
 #text {
   width:300px;
@@ -266,6 +272,7 @@ a:hover { text-decoration: underline; color: #aaa; }
 }
 #aliasDisplay {
   background-color: white;
+  color: black;
   padding: 10px;
 }
 
