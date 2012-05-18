@@ -22,6 +22,11 @@ function fbLogin() {
 		if (response.authResponse) {
 			FB.api('/me', function(response) {
 				CONFIG.fbid = response.name;
+				console.log(response.name);
+				$('#aliasInput').val(response.name);
+				$('#fbLogin').css('display','none');
+				$('#aliasDisplay').html(response.name);
+				$('#aliasDisplay').css('display','block');
 			});
 		} else {
 		}

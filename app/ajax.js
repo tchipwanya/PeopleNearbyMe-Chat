@@ -85,9 +85,9 @@ db.open(function(err, db) {
 					var error = "";
 
 					if (!alias){ error += "Alias was not included in join request. "; }
-					if (/[^\w_\-^!]/.exec(alias)) { error += "Alias contains invalid characters and is far too silly. "; }
-					if (alias.length === 0) { error += "You forgot to enter your alias silly. "; }
-					if (alias.length > 50) { error += "The alias you entered is too long. "; }
+					// if (/[^\w_\-^!]/.exec(alias)) { error += "Alias contains invalid characters and is far too silly. "; }
+					// if (alias.length === 0) { error += "You forgot to enter your alias silly. "; }
+					// if (alias.length > 50) { error += "The alias you entered is too long. "; }
 
 					var clients = io.sockets.in(room._id).clients();
 
