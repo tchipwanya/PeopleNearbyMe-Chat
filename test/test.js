@@ -1,6 +1,7 @@
 var Browser = require("zombie");
 var assert = require("assert");
 
+// just little test at beginning
 // Load the page from localhost
 browser = new Browser()
 
@@ -16,6 +17,3 @@ browser.visit("http://localhost:3000/").
     console.log("Oops", error);
 });
 
-browser.clickLink("logout", function() {
-  	assert.equal(browser.text("title"), "");
-});

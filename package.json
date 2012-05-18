@@ -13,5 +13,6 @@
     , "connect": "2.2.x"
     , "mongodb": "1.0.x"
     , "connect-mongodb": "1.1.x"
+    , "zombie": "1.1.x```"
   }
 }
