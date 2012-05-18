@@ -3,65 +3,47 @@
 
   
 * {
-	margin: 0;
+    margin: 0;
 }
-html, body {
-	height: 100%;
-  	margin: 0;
-  	font-family: 'Open Sans', sans-serif;
 
-}
 #wrapper {
-	min-height: 100%;
-	height: auto !important;
-	height: 100%;
-	margin: 0 auto; /* the bottom margin is the negative value of the footer's height */
+  width: 980px;
+    margin: 0 auto; /* the bottom margin is the negative value of the footer's height */
 }
 
 #footer {
-	height: 25px;
-/*	clear:both; */
-	text-align: center;
-	background-color: rgba(0,0,0,0.5);
+  width: 100%;
+    height: 25px;
+    text-align: center;
+    background-color: rgba(0,0,0,0.5);
   color: white;
+  position:absolute;
+  bottom:0;
 }
-body, #entry {
-  color: #fff;
+#entry {
+  color: #000;
 }
-body, table {
+
+body{
   font-size: 14pt;
   background-image: url('/images/wood2.jpg');
   background-repeat:no-repeat;
   background-attachment:fixed;
   background-position:center; 
+  margin: 0;
+  padding:0;
+  font-family: 'Open Sans', sans-serif;
+  color: white;
 }
 
 h2 {
-  color:white;
-  font-family: 'Open Sans', sans-serif;
   font-size:16px;
   text-align:right;
   display:none;
 }
 
-tr,td,table {
-  padding: 0;
-  margin: 0;
-  outline-width: 0;
-  border-width: 0;
-}
 tr,td {
   width: auto;
-}
-table {
-  line-height: 150%;
-  padding:5px;
-  border-radius: 5px;
-  width:890px;
-  background:rgba(255,255,255,0.7);
-  border-collapse: collapse;
-  border-spacing: 0;
-  margin: 10px 0;
 }
 
 
@@ -79,7 +61,7 @@ a {
 a:hover { 
   text-decoration: none; 
   background:rgba(0,0,0,.3) 
-  }
+}
 ::-moz-selection,
 ::selection {
   color: inherit;
@@ -118,19 +100,16 @@ a:hover {
   border-bottom: 1pt solid white;
   text-shadow:1px 1px 2px #fff;
 }
-#wrapper {
-  width:960px;
-  margin: 0 auto;
-}
+
 #loading, #connect {
 
   height: 100%;
   width: inherit;
-  padding: 10px 0 0 0;
 }
 
 #content {
   background: rgba(0,0,0,0.5);
+  padding: 10px;
 }
 
 #connect, #loading, #log, #toolbar, #error { display:none; }
@@ -221,17 +200,10 @@ a:hover {
   float:right;
   width:200px;
   height: 495px;
-  padding: 0px 0;
-  font-size:12px;
   overflow-y:scroll;
-  background:rgba(37, 120, 46,.3);
+  background:rgba(59, 140, 62,.4);
 }
-#whoTitle {
-  padding: 5px 10px 10px 10px;
 
-  font-weight:bold;
-  font-size:14px;
-}
 #dropv, .dropv ul {padding: 0; margin: 0; list-style: none;}
 #dropv a {display: inline; width: 170px;}
 #dropv li {float: left; padding: 0px 8px 2px 0px;}  /* all list items */
@@ -242,13 +214,13 @@ a:hover {
 #dropv li ul li a:hover {color: yellow; background:#663399;}
 
 .person {
-  padding:2px 10px;
+  padding:5px;
   display:block;
+  color: green,
 }
 .person:hover{
-}
-.person:nth-child(even) {
-    background:rgba(59, 140, 62,.4);
+    color:green;
+    text-decoration: underline;
 }
 #text {
   width:300px;
@@ -284,31 +256,21 @@ a:hover {
   margin-left:15px;
   padding-left: 15px;
 }
-#aliasDisplay {
-  background-color: white;
-  color: black;
-  padding: 10px;
-}
 
-.notice td, .join td, .part td, .message { color: #000  ; }
+
+.notice td, .join td, .part td, .message { color: #555; }
 .error td { color: #933; }
 .personal .alias, .notice .alias { color: #cd5; }
 
 .message {
   margin: 0;
   padding: 5px;
-  background:rgba(255,255,255,.5);
-  height:auto;
 }
-.message:nth-child(even) {
-  background:transparent;
-}
+
 .message td {
   vertical-align: top;
 }
-.msg-text {
 
-}
 .alias { 
   font-weight: bold;
   padding: 0 1em 0 0 0;
