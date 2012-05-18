@@ -524,8 +524,8 @@ function onJoin (data) {
 }/* client.js subfile 4 */
 var socket = null;
 function socketConnect() {
-	socket = io.connect(); // DEVELOPMENT
-	//var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
+	//socket = io.connect(); // DEVELOPMENT
+	socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
 }
 
 socketConnect();
