@@ -1,3 +1,7 @@
 exports.index = function(req, res){
-	res.render('index', { loggedIn: req.session.hasOwnProperty("user") })
+	res.render('index', {})
+};
+
+exports.channel = function(req, res){
+	res.render('channel', {})
 };

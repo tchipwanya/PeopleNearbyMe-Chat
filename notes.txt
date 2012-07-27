@@ -1,0 +1,26 @@
+## On first pageload
+
+- http get request to root domain
+- express adds session and cookie, returns page
+- page loads. Socket.io, google maps, and Fbauth init.
+- location is retrieved from browser, sent to google maps and to PeopleNearby.me servers => return list of nearby places.
+- Socket.io linked with prexisting express session
+- on fb connect button click, facebook send authentication request, returning fb auth variables. 
+- upon user selecting which room they are in, "join room" now button becomes active.
+- big socket request to server to join the room
+- server adds user's facebook authentication info to db. Links user's session with the room specified. 
+- application begins receiving chat events 
+	- on
+
+
+# Facebook and session managment details
+
+## On leave room:
+- user is dissociated with current room. 
+- login page is displayed, with rooms availble reset. 
+- other users in the room are notified of that user's departure.
+
+## On log out.
+- Delete fb session info. 
+- Reset login button
+- allow new login.

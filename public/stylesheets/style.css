@@ -13,12 +13,13 @@
 
 #footer {
   width: 100%;
-    height: 25px;
-    text-align: center;
-    background-color: rgba(0,0,0,0.5);
+  height: 25px;
+  text-align: center;
+  background-color: rgba(0,0,0,0.5);
   color: white;
   position:absolute;
   bottom:0;
+  z-index:-1;
 }
 
 body{
@@ -26,7 +27,8 @@ body{
   background-image: url('/images/wood2.jpg');
   background-repeat:no-repeat;
   background-attachment:fixed;
-  background-position:center; 
+  background-position:top left; 
+  background-color: #5A2010;
   margin: 0;
   padding:0;
   font-family: 'Open Sans', sans-serif;
@@ -48,7 +50,6 @@ a {
   display: inline-block; 
   text-decoration: none; 
   color: white; 
-  padding: 5px; 
   transition:all .1s ease-in;
   -moz-transition:all .1s ease-in;
   -webkit-transition:all .1s ease-in;
@@ -57,7 +58,8 @@ a {
 }
 a:hover { 
   text-decoration: none; 
-  background:rgba(0,0,0,.3) 
+  background:rgba(0,0,0,.3);
+  cursor: default;
 }
 
 .center {
@@ -69,9 +71,19 @@ a:hover {
 #links {
   float: right;
 }
-#links a { margin-left: 10px; font-size: 10pt; }
+#links a { 
+  margin: 0 0 0 10px; 
+  font-size: 10pt;
+  padding: 5px;  
+}
 
-#header { position: relative; }
+#logout {
+  display:none;
+}
+
+#header { 
+  position: relative; 
+}
 
 
 
@@ -93,18 +105,12 @@ a:hover {
   text-shadow:1px 1px 2px #fff;
 }
 
-#loading, #connect {
-
-  height: 100%;
-  width: inherit;
-}
-
 #content {
   background: rgba(0,0,0,0.5);
   padding: 10px;
 }
 
-#connect, #loading, #log, #toolbar, #error { display:none; }
+#loading, #chat, #toolbar, #error { display:none; }
 
 #joinButton {
   -moz-box-shadow:inset 0px 0px 0px -50px #bbdaf7;
@@ -182,19 +188,28 @@ a:hover {
 
 #log {
   /* enough padding to clear the toolbar.. is there a better way to do this? */
+  float:left;
   padding-bottom: 5.1em; 
   background: inherit;
-  overflow-x: visible;
+  overflow-x: scroll;
   overflow-y: scroll;
   height:400px;
+  width: 750px;
   background:rgba(255,255,255,0.7);
 }
+
 #who {
   float:right;
   width:200px;
   height: 495px;
   overflow-y:scroll;
   background:rgba(59, 140, 62,.4);
+}
+
+#whoTitle {
+  display: block;
+  text-align: center;
+  font-weight: bold;
 }
 
 #dropv, .dropv ul {padding: 0; margin: 0; list-style: none;}
@@ -233,11 +248,16 @@ a:hover {
 
 #roomSelect {
   margin: 0 0 10px 0;
-  width: 475px;
+  border: 1px solid #D6D6D6;  
+  width: 475px;  
+  padding: 10px;
   height: 242px;
-  border: 1px solid #D6D6D6;
   font-size: 14pt;
   font-weight:lighter;
+}
+
+#roomSelect option {
+  padding: 1em;
 }
 
 #roomSelect optgroup {
@@ -247,33 +267,39 @@ a:hover {
 }
 
 #roomSelect optgroup option {
-  margin-left:15px;
+  margin-left: 15px;
   padding-left: 15px;
 }
 
 
 .notice td, .join td, .part td, .message { color: #555; }
 .error td { color: #933; }
-.personal .alias, .notice .alias { color: #cd5; }
+.personal .alias, .notice .alias { color: #3B5998; }
 
 .message {
   margin: 0;
   padding: 5px;
-  background:rgba(255,255,255,.5);
+  background:rgba(255,255,255,.1);
   height:auto;
 }
 .message:nth-child(even) {
   background:transparent;
 }
 
-.alias { 
+.alias {
+  display:block;
+  float:left;
   font-weight: bold;
-  padding: 0 1em 0 0 0;
+  padding: 0 0 0 .3em;
+  min-width: 5em;
 }
 
-.alias a {
-  color: inherit;
+.msg-text {
+  padding-left: .6em;
 }
+
+/*.alias a {
+} */
 
 #joinForm {
   float:right;
@@ -285,9 +311,9 @@ a:hover {
     clear:both;
 }
 
-#usersLink {
-  color: inherit;
-}
+/*#usersLink {
+  color: #3B5998;
+}*/
 
 #map_canvas {
   width: 475px;
@@ -305,5 +331,8 @@ a:hover {
   -webkit-transition: opacity .15s ease-in;
   -o-transition: opacity .8s ease-in;
   font-size: 10pt;
-  color: black;
+  color: #555;
+  display:block;
+  vertical-align: center;
+  padding:.5em;
 }

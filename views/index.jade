@@ -1,25 +1,27 @@
 #connect
-	#fb-root
 	#error
 	#map_canvas	
 	form#joinForm
-		img(id="fbLogin", src="/images/facebook_connect.png")
-		input(id="aliasInput", class="hidden", type="hidden", name="aliasInput")
+		//img(id="fbLogin", src="/images/facebook_connect.png")
+		//div(class="fb-login-button", scope="email", size="large", data-show-faces="true", , data-max-rows="1") Login with Facebook
+		input(id="aliasInput", class="text", type="text", autocomplete="off", value="", placeholder="Your screen name?", name="aliasInput")
 		div(id="aliasDisplay",style="display:none;")
 		select(id="roomSelect", name="room", size="2")
 			optgroup Loading
-		input(id="roomInput", class="text", type="text", name="roomInput", autocomplete="off", value="", placeholder="If your room wasn't listed above, enter it here.")
+		input(id="roomInput", class="text", type="text", name="roomInput", autocomplete="off", value="", placeholder="Choose a room from above or name a new one.")
 		input(id="joinButton", class="button", type="submit", name="", value="Join")
 	.clear
 #loading
 	p loading
-#who
-	h4#roomtitle
-	#whoTitle people
-	a(href='#').whoList
-	div#whoList
 
-#log
+#chat	
+	#log
+	#who
+		h4#roomTitle
+		#whoTitle Who's here
+		#whoList
+
+
 
 #toolbar
 	form#entryForm
