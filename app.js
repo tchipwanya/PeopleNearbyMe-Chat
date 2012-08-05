@@ -31,6 +31,14 @@ var mongo = require('mongodb'),
 
 var app = module.exports = express.createServer();
 
+app.configure('development', function(){
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+});
+
+app.configure('production', function(){
+  app.use(express.errorHandler());
+});
+
 app.configure(function() {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
@@ -42,14 +50,6 @@ app.configure(function() {
 							secret: 'JHgzU1IWXZmAJpETpPgTYsjtiojqn7mseIbzboQW', 
 							key: 'express.sid'}));
   app.use(app.router);
-});
-
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
-
-app.configure('production', function(){
-  app.use(express.errorHandler());
 });
 
 /* Routes */
