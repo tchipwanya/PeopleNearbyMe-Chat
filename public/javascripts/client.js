@@ -210,7 +210,7 @@ function mapsInit(position) {
 }
 
 function onLocation(data) {
-	console.log(data);
+//	console.log(data);
 	updateRoomList(data);
 }
 
@@ -417,7 +417,11 @@ function updateTitle(){
 }
 
 function updateRoomTitle() {
-	$("#roomTitle").html(CONFIG.room);
+	if(CONFIG.room) {
+		$('#roomTitle').html(CONFIG.room.name);
+	} else {
+		console.log("CONFIG.room undefined for updateRoomTitle()");
+	}
 }
 
 //Transition the page to the state that prompts the user for a alias
