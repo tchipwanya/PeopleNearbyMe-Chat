@@ -2,8 +2,6 @@
 
 var GOOGLE_API_KEY = "AIzaSyDUyWoBTnAqU5faKSREgi4-xfw1Slzk-0Q",
 	NUM_PLACES_RESULTS = 5,
-  	MONGO_DEV_USER = '',
-  	MONGO_DEV_PASS = '',
   	MONGO_PROD_USER = 'heroku_app4027608',
   	MONGO_PROD_PASS = 'd8fc6548a8d78b52cf1b6b47c277ae52';
 
@@ -25,37 +23,31 @@ var mongo = require('mongodb'),
 	Session = connect.middleware.session.Session,
 	parseCookie = connect.utils.parseCookie;
 
-/* Mongo Authentication Setup */
-
 /* Express setup */
 
 var app = module.exports = express.createServer();
 
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(express.static(__dirname + '/public', { maxAge: 86400000 })); // one day
+app.use(express.cookieParser());
+app.use(express.session({ store: sessionStore, secret: 'JHgzU1IWXZmAJpETpPgTYsjtiojqn7mseIbzboQW', key: 'express.sid'}));
+app.use(app.router);
+app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+/*app.configure('development', function(){
+
 });
 
 app.configure('production', function(){
-  app.use(express.errorHandler());
-});
-
-app.configure(function() {
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.static(__dirname + '/public', { maxAge: 86400000 })); // one day
-  app.use(express.cookieParser());
-  app.use(express.session({	store: sessionStore, 
-							secret: 'JHgzU1IWXZmAJpETpPgTYsjtiojqn7mseIbzboQW', 
-							key: 'express.sid'}));
-  app.use(app.router);
-});
+	app.use(express.errorHandler());
+});*/
 
 /* Routes */
 
 app.get('/', routes.index);
-app.get('/channel.html', routes.channel)
+//app.get('/channel.html', routes.channel)
 
 /* App start */
 
