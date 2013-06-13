@@ -1,409 +1,370 @@
-/* Constants */
-
+// Constants 
 var GOOGLE_API_KEY = "AIzaSyDUyWoBTnAqU5faKSREgi4-xfw1Slzk-0Q",
-	NUM_PLACES_RESULTS = 5;
+		NUM_PLACES_RESULTS = 5,
+		SECRET = 'JHgzU1IWXZmAJpETpPgTYsjtiojqn7mseIbzboQW',
+		COOKIE = 'express.sid',
+		PORT = process.env.PORT || 3000;
 
-/* Mongodb connection */
-var mongo = require('mongodb')
-  , Server = mongo.Server
-  , Db = mongo.Db
-  , server = new Server('localhost', 27017, {auto_reconnect: true})
-  , BSON = mongo.BSONPure
-  , db = new Db('peoplenearbyme', server)
-  , MongoStore = require('connect-mongodb')
-  , sessionStore = new MongoStore({db: db, reapInterval: 1000 * 60 * 60 });
+// Mongoose init 
+var mongoose = require('mongoose'),
+		ObjectID = require('mongodb').ObjectID;
+mongoose.connect('mongodb://localhost/peoplenearbyme');
+var db = mongoose.connection;
 
-/* Express init */
+// Express requires 
+var express = require('express'),
+		http = require('http'),
+		https = require('https');
 
-var express = require('express')
-  , routes = require('./routes')
-  , http = require('http')
-  , https = require('https');
+// Express init 
+var app = express();
 
-/* Express config */
+// Express plumbing
 
-var app = module.exports = express.createServer();
 
-app.configure(function() {
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.static(__dirname + '/public', { maxAge: 86400000 })); // one day
-  app.use(express.cookieParser());
-  app.use(express.session({	store: sessionStore, 
-  							secret: 'JHgzU1IWXZmAJpETpPgTYsjtiojqn7mseIbzboQW', 
-  							key: 'express.sid'}));
-  app.use(app.router);
-});
+var cookieParser = express.cookieParser(SECRET),
+		sessionStore = new express.session.MemoryStore();
+app.set('view engine', 'jade');
+app.set('views', __dirname + '/views');
+app.engine('jade', require('jade').__express);
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+// app.use(express.directory('public'));
+app.use(cookieParser);
+app.use(express.session({ key: COOKIE, store: sessionStore }));
+app.use(express.static('public'));
 
-app.configure('development', function(){
+// Conditional configs
+app.configure('development', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
-
-app.configure('production', function(){
+app.configure('production', function() {
   app.use(express.errorHandler());
 });
 
-/* Socket.io init */
-
-var io = require('socket.io')
-  , connect = require('connect')
-  , Session = connect.middleware.session.Session
-  , parseCookie = connect.utils.parseCookie;
-
-/* Routes */
-
-app.get('/', routes.index);
-app.get('/channel.html', routes.channel)
-//app.get('/part', onPart);
-
-/* App start */
-
-var PORT = process.env.PORT || 3000;
-//if (!module.parent) { // If you only want to listen on node.js
-app.listen(PORT, function(){
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-});
-io = io.listen(app); // Reassigning var io from library to instance
-//}
-
-/* Socket.io config */
-io.configure(function(){
-	io.set("transports", ["xhr-polling"]);
-	io.set("polling duration", 10);
-	io.set("authorization", function (data, accept) {
-	    if (data.headers.cookie) {
-	        data.cookie = parseCookie(data.headers.cookie);
-	        data.sessionID = data.cookie['express.sid'];
-	        data.sessionStore = sessionStore;
-	        sessionStore.get(data.sessionID, function (err, session) {
-	            if (!err && session) {  // Express session will always exist before socket.io connects.
-	                data.session = new Session(data, session);
-	                accept(null, true);
-	            } else {
-	            	accept(err, false);
-	            }
-	        });
-	    } else {
-	       return accept('No cookie transmitted.', false);
-	    }
-	});
+// Routes 
+app.get('/', function(req, res) {
+	res.render('index', {})
 });
 
+// Express server init, io init
+var server = http.createServer(app),
+		io = require('socket.io').listen(server);
+
+// io config 
+io.set("transports", ["xhr-polling"]);
+io.set("polling duration", 10);
+io.set('authorization', function(handshake, callback) { // https://github.com/alphapeter/socket.io-express
+  if (handshake && handshake.headers && handshake.headers.cookie) {
+      cookieParser(handshake, {}, function(err) {
+          if(err) {
+              return callback('COOKIE_PARSE_ERROR');
+          }
+          var sessionId = handshake.signedCookies[COOKIE];
+          sessionStore.get(sessionId, function(err, session) {
+              if(err || !session) {//|| !session.auth || !session.auth.loggedIn) {
+                  callback('NOT_LOGGED_IN', false);
+              }
+              else{
+                  handshake.session = session;
+                  callback(null, true);
+              }
+          });
+      });
+  } else {
+	console.log('8');  	
+      return callback('MISSING_COOKIE', false);
+  }
+});
+
+// io conditional config
 io.configure('development', function() {
 	io.set('log level', 0);
 });
-
 io.configure('production', function() {
 	io.enable('browser client minification');  
 	io.enable('browser client etag');          
 	io.enable('browser client gzip');          
 	io.set('log level', 1);                    
 });
-/* Now.js config */
-/*var everyone = require("now").initialize(app, 
-{
-	socketio: {													// Socket.io config 
-		'log level':1, // reduce logging FOR PRODUCTION ONLY
-		"transports": ["xhr-polling"],
-		"polling duration": 10,
-		"authorization": function (data, accept) {
-		    if (data.headers.cookie) {
-		        data.cookie = parseCookie(data.headers.cookie);
-		        data.sessionID = data.cookie['express.sid'];
-		        data.sessionStore = sessionStore;
-		        sessionStore.get(data.sessionID, function (err, session) {
-		            if (!err && session) {  // Express session will always exist before socket.io connects.
-		                data.session = new Session(data, session);
-		                accept(null, true);
-		            } else {
-		            	accept(err, false);
-		            }
-		        });
-		    } else {
-		       return accept('No cookie transmitted.', false);
-		    }
-		} 
-	}
-}); */
 
+// Server start 
+server.listen(PORT)
+console.log("Express server listening on port %d in %s mode", PORT, app.settings.env);
 
+/* Mongoose Models */
+var roomSchema = new mongoose.Schema({
+	name: String,
+	roomID: String, 
+	coords: [Number, Number]
+});
+roomSchema.index({ coords : "2d" });
+var Room = mongoose.model('Room', roomSchema);
 
-db.open(function(err, db) {
-	if (!err) {
-		 db.ensureIndex('rooms', { coords : "2d" }, function(err, fieldName) {
-    		if(!err)
-    			console.log("Geospatial Index created named: "+fieldName);
-    		else
-    			console.log("mongodb error 573");
+/* Mongoose */
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback() {
+	io.sockets.on("connection", function(socket) {
+		var session = socket.handshake.session;
+		// var intervalID = setInterval(function() { // setup an inteval that will keep our session fresh
+			// session.reload( function() { // reload the session (just in case something changed			
+			// session.touch().save(); // "touch" it (resetting maxAge and lastAccess) and save it back again.
+			// });
+		// }, 60 * 1000);
+
+		socket.on('disconnect', function(data) {	// clear the socket interval to stop refreshing the session
+			if(session.roomID) {
+				socket.broadcast.to(session.roomID)
+					.emit("someonePart", { 
+						alias: session.user.alias, 
+						timestamp: (new Date()).getTime() 
+					});
+				socket.leave(session.roomID);
+			}
+			// clearInterval(intervalID);
 		});
 
-		io.sockets.on("connection", function (socket) {
-			var hs = socket.handshake;
-			var intervalID = setInterval(function () { // setup an inteval that will keep our session fresh
-				hs.session.reload( function () { // reload the session (just in case something changed			
-					hs.session.touch().save(); // "touch" it (resetting maxAge and lastAccess) and save it back again.
-				});
-			}, 60 * 1000);
-
-			socket.on('disconnect', function (data) {
-			// clear the socket interval to stop refreshing the session
-				var session = hs.session;
-				if(session.roomID) {
-					socket.broadcast.to(session.roomID).emit("someonePart", {	alias: session.user.alias,
-			 													timestamp: (new Date()).getTime() });
-		 			socket.leave(session.roomID);
-		 		}
-				clearInterval(intervalID);
-			});
-
-			socket.on("join", function (userData) {
-				db.collection('rooms', function(err, collection) {
-					if (userData.roomSelect && validateRoomSelect(userData.roomSelect)) {
-						if(userData.roomSelect.length === 40){ // google places id
-							var room = { roomID: userData.roomSelect };
-							onRoomRetrieved(userData.alias, room);
-						} else {
-							var query = {'_id': BSON.ObjectID.createFromHexString(userData.roomSelect)};
-							collection.findOne(query, function(err, item) {
-									if(!err)
-										onRoomRetrieved(userData.alias,item);
-									else 
-										console.log("mongodb error 2"); 
-							}); 
-						}
-					} else if (userData.roomInput && validateRoomInput(userData.roomInput)) {  			
-						room = { name: userData.roomInput };
-						var session = hs.session
-						room.coords = [session.lat,session.lng];
-						collection.insert(room, {safe:true}, function(err, records) {
-							if(!err)
-								onRoomRetrieved(userData.alias, records[0]);
-							else
-								console.log("mongodb error 23");
-						});
-					} else {
-						socket.emit("error", {error: "No room specified."});
-						return null; 
-					}
-				});
-			});
-
-			function onRoomRetrieved(alias, room) { // deciding to validate alias after room is queried.	
-				var roomID;
-				if(room.roomID && room.roomID.length === 40)
-					roomID = room.roomID;
-				else
-					roomID = room._id.toHexString();
-
-				if(validateAlias(alias, roomID)) {
-					if (!room) {
-						socket.emit("error", {error: "Room could not be resolved."});
-						return null;
-					}
-
-					var user = { alias: alias };
-
-					socket.join(roomID);
-
-					var session = hs.session;
-					session.user = user;
-					session.roomID = roomID;
-					session.save();
-
-					var users = who(roomID);
-					socket.broadcast.to(roomID).emit("someoneJoin", { user: session.user, timestamp: (new Date()).getTime() });
-					socket.emit("join", {	sessionID: hs.sessionID,
-											users: users,
-											room: room });
+		socket.on("join", function(userData) {
+			if (validateRoomSelect(userData.roomSelect)) {
+				if (userData.roomSelect.length === 40) { // google places id
+					var room = { roomID: userData.roomSelect };
+					onRoomRetrieved(userData.alias, room);
+				} else { // user created room
+					console.log(userData.roomSelect.length);
+					console.log(userData.roomSelect);					
+					console.log(userData);
+					var query = { '_id': new ObjectID(userData.roomSelect) };
+					Room.findOne(query, function(err, room) {
+							if(!err) {
+								onRoomRetrieved(err, userData.alias, room);
+							} else {
+								console.log(err);
+							}
+					});
 				}
+			} else if (validateRoomInput(userData.roomInput)) {  			
+
+				room = {
+					name: userData.roomInput,
+					coords: [session.lat,session.lng]
+				};
+				room = new Room(room).save(function(err, room) {
+					if (err) 
+						console.log("error 42");
+					onRoomRetrieved(userData.alias, room);
+				});
+			} else {
+				socket.emit("error", {error: "No room specified."});
 			}
+		});
 
-			/*socket.on("rejoin", function (userData) {
-				var user = hs.session.user;
-				socket.join(user.room._id);
-				room = user.room;
-				var aliases = who();
-				socket.emit("rejoin", { 	sessionID: hs.sessionID, 
-											alias: user.alias,
-											aliases: aliases,
-											room: user.room});
-				socket.broadcast.to(room._id).emit("someoneJoin", {	user: user,
-																	timestamp: (new Date()).getTime() });
-			}); */
+		function onRoomRetrieved(alias, room) { // deciding to validate alias after room is queried.	
+			var roomID;
+			if (room.roomID && room.roomID.length === 40)
+				roomID = room.roomID
+			else
+				roomID = room._id.str;
+
+			if(validateAlias(alias, roomID)) {
+				if (!room) {
+					socket.emit("error", {error: "Room could not be resolved."});
+					throw err;
+				}
+
+				socket.join(roomID);
+				session.user = { alias: alias };
+				session.roomID = roomID;
+				// session.save();
+				var users = who(roomID);
+				socket.broadcast.to(roomID).emit("someoneJoin", { user: session.user, timestamp: (new Date()).getTime() });
+				socket.emit("join", {	alias: alias, users: users, room: room });
+			}
+		}
+
+		/*socket.on("rejoin", function(userData) {
+			var user = session.user;
+			socket.join(user.room._id);
+			room = user.room;
+			var aliases = who();
+			socket.emit("rejoin", { 	sessionID: sessionID, 
+										alias: user.alias,
+										aliases: aliases,
+										room: user.room});
+			socket.broadcast.to(room._id).emit("someoneJoin", {	user: user,
+																timestamp: (new Date()).getTime() });
+		}); */
 
 
-			socket.on("logout", function (userData) {
-					socket.broadcast.to(hs.session.roomID).emit("someonePart", {	alias: hs.session.user.alias,
+		socket.on("logout", function(userData) {
+				socket.broadcast.to(session.roomID).emit("someonePart", {	alias: session.user.alias,
+				timestamp: (new Date()).getTime()
+			});
+			socket.leave(session.roomID);
+			delete session.user;
+			delete session.roomID;
+			delete session.lat;
+			delete session.lng;
+			//clearInterval(intervalID);
+			//session.destroy();
+			//session.regenerate().save();
+			//	console.log(session);
+			//session.close();
+		});
+
+
+		socket.on("send", function(userData) {
+			// If a registered user.
+			if(session.user) {
+				console.log(session);
+				// session.touch().save();
+				io.sockets.in(session.roomID).emit("message", { 
+					alias: session.user.alias,
+					text: userData.text,
 					timestamp: (new Date()).getTime()
 				});
-				socket.leave(hs.session.roomID);
-				delete hs.session.user;
-				delete hs.session.roomID;
-				delete hs.session.lat;
-				delete hs.session.lng;
-				//clearInterval(intervalID);
-				//hs.session.destroy();
-				//hs.session.regenerate().save();
-				//	console.log(hs.session);
-				//hs.session.close();
-			});
-
-
-			socket.on("send", function (userData) {
-				// If a registered user.
-				if(hs.session.user) {
-					hs.session.touch().save();
-					io.sockets.in(hs.session.roomID).emit("message", { 
-						alias: hs.session.user.alias,
-						text: userData.text,
-						timestamp: (new Date()).getTime()
-					});
-				}
-			});
+			}
+		});
+		
+		//connecting the flagging socket
+		
+		socket.on("location", function(position) {
+			/* Future schema?
+				{	name:"The Lobby",
+					roomNum:"000",
+					building:"Burlington City Hall",
+					roomId:"asdf",
+					occupants:200,
+					coords:[44.476190, -73.213063]
+				}*/
 			
-			//connecting the flagging socket
-			
-			socket.on("location", function(position) {
-				/* Future schema?
-					{	name:"The Lobby",
-						roomNum:"000",
-						building:"Burlington City Hall",
-						roomId:"asdf",
-						occupants:200,
-						coords:[44.476190, -73.213063]
-					}*/
-				
-				var lat = position.coords.latitude;
-				var lng = position.coords.longitude;
+			var lat = position.coords.latitude;
+			var lng = position.coords.longitude;
 
-				var session = hs.session
-				session.lat = lat;
-				session.lng = lng;
-				session.save();
+			session.lat = lat;
+			session.lng = lng;
+			// session.save();
 
-				var options = {
-					host: "maps.googleapis.com",
-					path: "/maps/api/place/search/json?",
-					ssl: true
-				}
+			var options = {
+				host: "maps.googleapis.com",
+				path: "/maps/api/place/search/json?",
+				ssl: true
+			}
 
-				var params = {
-					key: GOOGLE_API_KEY,
-					location: lat.toString()+","+lng.toString(),
-					radius: 100, // 100m default
-					sensor: true
-				}
+			var params = {
+				key: GOOGLE_API_KEY,
+				location: lat.toString()+","+lng.toString(),
+				radius: 100, // 100m default
+				sensor: true
+			}
 
-				REST.getJSON(options, params, function(status, response){
-					//console.log(response.status);
-					//console.log(response.results);
-					//44.013506, -73.180891
-					db.collection('rooms', function(err, collection) {
-						collection.find( { coords:{$near:[lat,lng]} } ).toArray(function(err, items) {
-							for(var x in items)
-								items[x].roomID = items[x]._id.toHexString();
-							for(var x = 0; x < NUM_PLACES_RESULTS && x < response.results.length; x++)
-								response.results[x].roomID = response.results[x].id;
-							var retArray = items.concat(response.results.splice(0,NUM_PLACES_RESULTS));
-							for(var x in retArray)
-								retArray[x].numUsers = io.sockets.clients(retArray[x].roomID).length;
-							socket.emit("location", retArray);
-						});
-					});
+			getJSON(options, params, function(status, response) {
+				Room.find({ coords: { $near:[lat,lng] } }, function(err, items) {
+					for(var x in items)
+						items[x].roomID = items[x]._id.str;
+					for(var x = 0; x < NUM_PLACES_RESULTS && x < response.results.length; x++)
+						response.results[x].roomID = response.results[x].id;
+					var retArray = items.concat(response.results.splice(0,NUM_PLACES_RESULTS));
+					for(var x in retArray)
+						retArray[x].numUsers = io.sockets.clients(retArray[x].roomID).length;
+					socket.emit("location", retArray);
 				});
 			});
-
-			function who(roomID) {
-				var users = [];
-				var clients = io.sockets.clients(roomID);
-				for (var i in clients) {
-					var client = clients[i];
-					var user = client.handshake.session.user;
-					if(user) {
-						users.push(user.alias);
-					}
-				}
-				return users;
-			}
-
-			function validateRoomInput(input) { return true; } // TODO
-			function validateRoomSelect(select) { return true; } // TODO
-			function validateAlias(alias, roomID) {
-				var error = "";
-				if (!alias) {
-					error += "Alias was not included in join request. "; 
-				}
-				// if (/[^\w_\-^!]/.exec(alias)){ error += "Alias contains invalid characters and is far too silly. "; }
-				// if (alias.length === 0) { error += "You forgot to enter your alias silly. "; }
-				// if (alias.length > 50) { error += "The alias you entered is too long. "; }
-
-				var clients = io.sockets.clients(roomID);
-
-				for (var i in clients) {
-					var client = clients[i];
-					var session = client.handshake.session;
-					if (session.user && session.user.alias === alias)
-						error += "The alias you entered is already in use.";
-				}
-
-				if(error.length !== 0) {
-					socket.emit("error", {error: error});
-					return false;
-				} else return true;
-			}
 		});
-	} else console.log("mongodb error 1");
+
+		function who(roomID) {
+			var users = [];
+			var clients = io.sockets.clients(roomID);
+			for (var i in clients) {
+				var client = clients[i];
+				var user = client.handshake.session.user;
+				if(user) {
+					users.push(user.alias);
+				}
+			}
+			return users;
+		}
+
+		function validateRoomInput(input) { 
+			if (input)
+				return true; 
+			else return false;
+		}
+		function validateRoomSelect(select) { 
+			if (select)
+				return true; 
+			else return false;
+		} // TODO
+		function validateAlias(alias, roomID) {
+			var error = "";
+			if (!alias) {
+				error += "Alias was not included in join request. "; 
+			}
+			// if (/[^\w_\-^!]/.exec(alias)) { error += "Alias contains invalid characters and is far too silly. "; }
+			// if (alias.length === 0) { error += "You forgot to enter your alias silly. "; }
+			// if (alias.length > 50) { error += "The alias you entered is too long. "; }
+
+			var clients = io.sockets.clients(roomID);
+
+			for (var i in clients) {
+				var client = clients[i];
+				var clientSession = client.handshake.session;
+				if (clientSession.user && clientSession.user.alias === alias)
+					error += "The alias you entered is already in use.";
+			}
+
+			if(error.length !== 0) {
+				socket.emit("error", {error: error});
+				return false;
+			} else return true;
+		}
+	});
 });
 
-var REST = {
-	getJSON: function (options, params, callback) {
+function getJSON(options, params, callback) {
 
-		var keyValuePairs = [];
-		for (var prop in params) {
-    		if (params.hasOwnProperty(prop)) {
-        		keyValuePairs.push(prop + "=" + params[prop]);
-    		}
+	var keyValuePairs = [];
+	for (var prop in params) {
+		if (params.hasOwnProperty(prop)) {
+			keyValuePairs.push(prop + "=" + params[prop]);
 		}
-		params = keyValuePairs.join("&");
-
-		var client;
-		if(!options.ssl) {
-			options.port = 80;
-			client = http;
-		} else {
-			options.port = 443;
-			client = https;
-		}
-
-		delete options.ssl;
-
-		options.path = options.path + params;
-		options.method = 'GET';
-		options.headers = {
-			Referer: "localhost"
-		}
-
-		//console.log(options.host+options.path);
-		var req = client.request(options, function(res) {
-  			//console.log("statusCode: ", res.statusCode);
-  			//console.log("headers: ", res.headers);
-		  	res.setEncoding('utf8');
-		  	var output = '';
-	        
-        	res.on('data', function (chunk) {
-         		output += chunk;
-        	});
-
-       		res.on('end', function() {
-          		var obj = JSON.parse(output);
-	          	callback(res.statusCode, obj);
-        	});
-		});
-		req.end();		
-		req.on('error', function(err) {
-		    console.log('error: ' + err.message);
-		});
 	}
+	params = keyValuePairs.join("&");
+
+	var client;
+	if(!options.ssl) {
+		options.port = 80;
+		client = http;
+	} else {
+		options.port = 443;
+		client = https;
+	}
+
+	delete options.ssl;
+
+	options.path = options.path + params;
+	options.method = 'GET';
+	options.headers = {
+		Referer: "localhost"
+	}
+
+	//console.log(options.host+options.path);
+	var req = client.request(options, function(res) {
+		//console.log("statusCode: ", res.statusCode);
+		//console.log("headers: ", res.headers);
+		res.setEncoding('utf8');
+		var output = '';
+		
+		res.on('data', function(chunk) {
+			output += chunk;
+		});
+
+		res.on('end', function() {
+			var obj = JSON.parse(output);
+			callback(res.statusCode, obj);
+		});
+	});
+	req.end();		
+	req.on('error', function(err) {
+		console.log('error: ' + err.message);
+	});
 }
