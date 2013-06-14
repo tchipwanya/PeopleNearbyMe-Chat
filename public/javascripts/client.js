@@ -1,36 +1,69 @@
-/* client.js subfile 1 */
+// window.fbAsyncInit = function() {
+// 	FB.init({
+// 		appId			:'253250614745350',//'262579080505640', // PRODUCTION
+// //		appId			:'408731785826423', // DEVELOPMENT		
+// 		status			: true, // check login status
+// 		cookies			: true, // enable cookies to allow the server to access the session
+// 		xfbml			: true,  // parse XFBML
+// 		oauth 			: true,
+// 		channelUrl		: "//localhost:3000/pages/channel.html", 
+// 	});
+// 	FB.Event.subscribe('auth.authResponseChange', fbLoginStatusChanged);
+// };
 
-var CONFIG = {	alias: "#",   // set in onConnect,
+// // Load the SDK Asynchronously
+// (function(d){
+// 	var js, 
+// 		id = 'facebook-jssdk', 
+// 		ref = d.getElementsByTagName('script')[0];
+
+// 	if (d.getElementById(id)) {return;}
+// 	js = d.createElement('script'); 
+// 	js.id = id; 
+// 	js.async = true;
+// 	js.src = "//connect.facebook.net/en_US/all.js";
+// 	ref.parentNode.insertBefore(js, ref);
+// }(document));
+
+// function fbLogin() {
+// 	FB.login(fbLoginStatusChanged, {scope:'email'});
+// };
+
+// function onFbLogout(response) {
+// 	$('#aliasDisplay').css('display','none');
+// 	$('#fbLogin').css('display','block');					
+// }
+
+// function fbLoginStatusChanged(response) {
+// 	if(response.status === 'connected') {
+// 		CONFIG.fbID = response.authResponse.userID;
+// 		CONFIG.fbToken = response.authResponse.accessToken;
+// 		FB.api('/me', onFbGraphResponse);
+// 	} else if(response.status === 'not_authorized') {
+// 		// user is logged into facebook but not the app. keep button where it is
+// 	} else {
+// 		// user is not logged into facebook or the application.
+// 	}
+// }
+
+// function onFbGraphResponse(response) {
+// 	CONFIG.alias = response.name;
+// 	//console.log(response.name);
+// 	//	$('#aliasInput').val(response.name);
+// 	$('#aliasDisplay').html(response.name);
+// 	$('#fbLogin').css('display','none');				
+// 	$('#aliasDisplay').css('display','block');
+// }
+
+var CONFIG = {	alias: null,   // set in onConnect,
+				// fbID: null,
+				// fbToken: null,
 				room: null,
-				id: null,    // set in onConnect,
 				last_message_time: 1,
 				focus: true, //event listeners bound in onConnect,
 				unread: 0 //updated in the message-processing loop
 			 };
 
-var aliases = [];
-
-/* Returns a description of this past date in relative terms.
- * Takes an optional parameter (default: 0) setting the threshold in ms which
- * is considered "Just now".
- *
- * Examples, where new Date().toString() == "Mon Nov 23 2009 17:36:51 GMT-0500 (EST)":
- *
- * new Date().toRelativeTime()
- * --> 'Just now'
- *
- * new Date("Nov 21, 2009").toRelativeTime()
- * --> '2 days ago'
- *
- * // One second ago
- * new Date("Nov 23 2009 17:36:50 GMT-0500 (EST)").toRelativeTime()
- * --> '1 second ago'
- *
- * // One second ago, now setting a now_threshold to 5 seconds
- * new Date("Nov 23 2009 17:36:50 GMT-0500 (EST)").toRelativeTime(5000)
- * --> 'Just now'
- *
- */
 Date.prototype.toRelativeTime = function(now_threshold) {
 	var delta = new Date() - this;
 
@@ -123,34 +156,9 @@ util = {
 //used to keep the most recent messages visible
 function scrollDown () {
 	var doAutoscroll = (($("#log").scrollTop()+ $("#log").innerHeight() + 40)>=($("#log")[0].scrollHeight));
-	//  addMessage2("sys", ($("#log").scrollTop() +  $("#log").innerHeight()).toString() + " " + ($("#log")[0].scrollHeight).toString() + " " + doAutoscroll );
+	//  addMessage2("sys", ($("#log").scrollTop() +  $("#log").innerHeight()).toString
+		//() + " " + ($("#log")[0].scrollHeight).toString() + " " + doAutoscroll );
 	if (doAutoscroll) $("#log").scrollTop($("#log")[0].scrollHeight);
-}
-
-function gotLocation(position) {
-	mapsInit(position);
-	socket.emit("location", position);
-}
-
-function onLocation(data) {
-	updateRoomList(data);
-}
-function mapsInit(position) {
-	var myOptions = {
-		center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
-		zoom: 16,
-		zoomControl: false,
-		streetViewControl: false,
-		scaleControl: false,
-		rotateControl: false,
-		panControl: false,
-		overviewMapControl: false,
-		mapTypeControl: false,
-		disableDoubleClickZoom: true,
-		scrollwheel: false,
-		mapTypeId: google.maps.MapTypeId.HYBRID
-	};
-	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 }
 
 function getLocation() {
@@ -177,6 +185,76 @@ function getLocation() {
 	}
 }
 
+function gotLocation(position) {
+	mapsInit(position);
+	socket.emit("location", position);
+
+}
+
+function mapsInit(position) {
+	var myOptions = {
+		center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+		zoom: 16,
+		zoomControl: false,
+		streetViewControl: false,
+		scaleControl: false,
+		rotateControl: false,
+		panControl: false,
+		overviewMapControl: false,
+		mapTypeControl: false,
+		disableDoubleClickZoom: true,
+		scrollwheel: false,
+		mapTypeId: google.maps.MapTypeId.HYBRID
+	};
+	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+}
+
+
+
+function onLocation(data) {
+	updateRoomList(data);
+	mapsUpdate(data);
+}
+
+
+function mapsUpdate(rooms) {
+	var myOptions = {
+		center: new google.maps.LatLng(rooms[0].coords[0], rooms[0].coords[1]),
+		zoom: 16,
+		zoomControl: false,
+		streetViewControl: false,
+		scaleControl: false,
+		rotateControl: false,
+		panControl: false,
+		overviewMapControl: false,
+		mapTypeControl: false,
+		disableDoubleClickZoom: true,
+		scrollwheel: false,
+		mapTypeId: google.maps.MapTypeId.HYBRID
+	};
+	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+	for(var x in rooms) {
+			// first set the center point of the marker
+			var latlng = new google.maps.LatLng(rooms[x].coords[0], rooms[x].coords[1]);
+			// now, create the marker
+			var marker = new google.maps.Marker({
+			    position: latlng,
+			    map: map,
+			    title: rooms[x].roomID
+
+			});	
+
+			google.maps.event.addListener(marker, 'click', function() {
+				console.log(this.title);
+
+				$("#roomSelect").val(this.title);				
+		    });
+		}
+}
+
+
 function bindEvents() {
 	socket.on("connection", onConnect);
 	socket.on("someoneJoin", onSomeoneJoin);
@@ -184,56 +262,96 @@ function bindEvents() {
 	socket.on("message", onMessage);
 	socket.on("error", onError);
 	socket.on("join", onJoin);
-	socket.on("rejoin", onReJoin);
 	socket.on("location", onLocation);
+	socket.on("flag", onFlag);
 
-	// Entry send
-	$("#entryForm").submit(function (i) { 
-		i.preventDefault();
-		var msg = $("#entry").val().replace("\n", "");
-		if (!util.isBlank(msg))
-			send(msg);
-		$("#entry").val('');
-	});
-
-	// Try joining the chat when the user clicks the connect button
-	$("#joinForm").submit(function (i) {
-		i.preventDefault();
-		showLoad();
-		var alias = $("#aliasInput").val();
-		var roomSelect = $("#roomSelect").val(); // I <3 jQuery
-		var roomInput = $("#roomInput").val();
-
-		if (alias.length > 50) {
-			showConnect("alias too long. 50 character max.");
-			return false;
-		}
-
-		if (alias.length === 0) {
-			showConnect("You forgot to enter your alias silly.");
-			return;
-		}
-
-		//more validations
-		if (/[^\w_\-^!]/.exec(alias)) {
-			showConnect("Bad character in alias. Can only have letters, numbers, and '_', '-', '^', '!'");
-			return false;
-		}
-
-		// TODO validate roomInput. 
-
-		//make the actual join request to the server
-		socket.emit("join", { alias: alias, roomInput: roomInput, roomSelect: roomSelect });
-		return true;
-	});
-
+	$("#entryForm").submit(onEntryFormSubmit);
+	// $("#fbLogin").click(fbLogin);
+	$("#joinForm").submit(onJoinFormSubmit);
 	$("#logout").click(logout);
-}/* client.js subfile 2 */
+	$("#switch").click(switchRoom);
+}
+
+
+
+function onEntryFormSubmit(i) {
+	i.preventDefault();
+	var msg = $("#entry").val().replace("\n", "");
+	if (!util.isBlank(msg))
+		send(msg);
+	$("#entry").val('');
+}
+
+function onJoinFormSubmit(i) {
+	i.preventDefault();
+	showLoad();
+
+	var alias = $("#aliasInput").val();
+	var roomSelect = $("#roomSelect").val();
+	var roomInput = $("#roomInput").val();
+
+	
+	if(validate(alias, roomSelect, roomInput)) {
+		CONFIG.alias = alias;
+		var joinObj = { alias: CONFIG.alias	}
+		if(roomSelect)
+			joinObj.roomSelect = roomSelect;
+		else if(roomInput)
+			joinObj.roomInput = roomInput;
+
+		// if(CONFIG.fbToken)
+		// 	joinObj.fbToken = CONFIG.fbToken;
+		// if(CONFIG.fbID)
+		// 	joinObj.fbID = CONFIG.fbID;	
+		socket.emit("join", joinObj);
+		return true;
+	}
+}
+
+/*function isLoggedIn() {
+	return CONFIG.fbID && CONFIG.fbToken && CONFIG.alias;
+}*/
+
+function validate(alias, select, input) { // TODO
+	var aliasValid = false; 
+	var roomValid = false;
+	var err = "";
+
+	if(!(select || input))
+		err += "Choose a room to join or name a new one. ";
+
+	if(select)
+		roomValid = true;
+
+	if(input)
+		if(input.length >= 3  && input.length < 80)
+			roomValid = true;			
+		else 
+			err += "Room name must be longer than 4 character and shorter than 20 characters. ";
+
+	if(alias)
+		if(alias.length < 40)
+			aliasValid = true;
+		else 
+			err += "Screen name must be shorter than 20 characters. ";
+	else
+		err+= "Enter a nickname.";
+
+	/* if (/([A-Za-z0-9-\w]+)/.exec(input).length != 1) { // contains invalid characters
+	 	showConnect("No weird room names allowed. Use only letters, numbers, spaces and hyphens.");
+	 	return false;
+	 }*/
+	if(err != "")
+		showConnect(err);
+
+	return (aliasValid && roomValid);
+}
+
 
 //updates the users link to reflect the number of active users
-function updateUsersLink ( ) {
-	var t = aliases.length.toString() + " user";
-	if (aliases.length != 1) t += "s";
+function updateUserLinks ( ) {
+	var t = CONFIG.users.length.toString() + " user";
+	if (CONFIG.users.length != 1) t += "s";
 	$("#usersLink").text(t);
 }
 
@@ -241,57 +359,72 @@ function updateUsersLink ( ) {
 //the event may be a msg, join or part type
 //from is the user, text is the body and time is the timestamp, defaulting to now
 //_class is a css class to apply to the message, usefull for system events
-//aliases is global for better or for worse...
-function updateWhoList() {
+//users is global for better or for worse...
+function updateUserList() {
 	$('#whoList').html('');
 	var content = "";
-	for(var i in aliases) { //An attempt to make a drop down menu with the flag option
-		var alias = aliases[i];
-		content += '<ul id="dropv">'
-		content += '<li class="person"><a href = "#">';
-		content += alias;
-		content +='</a>';
-		content += '<ul>';
-		content += '<li><a href = "#">';
-		content += "Flag User";
-		content += '</a></li>';
-		content += '</ul>';
-		content += '</li>';
-		content +='</ul>';
+	//console.log(users);
+	for(var i in CONFIG.users) { //An attempt to make a drop down menu with the flag option
+		var user = CONFIG.users[i];
+		//console.log(user);		
+		// content += '<ul class="dropv">'
+		// content += '<li class="person"><a href = "#">';
+		// content += alias;
+		// content +='</a>';
+		// content += '<ul>';
+		// content += '<li><a href = "#">';
+		// content += "Flag User";
+		// content += '</a></li>';
+		// content += '</ul>';
+		// content += '</li>';
+		// content +='</ul>';
+		content += '<div class="person">';
+		content += user; // for now user = alias
+		content += '</div>';
+		//content += '</br>';
 	}
 	$('#whoList').html(content);
-	$('#dropv').click(flag(alias));
 }
-function updateRoomList(data) {
-	$('#roomSelect').html('');
-
+function updateRoomList(rooms) {
 	var content = "";
-	for(var x in data) {
-		content += '<option value="'+data[x]._id+'">';
-		content += data[x].name;
+	console.log(rooms);
+	for(var x in rooms) {
+		console.log(rooms[x].coords);
+		content += '<option value="'+rooms[x].roomID+'">';
+		content += rooms[x].name;
+		if(rooms[x].numUsers > 0)
+			content += " ("+rooms[x].numUsers+")";
+		//if(data[x].roomNum!= "000") {
+		//	content+=" - "+data[x].roomNum;
+		//}
 		content += "</option>";
 	}
 	$('#roomSelect').html(content);
 }
-function addMessage (from, text, time, _class) {
-	if (text === null)
+/*
+function flagUser(){
+	content = "";
+	$('#dropv').click(onFlag(content));
+	send(content);
+}
+*/
+function addMessage(from, text, time, _class) {
+	
+	if (!text) {
+		console.log("addMessage() just received a null message.");
 		return;
-
-	if (time === null) {
-		// if the time is null or undefined, use the current time.
-		time = new Date();
-	} else if ((time instanceof Date) === false) {
-		// if it's a timestamp, interpret it
-		time = new Date(time);
 	}
+	
+	if (!time)
+		time = new Date();
+	else if ((time instanceof Date) === false)
+		time = new Date(time);
+	
 
-	//every message you see is actually a table with 3 cols:
-	//  the time,
-	//  the person who caused the event,
-	//  and the content
 	var messageElement = $(document.createElement("div"));
 
 	messageElement.addClass("message");
+
 	if (_class)
 		messageElement.addClass(_class);
 
@@ -317,7 +450,7 @@ function addMessage (from, text, time, _class) {
 	scrollDown();
 }
 
-//we want to show a count of unread messages when the window does not have focus
+// show a count of unread messages when the window does not have focus
 function updateTitle(){
 	if (CONFIG.unread) {
 		document.title = "(" + CONFIG.unread.toString() + ") #PeopleNearby.me";
@@ -327,38 +460,44 @@ function updateTitle(){
 }
 
 function updateRoomTitle() {
-	$("#roomTitle").html(CONFIG.room);
+	if(CONFIG.room) {
+		$('#roomTitle').html(CONFIG.room.name);
+	} else {
+		console.log("CONFIG.room undefined for updateRoomTitle()");
+	}
 }
 
 //Transition the page to the state that prompts the user for a alias
-function showConnect (errorMessage) {
-	if (errorMessage)
-		$("#error").html(errorMessage).css('display', 'block');
-	
+function showConnect(errorMessage) {
+	if (errorMessage) {
+		$("#error").html(errorMessage);
+		$("#error").css('display', 'block');
+	}
+	$("#logout").css('display', 'none');
 	$("#connect").css('display','block');
 	$("#loading").css('display','none');
 	$("#toolbar").css('display','none');
 	$("#map_canvas").css('display','block');
-	$("#log").css('display','none');
-	$("#who").css('display','none');
+	$("#chat").css('display','none');
 	$("#aliasInput").focus();
 }
 
 //transition the page to the loading screen
 function showLoad () {
+	$("#logout").css('display', 'inline');	
 	$("#error").css('display', 'none');
 	$("#connect").css('display','none');
 	$("#loading").css('display','block');
 	$("#toolbar").css('display','none');
-
+	$("#chat").css('display','none');
 }
 
 //transition the page to the main chat view, putting the cursor in the textfield
-function showChat (alias) {
+function showChat () {
+	$("#logout").css('display', 'inline');	
 	$("#map_canvas").css('display','none');
 	$("#toolbar").css('display','block');
-	$("#log").css('display','block');
-	$("#who").css('display','block');
+	$("#chat").css('display','block');
 	$("#entry").focus();
 	$("#error").css('display', 'none');
 	$("#connect").css('display','none');
@@ -366,41 +505,39 @@ function showChat (alias) {
 
 	scrollDown();
 }
-/* client.js subfile 3 */
 
-// Handles when a user joins the chatroom
+// called upon socket.io connection
+function onConnect () {}
 
-function onConnect () {
-
-}
-
+// handler for when another user joins a room.
 function onSomeoneJoin(data) {
-	var alias = data.user.alias;
-	var timestamp = data.timestamp;
-	addMessage(alias, "joined", timestamp, "join");
-	updateTitle();      
-	for (var i = 0; i < aliases.length; i++)
-		if (aliases[i] == alias) return;
-	aliases.push(alias);
-	updateUsersLink();
+	var userAlias = data.user.alias;
+	var userTimestamp = data.timestamp;      
+	for (var i = 0; i < CONFIG.users.length; i++)
+		if (CONFIG.users[i] == userAlias) return;
+	CONFIG.users.push(userAlias);
+	addMessage(userAlias, "joined", userTimestamp, "join");
+	updateUserList();
+	updateTitle();	
+	updateUserLinks();
 }
 
 // Handles when a user leaves the chatroom
 
 function onSomeonePart(data) {
-	var alias = data.alias;
-	var timestamp = data.timestamp;
+	var userAlias = data.alias;
+	var userTimestamp = data.timestamp;
 
-	addMessage(alias, "left", timestamp, "part");
-	for (var i = 0; i < aliases.length; i++) {
-		if (aliases[i] == alias) {
-			aliases.splice(i,1);
+	for (var i = 0; i < CONFIG.users.length; i++) {
+		if (CONFIG.users[i] == userAlias) {
+			CONFIG.users.splice(i,1);
 			break;
 		}
 	}
-    updateWhoList();
+	addMessage(userAlias, "left", userTimestamp, "part");
+    updateUserList();
 	updateTitle();
-	updateUsersLink();
+	updateUserLinks();
 }
 
 
@@ -420,73 +557,68 @@ function onError(data) {
 
 // submit a new message to the server
 function send(msg) {
-	socket.emit("send", {id: CONFIG.id, text: msg});
+	socket.emit("send", { text: msg});
 }
 
 // Called when page is randomly left with no warning.
-function part() {
-	socket.emit("part", {id: CONFIG.id}); // Session not deleted.
-}
+/*function part() {
+	jQuery.ajax({
+        url: '/part',
+        async: false
+    });
+}*/
 
-// Called when logout button is explicitly pressed.
+// Called when logout button is pressed.
 function logout () {
 	socket.emit("logout", {});
-// fuck it just reloading page
-	window.location.reload();
-
-// 	CONFIG.id = null;
-// 	CONFIG.room = null;
-// 	CONFIG.alias = null;
-// 	showConnect();
-//	socket.server.close();
-// 	socketConnect();
+	FB.logout(onFbLogout);
+ 	CONFIG.room = null;
+ 	CONFIG.alias = null;
+ 	showConnect();
+	//socket.server.close();
+ 	//socketConnect();
 }
 
-function flag(){
+// Called when switch button is pressed.
+function switchRoom () {
+	socket.emit("switch", {});
+ 	CONFIG.room = null;
+ 	CONFIG.alias = null;
+ 	showConnect();
+	//socket.server.close();
+ 	//socketConnect();
+}
+
+function onFlag(){ 
 	var user = data.user;
-	var session = socket.handshake.session;
-	var flagged = handshake.session.user.flagCount;//get this stuff make sure query is right
+	var flagged = socket.handshake.session.user.flagCount;//get this stuff make sure query is right
 		flagged++;	
+		send(flagged);
 		socket.emit("flagged",{});
 	if (flagged > 5){
 			flagged = 0;
 			flagged.save();
 	 		logout;
 	 	}
-	flagged.save(); //saving the flag count before kicking out
-}
-
-function reJoin() {
-	socket.emit("rejoin", {});
-}
-
-// return of reJoin emit.
-function onReJoin(data) {
-	CONFIG.alias = data.alias;
-	CONFIG.room = data.room;
-	CONFIG.id = data.id;
-	aliases = data.aliases;
-	updateWhoList();
-	updateRoomTitle();
+	flagged.save();
 }
 
 //handle the server's response to our alias and join request
 function onJoin (data) {
+	console.log(data);
 	if (data.error) {
 		showConnect(data.error);
 		return;
 	}
 
 	CONFIG.alias = data.alias;
-	CONFIG.id = data.id;
 	CONFIG.room = data.room;
-	updateRoomTitle();
-	
-    aliases = data.aliases;
-    updateWhoList();
+  CONFIG.users = data.users;
 
-	//update the UI to show the chat
-	showChat(CONFIG.alias);
+	// updateRoomTitle();
+  updateUserList();
+  console.log('show chat');
+	showChat();
 
 	//listen for browser events so we know to update the document title
 	$(window).bind("blur", function() {
@@ -499,24 +631,17 @@ function onJoin (data) {
 		CONFIG.unread = 0;
 		updateTitle();
 	});
-}/* client.js subfile 4 */
+}
+
 var socket = null;
 function socketConnect() {
 	socket = io.connect(); // DEVELOPMENT
-	//var socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
+	//socket = io.connect("http://www.peoplenearby.me"); // PRODUCTION
 }
 
-socketConnect();
 $(document).ready(function() {
-	if($("#content").attr("showChat") === "true") {
-		showChat();
-		reJoin();
-	} else {
-		showConnect();
-	}
+	socketConnect();
+	$("#aliasInput").focus();
 	getLocation();
 	bindEvents();
 });
-
-//if we can, notify the server that we're going away.
-$(window).unload(part);

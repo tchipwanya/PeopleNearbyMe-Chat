@@ -1,23 +1,29 @@
-#connect
-	#error
-	#map_canvas	
-	form#joinForm
-		input(id="aliasInput", class="text", type="text", name="alias", autocomplete="off", value="", placeholder="Enter a username here, then select your location.")	
-		select(id="roomSelect", name="room", size="2")
-			optgroup Loading
-		input(id="roomInput", class="text", type="text", name="roomInput", autocomplete="off", value="", placeholder="If your room wasn't listed above, enter it here.")
-		input(id="joinButton", class="button", type="submit", name="", value="Join")
-	.clear
-#loading
-	p loading
-#who
-	h4#roomtitle
-	#whoTitle People nearby you:
-	a(href='#').whoList
-	ul#whoList
+extends layout
 
-#log
+block content
+	#connect
+		#error
+		#map_canvas	
+		form#joinForm
+			//img(id="fbLogin", src="/images/facebook_connect.png")
+			//div(class="fb-login-button", scope="email", size="large", data-show-faces="true", , data-max-rows="1") Login with Facebook
+			input(id="aliasInput", class="text", type="text", autocomplete="off", value="", placeholder="Your screen name?", name="aliasInput")
+			div(id="aliasDisplay",style="display:none;")
+			select(id="roomSelect", name="room", size="2")
+				optgroup Loading
+			input(id="roomInput", class="text", type="text", name="roomInput", autocomplete="off", value="", placeholder="Choose a room from above or name a new one.")
+			input(id="joinButton", class="button", type="submit", name="", value="Join")
+		.clear
+	#loading
+		p loading
 
-#toolbar
-	form#entryForm
-		input(tabindex="1", type="text", id="entry")	
+	#chat	
+		#log
+		#who
+			h4#roomTitle
+			#whoTitle Who's here
+			#whoList
+
+	#toolbar
+		form#entryForm
+			input(tabindex="1", autocomplete="off", type="text", id="entry")

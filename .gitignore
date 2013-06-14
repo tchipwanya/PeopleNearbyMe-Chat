@@ -1,4 +1,4 @@
 node_modules
 peoplenearbyme.sublime-project
 peoplenearbyme.sublime-workspace
-.gitignore
+.DS_Store
