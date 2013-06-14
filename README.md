@@ -1,21 +1,8 @@
-PeopleNearby.me
+Vicinity
 ===============
-## 	A geo-social app for conversing with people nearby you.
+## 	A way to chat with people around you.
 
-### To run locally:
-
-1. Install Node.js. Requires that Homebrew be installed. (http://mxcl.github.com/homebrew/)
-	$ brew install node
-2. Install dependencies with NPM:
-	$ npm install
-3. "Compile" source from subfiles:
-	$ ./make.sh
-4. Run application:
-	$ node app.js
-4. In your browser, navigate to [http://localhost:3000](http://localhost:3000).
-
-
-### To deploy to Heroku:
+### Deployment
 
 1. Change server address in client/init.js line 2. Uncomment the appropriate line:
 	//var socket = io.connect(); // DEVELOPMENT
@@ -33,7 +20,7 @@ PeopleNearby.me
 
 ### TODO
 
-* Convert session store over to [MongoDB](https://github.com/masylum/connect-mongodb)
-* Maintain user list on client side.
-* Convert timestamps to 12-hour.
-* Add multiple chatroom functionality.
+* Convert session store over to mongo preferably with mongoose
+* somehow mitigate page refresh
+* get passport working for login with twitter
+* map pins where rooms are
