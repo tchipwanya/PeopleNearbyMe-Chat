@@ -394,8 +394,8 @@ function addMessage(from, text, time, _class) {
 
 	var content = '<div>';
 	content+= '  <span class="date">' + util.timeString(time) + '</span>';
-	content+= '  <span class="alias">' + util.toStaticHTML(from) + '</span>';
-	content+= '  <span class="msg-text">' + text  + '</td>';
+	content+= '  <div class="alias">' + util.toStaticHTML(from) + '</div>';
+	content+= '  <div class="msg-text">' + text  + '</td>';
 	content+= '</div>';
 							
 	messageElement.html(content);
@@ -513,6 +513,7 @@ function send(msg) {
 	socket.emit("send", { text: msg});
 }
 
+ 
 // Called when page is randomly left with no warning.
 /*function part() {
 	jQuery.ajax({

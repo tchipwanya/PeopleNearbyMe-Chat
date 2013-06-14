@@ -88,6 +88,8 @@ io.configure('production', function() {
 	io.set('log level', 1);                    
 });
 
+
+
 // Server start 
 server.listen(PORT)
 console.log("Express server listening on port %d in %s mode", PORT, app.settings.env);
@@ -195,6 +197,8 @@ db.once('open', function callback() {
 			//session.close();
 		});
 
+//		socket.on("fileupload")
+
 
 		socket.on("send", function(userData) {
 			// If a registered user.
@@ -204,6 +208,7 @@ db.once('open', function callback() {
 				io.sockets.in(session.roomID).emit("message", { 
 					alias: session.user.alias,
 					text: userData.text,
+					//file: userData.file,
 					timestamp: (new Date()).getTime()
 				});
 			}

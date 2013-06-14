@@ -21,9 +21,11 @@ block content
 		#log
 		#who
 			h4#roomTitle
-			#whoTitle Who's here
+			#whoTitle Who's Here
 			#whoList
+		#toolbar
+			form#entryForm 
+				textarea(input tabindex="0", autocomplete="off", type="text ", id="entry", placeholder="Send your message here") 
+				input(id="sendButton", class="button", type="submit", name="", value="Send")
 
-	#toolbar
-		form#entryForm
-			input(tabindex="1", autocomplete="off", type="text", id="entry")
+				
