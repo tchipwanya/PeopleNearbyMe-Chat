@@ -188,6 +188,7 @@ function getLocation() {
 function gotLocation(position) {
 	mapsInit(position);
 	socket.emit("location", position);
+
 }
 
 function mapsInit(position) {
@@ -206,11 +207,48 @@ function mapsInit(position) {
 		mapTypeId: google.maps.MapTypeId.HYBRID
 	};
 	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
 }
+
+
 
 function onLocation(data) {
 	updateRoomList(data);
+	mapsUpdate(data);
 }
+
+
+function mapsUpdate(rooms) {
+	var myOptions = {
+		center: new google.maps.LatLng(rooms[0].coords[0], rooms[0].coords[1]),
+		zoom: 16,
+		zoomControl: false,
+		streetViewControl: false,
+		scaleControl: false,
+		rotateControl: false,
+		panControl: false,
+		overviewMapControl: false,
+		mapTypeControl: false,
+		disableDoubleClickZoom: true,
+		scrollwheel: false,
+		mapTypeId: google.maps.MapTypeId.HYBRID
+	};
+	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+	for(var x in rooms) {
+			// first set the center point of the marker
+			var latlng = new google.maps.LatLng(rooms[x].coords[0], rooms[x].coords[1]);
+			// now, create the marker
+			var marker = new google.maps.Marker({
+			    position: latlng,
+			    map: map,
+			    title: rooms[x].roomID
+
+			});	
+			console.log(marker);	
+		}
+}
+
 
 function bindEvents() {
 	socket.on("connection", onConnect);
@@ -228,6 +266,8 @@ function bindEvents() {
 	$("#logout").click(logout);
 	$("#switch").click(switchRoom);
 }
+
+
 
 function onEntryFormSubmit(i) {
 	i.preventDefault();
@@ -342,7 +382,9 @@ function updateUserList() {
 }
 function updateRoomList(rooms) {
 	var content = "";
+	console.log(rooms);
 	for(var x in rooms) {
+		console.log(rooms[x].coords);
 		content += '<option value="'+rooms[x].roomID+'">';
 		content += rooms[x].name;
 		if(rooms[x].numUsers > 0)

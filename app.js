@@ -208,9 +208,8 @@ db.once('open', function callback() {
 				});
 			}
 		});
-		
-		//connecting the flagging socket
-		
+
+				
 		socket.on("location", function(position) {
 			/* Future schema?
 				{	name:"The Lobby",
@@ -220,7 +219,7 @@ db.once('open', function callback() {
 					occupants:200,
 					coords:[44.476190, -73.213063]
 				}*/
-			
+
 			var lat = position.coords.latitude;
 			var lng = position.coords.longitude;
 
