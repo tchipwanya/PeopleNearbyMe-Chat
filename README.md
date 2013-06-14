@@ -1,6 +1,6 @@
-PeopleNearby.me
+Vicinity
 ===============
-## 	A website for chatting with people nearby.
+## 	A way to chat with people around you.
 
 ### Deployment
 
@@ -20,7 +20,7 @@ PeopleNearby.me
 
 ### TODO
 
-* Convert session store over to [MongoDB](https://github.com/masylum/connect-mongodb)
-* Maintain user list on client side.
-* Convert timestamps to 12-hour.
-* Add multiple chatroom functionality.
+* Convert session store over to mongo preferably with mongoose
+* somehow mitigate page refresh
+* get passport working for login with twitter
+* map pins where rooms are

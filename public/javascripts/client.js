@@ -1,63 +1,63 @@
-window.fbAsyncInit = function() {
-	FB.init({
-		appId			:'253250614745350',//'262579080505640', // PRODUCTION
-//		appId			:'408731785826423', // DEVELOPMENT		
-		status			: true, // check login status
-		cookies			: true, // enable cookies to allow the server to access the session
-		xfbml			: true,  // parse XFBML
-		oauth 			: true,
-		channelUrl		: "//localhost:3000/pages/channel.html", 
-	});
-	FB.Event.subscribe('auth.authResponseChange', fbLoginStatusChanged);
-};
+// window.fbAsyncInit = function() {
+// 	FB.init({
+// 		appId			:'253250614745350',//'262579080505640', // PRODUCTION
+// //		appId			:'408731785826423', // DEVELOPMENT		
+// 		status			: true, // check login status
+// 		cookies			: true, // enable cookies to allow the server to access the session
+// 		xfbml			: true,  // parse XFBML
+// 		oauth 			: true,
+// 		channelUrl		: "//localhost:3000/pages/channel.html", 
+// 	});
+// 	FB.Event.subscribe('auth.authResponseChange', fbLoginStatusChanged);
+// };
 
-// Load the SDK Asynchronously
-(function(d){
-	var js, 
-		id = 'facebook-jssdk', 
-		ref = d.getElementsByTagName('script')[0];
+// // Load the SDK Asynchronously
+// (function(d){
+// 	var js, 
+// 		id = 'facebook-jssdk', 
+// 		ref = d.getElementsByTagName('script')[0];
 
-	if (d.getElementById(id)) {return;}
-	js = d.createElement('script'); 
-	js.id = id; 
-	js.async = true;
-	js.src = "//connect.facebook.net/en_US/all.js";
-	ref.parentNode.insertBefore(js, ref);
-}(document));
+// 	if (d.getElementById(id)) {return;}
+// 	js = d.createElement('script'); 
+// 	js.id = id; 
+// 	js.async = true;
+// 	js.src = "//connect.facebook.net/en_US/all.js";
+// 	ref.parentNode.insertBefore(js, ref);
+// }(document));
 
-function fbLogin() {
-	FB.login(fbLoginStatusChanged, {scope:'email'});
-};
+// function fbLogin() {
+// 	FB.login(fbLoginStatusChanged, {scope:'email'});
+// };
 
-function onFbLogout(response) {
-	$('#aliasDisplay').css('display','none');
-	$('#fbLogin').css('display','block');					
-}
+// function onFbLogout(response) {
+// 	$('#aliasDisplay').css('display','none');
+// 	$('#fbLogin').css('display','block');					
+// }
 
-function fbLoginStatusChanged(response) {
-	if(response.status === 'connected') {
-		CONFIG.fbID = response.authResponse.userID;
-		CONFIG.fbToken = response.authResponse.accessToken;
-		FB.api('/me', onFbGraphResponse);
-	} else if(response.status === 'not_authorized') {
-		// user is logged into facebook but not the app. keep button where it is
-	} else {
-		// user is not logged into facebook or the application.
-	}
-}
+// function fbLoginStatusChanged(response) {
+// 	if(response.status === 'connected') {
+// 		CONFIG.fbID = response.authResponse.userID;
+// 		CONFIG.fbToken = response.authResponse.accessToken;
+// 		FB.api('/me', onFbGraphResponse);
+// 	} else if(response.status === 'not_authorized') {
+// 		// user is logged into facebook but not the app. keep button where it is
+// 	} else {
+// 		// user is not logged into facebook or the application.
+// 	}
+// }
 
-function onFbGraphResponse(response) {
-	CONFIG.alias = response.name;
-	//console.log(response.name);
-	//	$('#aliasInput').val(response.name);
-	$('#aliasDisplay').html(response.name);
-	$('#fbLogin').css('display','none');				
-	$('#aliasDisplay').css('display','block');
-}
+// function onFbGraphResponse(response) {
+// 	CONFIG.alias = response.name;
+// 	//console.log(response.name);
+// 	//	$('#aliasInput').val(response.name);
+// 	$('#aliasDisplay').html(response.name);
+// 	$('#fbLogin').css('display','none');				
+// 	$('#aliasDisplay').css('display','block');
+// }
 
 var CONFIG = {	alias: null,   // set in onConnect,
-				fbID: null,
-				fbToken: null,
+				// fbID: null,
+				// fbToken: null,
 				room: null,
 				last_message_time: 1,
 				focus: true, //event listeners bound in onConnect,
@@ -223,7 +223,7 @@ function bindEvents() {
 	socket.on("flag", onFlag);
 
 	$("#entryForm").submit(onEntryFormSubmit);
-	$("#fbLogin").click(fbLogin);
+	// $("#fbLogin").click(fbLogin);
 	$("#joinForm").submit(onJoinFormSubmit);
 	$("#logout").click(logout);
 	$("#switch").click(switchRoom);
@@ -254,10 +254,10 @@ function onJoinFormSubmit(i) {
 		else if(roomInput)
 			joinObj.roomInput = roomInput;
 
-		if(CONFIG.fbToken)
-			joinObj.fbToken = CONFIG.fbToken;
-		if(CONFIG.fbID)
-			joinObj.fbID = CONFIG.fbID;	
+		// if(CONFIG.fbToken)
+		// 	joinObj.fbToken = CONFIG.fbToken;
+		// if(CONFIG.fbID)
+		// 	joinObj.fbID = CONFIG.fbID;	
 		socket.emit("join", joinObj);
 		return true;
 	}
@@ -279,13 +279,13 @@ function validate(alias, select, input) { // TODO
 		roomValid = true;
 
 	if(input)
-		if(input.length >= 3  && input.length < 20)
+		if(input.length >= 3  && input.length < 80)
 			roomValid = true;			
 		else 
 			err += "Room name must be longer than 4 character and shorter than 20 characters. ";
 
 	if(alias)
-		if(alias.length < 20)
+		if(alias.length < 40)
 			aliasValid = true;
 		else 
 			err += "Screen name must be shorter than 20 characters. ";
@@ -523,8 +523,6 @@ function logout () {
 	FB.logout(onFbLogout);
  	CONFIG.room = null;
  	CONFIG.alias = null;
- 	CONFIG.fbID = null;
- 	CONFIG.fbToken = null;
  	showConnect();
 	//socket.server.close();
  	//socketConnect();

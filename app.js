@@ -13,6 +13,7 @@ var db = mongoose.connection;
 
 // Express requires 
 var express = require('express'),
+		connect = require('connect'),
 		http = require('http'),
 		https = require('https');
 
@@ -31,7 +32,7 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 // app.use(express.directory('public'));
 app.use(cookieParser);
-app.use(express.session({ key: COOKIE, store: sessionStore }));
+app.use(connect.session({ key: COOKIE, store: sessionStore }));
 app.use(express.static('public'));
 
 // Conditional configs
@@ -56,23 +57,22 @@ io.set("transports", ["xhr-polling"]);
 io.set("polling duration", 10);
 io.set('authorization', function(handshake, callback) { // https://github.com/alphapeter/socket.io-express
   if (handshake && handshake.headers && handshake.headers.cookie) {
-      cookieParser(handshake, {}, function(err) {
-          if(err) {
-              return callback('COOKIE_PARSE_ERROR');
-          }
-          var sessionId = handshake.signedCookies[COOKIE];
-          sessionStore.get(sessionId, function(err, session) {
-              if(err || !session) {//|| !session.auth || !session.auth.loggedIn) {
-                  callback('NOT_LOGGED_IN', false);
-              }
-              else{
-                  handshake.session = session;
-                  callback(null, true);
-              }
-          });
-      });
+	  cookieParser(handshake, {}, function(err) {
+	      if(err) {
+	          return callback('COOKIE_PARSE_ERROR', false);
+	      }
+	      var sessionId = handshake.signedCookies[COOKIE];
+	      sessionStore.get(sessionId, function(err, session) {
+	          if(err || !session) {//|| !session.auth || !session.auth.loggedIn) {
+	              callback('NOT_LOGGED_IN', false);
+	          }
+	          else{
+	              handshake.session = session;
+	              callback(null, true);
+	          }
+	      });
+	  });
   } else {
-	console.log('8');  	
       return callback('MISSING_COOKIE', false);
   }
 });
@@ -126,51 +126,35 @@ db.once('open', function callback() {
 
 		socket.on("join", function(userData) {
 			if (validateRoomSelect(userData.roomSelect)) {
-				if (userData.roomSelect.length === 40) { // google places id
-					var room = { roomID: userData.roomSelect };
-					onRoomRetrieved(userData.alias, room);
-				} else { // user created room
-					console.log(userData.roomSelect.length);
-					console.log(userData.roomSelect);					
-					console.log(userData);
-					var query = { '_id': new ObjectID(userData.roomSelect) };
-					Room.findOne(query, function(err, room) {
-							if(!err) {
-								onRoomRetrieved(err, userData.alias, room);
-							} else {
-								console.log(err);
-							}
-					});
-				}
-			} else if (validateRoomInput(userData.roomInput)) {  			
-
+				Room.findOne({ '_id': new ObjectID(userData.roomSelect) }, function(err, room) {
+					if(!err) {
+						finishJoin(userData.alias, room);
+					} else {
+						console.log(err);
+						socket.emit("error", {error: "Database error."});
+					}
+				});
+			} else if (validateRoomInput(userData.roomInput)) {
 				room = {
 					name: userData.roomInput,
 					coords: [session.lat,session.lng]
 				};
 				room = new Room(room).save(function(err, room) {
-					if (err) 
+					if (!err) {
+						finishJoin(userData.alias, room);
+					} else {
 						console.log("error 42");
-					onRoomRetrieved(userData.alias, room);
+						socket.emit("error", {error: "Db error"});						
+					}
 				});
 			} else {
 				socket.emit("error", {error: "No room specified."});
 			}
 		});
 
-		function onRoomRetrieved(alias, room) { // deciding to validate alias after room is queried.	
-			var roomID;
-			if (room.roomID && room.roomID.length === 40)
-				roomID = room.roomID
-			else
-				roomID = room._id.str;
-
+		function finishJoin(alias, room) { // deciding to validate alias after room is queried.	
+			var roomID = room._id;
 			if(validateAlias(alias, roomID)) {
-				if (!room) {
-					socket.emit("error", {error: "Room could not be resolved."});
-					throw err;
-				}
-
 				socket.join(roomID);
 				session.user = { alias: alias };
 				session.roomID = roomID;
@@ -244,30 +228,12 @@ db.once('open', function callback() {
 			session.lng = lng;
 			// session.save();
 
-			var options = {
-				host: "maps.googleapis.com",
-				path: "/maps/api/place/search/json?",
-				ssl: true
-			}
-
-			var params = {
-				key: GOOGLE_API_KEY,
-				location: lat.toString()+","+lng.toString(),
-				radius: 100, // 100m default
-				sensor: true
-			}
-
-			getJSON(options, params, function(status, response) {
-				Room.find({ coords: { $near:[lat,lng] } }, function(err, items) {
-					for(var x in items)
-						items[x].roomID = items[x]._id.str;
-					for(var x = 0; x < NUM_PLACES_RESULTS && x < response.results.length; x++)
-						response.results[x].roomID = response.results[x].id;
-					var retArray = items.concat(response.results.splice(0,NUM_PLACES_RESULTS));
-					for(var x in retArray)
-						retArray[x].numUsers = io.sockets.clients(retArray[x].roomID).length;
-					socket.emit("location", retArray);
-				});
+			Room.find({ coords: { $near:[lat,lng] } }, function(err, items) {
+				for(var x in items)
+					items[x].roomID = items[x]._id;
+				for(var x in items)
+					items[x].numUsers = io.sockets.clients(items[x].roomID).length;
+				socket.emit("location", items);
 			});
 		});
 
