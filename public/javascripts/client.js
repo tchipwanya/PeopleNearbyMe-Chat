@@ -245,7 +245,12 @@ function mapsUpdate(rooms) {
 			    title: rooms[x].roomID
 
 			});	
-			console.log(marker);	
+
+			google.maps.event.addListener(marker, 'click', function() {
+				console.log(this.title);
+
+				$("#roomSelect").val(this.title);				
+		    });
 		}
 }
 
